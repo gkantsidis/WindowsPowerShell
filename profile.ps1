@@ -61,4 +61,8 @@ function Get-FileInEditor {
     }
 }
 
+#
+# Aliases and other shortcuts
+#
+
 Set-Alias -Name e -Value Get-FileInEditor
