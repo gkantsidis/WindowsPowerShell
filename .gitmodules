@@ -1,6 +1,3 @@
-[submodule "Modules/Posh-VsVars"]
-	path = Modules/Posh-VsVars
-	url = https://github.com/Iristyle/Posh-VsVars.git
 [submodule "Modules/Posh-GitHub"]
 	path = Modules/Posh-GitHub
 	url = https://github.com/Iristyle/Posh-GitHub.git
