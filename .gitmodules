@@ -10,12 +10,20 @@
 [submodule "Modules/PowerShellArsenal"]
 	path = Modules/PowerShellArsenal
 	url = https://github.com/mattifestation/PowerShellArsenal.git
-[submodule "Modules\\Posh-VsVars"]
-	path = Modules\\Posh-VsVars
+[submodule "Modules/Posh-VsVars"]
+	
+	path = Modules/Posh-VsVars
+
 	url = https://github.com/gkantsidis/Posh-VsVars.git
+
 [submodule "Modules/Pester"]
+
 	path = Modules/Pester
+
 	url = https://github.com/pester/Pester.git
+
 [submodule "Modules/IsePester"]
+
 	path = Modules/IsePester
+
 	url = https://github.com/dfinke/IsePester.git
