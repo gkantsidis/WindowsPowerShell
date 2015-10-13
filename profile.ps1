@@ -1,7 +1,8 @@
 #
-# Import external modules
+# Third party modules with special initialization
 # 
 
+# Module: posh-git
 $private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent 
 Push-Location $private:PowerShellProfileDirectory
 
@@ -20,14 +21,16 @@ function Prompt() {
     PoshGitPrompt
 }
 
+# Other modules
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
 Invoke-Expression -Command .\Modules\Posh-VsVars\Posh-VsVars-Profile.ps1
 
 #
-# Third party modules
+# Third party modules that do not require special initialization
 #
 
 Import-Module Invoke-MSBuild
+# TODO Import-Module Pester
 Import-Module PowerShellArsenal
 
 #
@@ -36,6 +39,7 @@ Import-Module PowerShellArsenal
 
 Import-Module Editors
 Set-Alias -Name e -Value Get-FileInEditor
+function en { param($Filename); Get-FileInEditor -NoWait -Filename $Filename }
 
 Pop-Location
 
