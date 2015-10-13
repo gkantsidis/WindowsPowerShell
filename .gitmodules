@@ -16,3 +16,6 @@
 [submodule "Modules/Pester"]
 	path = Modules/Pester
 	url = https://github.com/pester/Pester.git
+[submodule "Modules/IsePester"]
+	path = Modules/IsePester
+	url = https://github.com/dfinke/IsePester.git

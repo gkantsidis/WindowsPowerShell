@@ -31,6 +31,7 @@ Invoke-Expression -Command .\Modules\Posh-VsVars\Posh-VsVars-Profile.ps1
 
 Import-Module Invoke-MSBuild
 # TODO Import-Module Pester
+# TODO Import-Module IsePester but only in ISE
 Import-Module PowerShellArsenal
 
 #
