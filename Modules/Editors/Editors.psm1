@@ -37,7 +37,7 @@ function Get-FileInEditor {
     } else {
         $Global:EditorsLastFile = $Filename
     }
-    
+
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
         Write-Error "Name of input file cannot be null or empty."
         throw [System.ArgumentNullException] "Input file has null or empty name."
