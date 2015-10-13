@@ -1,0 +1,12 @@
+[submodule "Modules/Posh-VsVars"]
+	path = Modules/Posh-VsVars
+	url = https://github.com/Iristyle/Posh-VsVars.git
+[submodule "Modules/Posh-GitHub"]
+	path = Modules/Posh-GitHub
+	url = https://github.com/Iristyle/Posh-GitHub.git
+[submodule "Modules/posh-git"]
+	path = Modules/posh-git
+	url = https://github.com/dahlbyk/posh-git.git
+[submodule "Modules/Invoke-MSBuild"]
+	path = Modules/Invoke-MSBuild
+	url = https://git01.codeplex.com/invokemsbuild
