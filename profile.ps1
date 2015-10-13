@@ -86,7 +86,13 @@ function Get-FileInEditor {
             emacsclient $emacsNoWait $o
         } elseif ($o.Extension -in '.c', '.h', '.cpp', '.hpp') {
             emacsclient $emacsNoWait $o
-        } elseof ($o.Extension -in '.tab', '.csv', '.txt') {
+        } elseif ($o.Extension -in '.cs', '.fs', '.fsi', '.fsx', '.sln', 'csproj', 'fsproj') {
+            emacsclient $emacsNoWait $o
+        } elseif ($o.Extension -in '.tab', '.csv', '.txt') {
+            emacsclient $emacsNoWait $o
+        } elseif ($o.Extension -in '.html', '.htm', '.css') {
+            emacsclient $emacsNoWait $o
+        } elseif ($o.Name -in 'README.md', '.gitignore') {
             emacsclient $emacsNoWait $o
         } else {
             notepad $o
