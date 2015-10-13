@@ -41,8 +41,6 @@ Import-Module PowerShellArsenal
 Set-StrictMode -Version latest
 
 Import-Module Editors
-Set-Alias -Name e -Value Get-FileInEditor
-function en { param($Filename); Get-FileInEditor -NoWait -Filename $Filename }
 
 Pop-Location
 

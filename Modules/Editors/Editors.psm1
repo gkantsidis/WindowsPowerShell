@@ -76,5 +76,10 @@ function Get-FileInEditor {
 
 $EditorsLastFile = ""
 
+Set-Alias -Name e -Value Get-FileInEditor
+function en { param($Filename); Get-FileInEditor -NoWait -Filename $Filename }
+
 Export-ModuleMember -Function Get-FileInEditor
+Export-ModuleMember -Function en
 Export-ModuleMember -Variable EditorsLastFile
+Export-ModuleMember -Alias e
