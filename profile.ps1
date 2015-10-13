@@ -46,3 +46,28 @@ function en { param($Filename); Get-FileInEditor -NoWait -Filename $Filename }
 
 Pop-Location
 
+# TODO Move to separate module
+function Get-OsInfo {
+	param(
+		[Parameter()]
+		[string]
+		$ComputerName = "localhost"
+	)
+
+	Get-WmiObject -class Win32_OperatingSystem -ComputerName $ComputerName
+}
+
+function Get-HwInfo {
+	param(
+		[Parameter()]
+		[string]
+		$ComputerName = "localhost"
+	)
+
+	Get-WmiObject -class Win32_ComputerSystem -ComputerName $ComputerName
+}
+
+function Has-VisualStudio {
+	$vs = Get-ChildItem HKLM:\SOFTWARE\Microsoft\VisualStudio\[0-9]*
+	-not ($vs -eq $null)
+}
