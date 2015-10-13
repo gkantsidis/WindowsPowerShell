@@ -49,22 +49,40 @@ Pop-Location
 # TODO Move to separate module
 function Get-OsInfo {
 	param(
-		[Parameter()]
-		[string]
+	    [Parameter(ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true)]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Connection -ComputerName $_ -Count 1 -Quiet})]
+		[string[]]
 		$ComputerName = "localhost"
 	)
 
-	Get-WmiObject -class Win32_OperatingSystem -ComputerName $ComputerName
+    BEGIN {}
+    PROCESS {
+        foreach ($computer in $ComputerName) {
+	        Get-WmiObject -class Win32_OperatingSystem -ComputerName $computer
+        }
+    }
+    END {}
 }
 
 function Get-HwInfo {
-	param(
-		[Parameter()]
-		[string]
+    param(
+	    [Parameter(ValueFromPipeline=$true,
+                   ValueFromPipelineByPropertyName=$true)]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Connection -ComputerName $_ -Count 1 -Quiet})]
+		[string[]]
 		$ComputerName = "localhost"
 	)
 
-	Get-WmiObject -class Win32_ComputerSystem -ComputerName $ComputerName
+    BEGIN {}
+    PROCESS {
+        foreach ($computer in $ComputerName) {
+	        Get-WmiObject -class Win32_ComputerSystem -ComputerName $computer
+        }
+    }
+    END {}
 }
 
 function Has-VisualStudio {
