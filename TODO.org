@@ -1,0 +1,15 @@
+* [TODO] Azure
+https://github.com/Azure/azure-powershell
+
+* Office Integration
+** [TODO] Outlook
+
+** [TODO] Lync
+   Read instructions from https://technet.microsoft.com/en-us/library/dn362829(v=ocs.15).aspx
+   and download module from http://www.microsoft.com/en-us/download/details.aspx?id=39366.
+   An example can be found in http://blog.ciaops.com/2013/10/connecting-to-lync-online-via-powershell.html.
+   List of commands in https://technet.microsoft.com/en-us/library/jj994021.aspx.
+
+* Other repositories of interest
+  https://github.com/Jackbennett/powershell
+  https://github.com/lazywinadmin/PowerShell
