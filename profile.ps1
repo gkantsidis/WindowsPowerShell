@@ -6,7 +6,7 @@
 $private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent 
 Push-Location $private:PowerShellProfileDirectory
 
-. 'Modules\posh-git\profile.example.ps1'
+Invoke-Expression -Command .\Modules\posh-git\profile.example.ps1
 
 Rename-Item Function:\Prompt PoshGitPrompt -Force
 function Prompt() {
