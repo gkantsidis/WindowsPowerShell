@@ -10,3 +10,6 @@
 [submodule "Modules/Invoke-MSBuild"]
 	path = Modules/Invoke-MSBuild
 	url = https://git01.codeplex.com/invokemsbuild
+[submodule "Modules/PowerShellArsenal"]
+	path = Modules/PowerShellArsenal
+	url = https://github.com/mattifestation/PowerShellArsenal.git
