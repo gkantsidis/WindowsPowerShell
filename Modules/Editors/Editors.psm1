@@ -1,4 +1,39 @@
 
+# TODO Move to a different location
+$newLIB = $Env:LIB -split ';' |? { ($_.Length -gt 0) -and (Test-Path "$_") }
+$env:LIB = [string]::Join(';', $newLIB)
+
+Add-Type @"
+  using System;
+  using System.Runtime.InteropServices;
+  public class Tricks {
+     [DllImport("user32.dll")]
+     [return: MarshalAs(UnmanagedType.Bool)]
+     public static extern bool SetForegroundWindow(IntPtr hWnd);
+  }
+"@
+
+function Open-InEmacs {
+    param(
+        [System.IO.FileInfo]
+        $File,
+
+        [Switch]
+        $NoWait
+    )
+
+    if ($NoWait) {
+        $emacsNoWait = '-n'
+    } else {
+        $emacsNoWait = ''
+    }
+
+    $emacs = Get-Process emacs
+    [Tricks]::SetForegroundWindow($emacs.MainWindowHandle)
+    emacsclient $emacsNoWait $File
+}
+
+
 <#
 .SYNOPSIS
 Opens a file with an appropriate editor.
@@ -55,19 +90,19 @@ function Get-FileInEditor {
         }
 
         if ($o.Extension -in '.tex', '.bib') {
-            emacsclient $emacsNoWait $o
+            Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Extension -in '.c', '.h', '.cpp', '.hpp') {
-            emacsclient $emacsNoWait $o
+            Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Extension -in '.cs', '.fs', '.fsi', '.fsx', '.sln', 'csproj', 'fsproj') {
-            emacsclient $emacsNoWait $o
+            Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Extension -in '.tab', '.csv', '.txt') {
-            emacsclient $emacsNoWait $o
+            Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Extension -in '.html', '.htm', '.css') {
-            emacsclient $emacsNoWait $o
+            Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Extension -in '.org', '.el') {
-            emacsclient $emacsNoWait $o            
+            Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Name -in 'README.md', '.gitignore') {
-            emacsclient $emacsNoWait $o
+            Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } else {
             notepad $o
         }
