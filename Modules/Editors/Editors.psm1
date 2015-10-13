@@ -64,6 +64,8 @@ function Get-FileInEditor {
             emacsclient $emacsNoWait $o
         } elseif ($o.Extension -in '.html', '.htm', '.css') {
             emacsclient $emacsNoWait $o
+        } elseif ($o.Extension -in '.org', '.el') {
+            emacsclient $emacsNoWait $o            
         } elseif ($o.Name -in 'README.md', '.gitignore') {
             emacsclient $emacsNoWait $o
         } else {
