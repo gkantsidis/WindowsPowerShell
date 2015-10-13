@@ -25,8 +25,6 @@ Get-FileInEditor main.tex
 function Get-FileInEditor {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
         [string]
         $Filename,
 
@@ -34,6 +32,12 @@ function Get-FileInEditor {
         $NoWait
     )
 
+    if ([System.String]::IsNullOrWhiteSpace($Filename)) {
+        $Filename = $EditorsLastFile
+    } else {
+        $Global:EditorsLastFile = $Filename
+    }
+    
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
         Write-Error "Name of input file cannot be null or empty."
         throw [System.ArgumentNullException] "Input file has null or empty name."
@@ -68,4 +72,7 @@ function Get-FileInEditor {
     }
 }
 
+$EditorsLastFile = ""
+
 Export-ModuleMember -Function Get-FileInEditor
+Export-ModuleMember -Variable EditorsLastFile
