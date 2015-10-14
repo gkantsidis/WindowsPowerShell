@@ -1,18 +1,4 @@
 
-# TODO Move to a different location
-$newLIB = $Env:LIB -split ';' |? { ($_.Length -gt 0) -and (Test-Path "$_") }
-$env:LIB = [string]::Join(';', $newLIB)
-
-Add-Type @"
-  using System;
-  using System.Runtime.InteropServices;
-  public class Tricks {
-     [DllImport("user32.dll")]
-     [return: MarshalAs(UnmanagedType.Bool)]
-     public static extern bool SetForegroundWindow(IntPtr hWnd);
-  }
-"@
-
 function Open-InEmacs {
     param(
         [System.IO.FileInfo]
@@ -29,7 +15,7 @@ function Open-InEmacs {
     }
 
     $emacs = Get-Process emacs
-    [Tricks]::SetForegroundWindow($emacs.MainWindowHandle)
+    [WindowingTricks]::SetForegroundWindow($emacs.MainWindowHandle)
     emacsclient $emacsNoWait $File
 }
 
