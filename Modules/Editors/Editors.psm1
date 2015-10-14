@@ -42,6 +42,8 @@ function Open-InEmacs {
             $emacsNoWait = ''
         }
 
+        $currentWindow = [WindowingTricks]::GetForegroundWindow()
+
         $emacs = Get-Process emacs -ErrorAction SilentlyContinue
         if ($emacs -eq $null) {
             runemacs
@@ -51,6 +53,13 @@ function Open-InEmacs {
 
         [WindowingTricks]::SetForegroundWindow($emacs.MainWindowHandle)
         emacsclient $emacsNoWait $File
+
+        if (-not $NoWait) {
+            # TODO The following does not work:
+            # it gets executed, but does not change the focus from emacs to window;
+            # even though it does change the focus between powershell windows
+            [WindowingTricks]::SetForegroundWindow($currentWindow)
+        }
     } else {
         Open-InNotepadPlusPlus -File $File
     }
@@ -101,8 +110,11 @@ function Get-FileInEditor {
 
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
         $Filename = $Editors.Session.LastFile
+    } elseif (Test-Path $Filename) {
+        $Global:Editors.Session.LastFile = (Get-Item $Filename).FullName
     } else {
-        $Global:Editors.Session.LastFile = $Filename
+        $nf = [System.IO.FileInfo]::New($Filename)
+        $Global:Editors.Session.LastFile = $nf.FullName
     }
 
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
