@@ -1,8 +1,15 @@
 * Issues with 3rd party libraries
+*** DONE [#C] Checking for Installable libraries
+    CLOSED: [2015-10-14 Wed 21:01]
+    :LOGBOOK:
+    - State "DONE"       from "TODO"       [2015-10-14 Wed 21:01]
+    :END:
+    Keep track of last check, and do not check too often
+
+
 ** Posh-VsVars
 *** [TODO] Possible adding spurious entries in LIB
-*** [TODO] Checking for Installable libraries
-    Keep track of last check, and do not check too often
+
 
 * [TODO] Azure
 https://github.com/Azure/azure-powershell
