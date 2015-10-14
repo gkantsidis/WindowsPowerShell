@@ -100,9 +100,9 @@ function Get-FileInEditor {
     )
 
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
-        $Filename = $EditorsLastFile
+        $Filename = $Editors.Session.LastFile
     } else {
-        $Global:EditorsLastFile = $Filename
+        $Global:Editors.Session.LastFile = $Filename
     }
 
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
@@ -147,12 +147,14 @@ function Get-FileInEditor {
     }
 }
 
-$EditorsLastFile = ""
+$Editors = @{}
+$Editors.Session = @{}
+$Editors.Session.LastFile = ""
 
 Set-Alias -Name e -Value Get-FileInEditor
 function en { param($Filename); Get-FileInEditor -NoWait -Filename $Filename }
 
 Export-ModuleMember -Function Get-FileInEditor
 Export-ModuleMember -Function en
-Export-ModuleMember -Variable EditorsLastFile
+Export-ModuleMember -Variable Editors
 Export-ModuleMember -Alias e
