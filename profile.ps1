@@ -1,3 +1,5 @@
+# Make sure that %HOMEDRIVE%%HOMEPATH%\Documents\WindowsPowerShell or destination directory is in PSModulePath
+
 $private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent 
 Push-Location $private:PowerShellProfileDirectory
 

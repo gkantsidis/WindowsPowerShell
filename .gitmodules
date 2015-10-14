@@ -22,3 +22,6 @@
 [submodule "Source/Pscx"]
 	path = Source/Pscx
 	url = https://github.com/Pscx/Pscx.git
+[submodule "Source/NTFS-Streams"]
+	path = Source/NTFS-Streams
+	url = https://github.com/RichardD2/NTFS-Streams.git
