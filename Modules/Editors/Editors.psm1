@@ -111,10 +111,19 @@ function Get-FileInEditor {
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
         $Filename = $Editors.Session.LastFile
     } elseif (Test-Path $Filename) {
-        $Global:Editors.Session.LastFile = (Get-Item $Filename).FullName
+        $fullName = (Get-Item $Filename).FullName
+        $Script:Editors.Session.LastFile = $fullName
+
+        if (-not $Script:Editors.Session.Files.Contains($fullName)) {
+            $Script:Editors.Session.Files.Add($fullName)
+        }
     } else {
         $nf = [System.IO.FileInfo]::New($Filename)
-        $Global:Editors.Session.LastFile = $nf.FullName
+        $Script:Editors.Session.LastFile = $nf.FullName
+
+        if (-not $Script:Editors.Session.Files.Contains($nf.FullName)) {
+            $Script:Editors.Session.Files.Add($nf.FullName)
+        }
     }
 
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
@@ -159,14 +168,20 @@ function Get-FileInEditor {
     }
 }
 
+function Get-FileEditHistory {
+    $Editors.Session.Files
+}
+
 $Editors = @{}
 $Editors.Session = @{}
+$Editors.Session.Files = New-Object System.Collections.Generic.List``1[string]
 $Editors.Session.LastFile = ""
 
 Set-Alias -Name e -Value Get-FileInEditor
 function en { param($Filename); Get-FileInEditor -NoWait -Filename $Filename }
 
 Export-ModuleMember -Function Get-FileInEditor
+Export-ModuleMember -Function Get-FileEditHistory
 Export-ModuleMember -Function en
 Export-ModuleMember -Variable Editors
 Export-ModuleMember -Alias e

@@ -1,6 +1,8 @@
 * Issues with 3rd party libraries
 ** Posh-VsVars
 *** [TODO] Possible adding spurious entries in LIB
+*** [TODO] Checking for Installable libraries
+    Keep track of last check, and do not check too often
 
 * [TODO] Azure
 https://github.com/Azure/azure-powershell
