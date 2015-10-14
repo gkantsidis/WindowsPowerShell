@@ -42,7 +42,13 @@ function Open-InEmacs {
             $emacsNoWait = ''
         }
 
-        $emacs = Get-Process emacs
+        $emacs = Get-Process emacs -ErrorAction SilentlyContinue
+        if ($emacs -eq $null) {
+            runemacs
+            Read-Host -Prompt "Press <ENTER> after emacs initializes"
+            $emacs = Get-Process emacs -ErrorAction SilentlyContinue
+        }
+
         [WindowingTricks]::SetForegroundWindow($emacs.MainWindowHandle)
         emacsclient $emacsNoWait $File
     } else {

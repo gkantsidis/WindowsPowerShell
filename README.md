@@ -7,7 +7,9 @@ After cloning, pull submodules with:
 git submodule init and
 git submodule update.
 
-
+Dependences:
+- WiX Toolset: http://wixtoolset.org/
+Required for Pscx
 
 Some general instructions for creating Windows PowerShell profiles:
 https://technet.microsoft.com/en-us/library/hh847857.aspx
