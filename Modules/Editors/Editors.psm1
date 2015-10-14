@@ -50,6 +50,15 @@ function Open-InEmacs {
     }
 }
 
+function Open-InPowerShellIse {
+    param(
+        [System.IO.FileInfo]
+        $File
+    )
+
+    powershell_ise.exe $File
+}
+
 
 <#
 .SYNOPSIS
@@ -122,6 +131,10 @@ function Get-FileInEditor {
             Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Name -in 'README.md', '.gitignore') {
             Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
+        } elseif ($o.Extension -in '.ps1', '.psd1', '.psm1', '.ps1xml', '.cdxml') {
+            Open-InPowerShellIse -File $o
+        } elseif ($o.Extension.StartsWith('.pssc')) {
+            Open-InPowerShellIse -File $o
         } else {
             Open-InNotepadPlusPlus $o
         }
