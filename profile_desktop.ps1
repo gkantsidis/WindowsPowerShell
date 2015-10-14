@@ -7,17 +7,9 @@ Import-Module Environment
 #
 # Third party installable modules
 #
-$pscxAvailable = Find-Package pscx | ? ProviderName -eq PSModule
-Import-Module pscx -ErrorAction SilentlyContinue
-$pscxCurrent = Get-Module pscx
 
-if ( ($pscxAvailable -ne $null) -and ($pscxCurrent -eq $null) ) {
-    Write-Host "Consider installing Pscx"
-    Write-Host "... using: Find-Package pscx | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
-} elseif ($pscxAvailable.Version -ne $pscxCurrent.Version) {
-    Write-Host "Consider upgrading Pscx"
-    Write-Host "... using: Find-Package pscx | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
-}
+
+CheckInstall-Module -ModuleName pscx
 
 #
 # Third party modules with special initialization
