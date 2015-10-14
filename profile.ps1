@@ -31,7 +31,7 @@ function Prompt() {
 # Other modules
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
 
-if (Has-VisualStudio) {
+if (Test-HasVisualStudio) {
     Invoke-Expression -Command .\Modules\Posh-VsVars\Posh-VsVars-Profile.ps1
 
     # TODO The Posh-VsVars module adds spurious entries in the LIB variable
@@ -44,8 +44,10 @@ if (Has-VisualStudio) {
 #
 
 Import-Module Invoke-MSBuild
-# TODO Import-Module Pester
-# TODO Import-Module IsePester but only in ISE
+Import-Module Pester
+if (Test-IsIse) {
+    Import-Module IsePester
+}
 Import-Module PowerShellArsenal
 
 #
