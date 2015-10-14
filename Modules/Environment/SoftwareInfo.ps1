@@ -1,6 +1,6 @@
 ﻿function Test-HasVisualStudio {
-	$vs = Get-ChildItem HKLM:\SOFTWARE\Microsoft\VisualStudio\[0-9]*
-	-not ($vs -eq $null)
+    $vs = Get-ChildItem HKLM:\SOFTWARE\Microsoft\VisualStudio\[0-9]* -ErrorAction SilentlyContinue
+    -not ($vs -eq $null)
 }
 
 function Test-HasChocolatey {
