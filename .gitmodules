@@ -19,6 +19,3 @@
 [submodule "Modules/IsePester"]
 	path = Modules/IsePester
 	url = https://github.com/dfinke/IsePester.git
-[submodule "Modules/Pscx"]
-	path = Modules/Pscx
-	url = https://github.com/Pscx/Pscx.git
