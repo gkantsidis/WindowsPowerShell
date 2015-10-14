@@ -13,8 +13,10 @@ $pscxCurrent = Get-Module pscx
 
 if ( ($pscxAvailable -ne $null) -and ($pscxCurrent -eq $null) ) {
     Write-Host "Consider installing Pscx"
+    Write-Host "... using: Find-Package pscx | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
 } elseif ($pscxAvailable.Version -ne $pscxCurrent.Version) {
     Write-Host "Consider upgrading Pscx"
+    Write-Host "... using: Find-Package pscx | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
 }
 
 #
