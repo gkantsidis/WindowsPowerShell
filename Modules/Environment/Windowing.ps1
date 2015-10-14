@@ -1,5 +1,7 @@
-﻿$newLIB = $Env:LIB -split ';' |? { ($_.Length -gt 0) -and (Test-Path "$_") }
-$env:LIB = [string]::Join(';', $newLIB)
+﻿if ($Env:LIB -ne $null) {
+    $newLIB = $Env:LIB -split ';' |? { ($_.Length -gt 0) -and (Test-Path "$_") }
+    $env:LIB = [string]::Join(';', $newLIB)
+}
 
 Add-Type @"
   using System;
