@@ -1,3 +1,30 @@
+function Open-InNotepad {
+    param(
+        [System.IO.FileInfo]
+        $File
+    )
+
+    notepad $File
+    $notepad = Get-Process emacs
+    [WindowingTricks]::SetForegroundWindow($notepad.MainWindowHandle)
+}
+
+function Open-InNotepadPlusPlus {
+    param(
+        [System.IO.FileInfo]
+        $File
+    )
+
+    if (Test-HasNotepadPlusPlus) {
+        $npp = Get-NotepadPlusPlusPath
+        $cmd = "& '$npp' $File"
+        Invoke-Expression $cmd
+        $wnd = Get-Process notepad++
+        [WindowingTricks]::SetForegroundWindow($wnd.MainWindowHandle)
+    } else {
+        Open-InNotepad -File $file
+    }
+}
 
 function Open-InEmacs {
     param(
@@ -8,15 +35,19 @@ function Open-InEmacs {
         $NoWait
     )
 
-    if ($NoWait) {
-        $emacsNoWait = '-n'
-    } else {
-        $emacsNoWait = ''
-    }
+    if (Test-HasEmacs) {
+        if ($NoWait) {
+            $emacsNoWait = '-n'
+        } else {
+            $emacsNoWait = ''
+        }
 
-    $emacs = Get-Process emacs
-    [WindowingTricks]::SetForegroundWindow($emacs.MainWindowHandle)
-    emacsclient $emacsNoWait $File
+        $emacs = Get-Process emacs
+        [WindowingTricks]::SetForegroundWindow($emacs.MainWindowHandle)
+        emacsclient $emacsNoWait $File
+    } else {
+        Open-InNotepadPlusPlus -File $File
+    }
 }
 
 
@@ -81,6 +112,8 @@ function Get-FileInEditor {
             Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Extension -in '.cs', '.fs', '.fsi', '.fsx', '.sln', 'csproj', 'fsproj') {
             Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
+        } elseif ($o.Extension -in '.ml', '.mli') {
+            Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Extension -in '.tab', '.csv', '.txt') {
             Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } elseif ($o.Extension -in '.html', '.htm', '.css') {
@@ -90,7 +123,7 @@ function Get-FileInEditor {
         } elseif ($o.Name -in 'README.md', '.gitignore') {
             Open-InEmacs -NoWait:$NoWait.IsPresent -File $o
         } else {
-            notepad $o
+            Open-InNotepadPlusPlus $o
         }
     }
 }

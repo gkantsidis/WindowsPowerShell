@@ -23,3 +23,16 @@ function Test-IsIse {
         return false
     }
 }
+
+function Test-HasNotepadPlusPlus {
+    return (Test-Path -Path 'C:\Program Files (x86)\Notepad++\notepad++.exe' -PathType Leaf)
+}
+
+function Get-NotepadPlusPlusPath {
+    if (Test-HasNotepadPlusPlus) {
+        'C:\Program Files (x86)\Notepad++\notepad++.exe'
+    } else {
+        Write-Error "Notepad++ does not exist in this system"
+        Throw "Notepad++ does not exist in this system"
+    }
+}
