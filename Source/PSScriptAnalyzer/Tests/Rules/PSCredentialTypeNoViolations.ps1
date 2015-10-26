@@ -1,3 +1,0 @@
-﻿function Credential([pscredential]$credential) {
-
-}
