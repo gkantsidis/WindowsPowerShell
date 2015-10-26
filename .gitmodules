@@ -25,3 +25,7 @@
 [submodule "Source/NTFS-Streams"]
 	path = Source/NTFS-Streams
 	url = https://github.com/RichardD2/NTFS-Streams.git
+[submodule "Modules/PSScriptAnalyzer"]
+	path = Source/PSScriptAnalyzer
+
+	url = https://github.com/PowerShell/PSScriptAnalyzer.git
