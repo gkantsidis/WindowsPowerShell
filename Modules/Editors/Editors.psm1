@@ -1,7 +1,6 @@
 function Open-InNotepad {
     param(
         [parameter(Mandatory=$true)]
-        [ValidateNotNull]
         [System.IO.FileInfo]
         $File
     )
@@ -15,7 +14,6 @@ function Open-InNotepadPlusPlus {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "Open-InNotepadPlusPlus")]
     param(
         [parameter(Mandatory=$true)]
-        [ValidateNotNull]
         [System.IO.FileInfo]
         $File
     )
@@ -35,7 +33,6 @@ function Open-InEmacs {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "Open-InEmacs")]
     param(
         [parameter(Mandatory=$true)]
-        [ValidateNotNull]
         [System.IO.FileInfo]
         $File,
 
@@ -76,7 +73,6 @@ function Open-InEmacs {
 function Open-InPowerShellIse {
     param(
         [parameter(Mandatory=$true)]
-        [ValidateNotNull]
         [System.IO.FileInfo]
         $File
     )
