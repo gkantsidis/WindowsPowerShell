@@ -1,22 +1,25 @@
 ﻿function Test-HasVisualStudio {
-    $vs = Get-ChildItem HKLM:\SOFTWARE\Microsoft\VisualStudio\[0-9]* -ErrorAction SilentlyContinue
-    -not ($vs -eq $null)
+    $vs = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\VisualStudio\[0-9]* -ErrorAction SilentlyContinue
+    -not ($null -eq $vs)
 }
 
 function Test-HasChocolatey {
-    $choco = Get-Command choco
-    -not ($choco -eq $null)
+    $choco = Get-Command -Name choco
+    -not ($null -eq $choco)
 }
 
 function Test-HasEmacs {
-    $emacs = Get-Command emacsclient
-    -not ($emacs -eq $null)
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "Test-HasEmacs")]
+    param()
+
+    $emacs = Get-Command -Name emacsclient
+    -not ($null -eq $emacs)
 }
 
 function Test-IsIse {
     try
     {
-        return $psISE -ne $null
+        return $null -ne $psISE
     }
     catch
     {
@@ -25,6 +28,9 @@ function Test-IsIse {
 }
 
 function Test-HasNotepadPlusPlus {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "Test-HasNotepadPlusPlus")]
+    param()
+
     return (Test-Path -Path 'C:\Program Files (x86)\Notepad++\notepad++.exe' -PathType Leaf)
 }
 
@@ -32,7 +38,7 @@ function Get-NotepadPlusPlusPath {
     if (Test-HasNotepadPlusPlus) {
         'C:\Program Files (x86)\Notepad++\notepad++.exe'
     } else {
-        Write-Error "Notepad++ does not exist in this system"
+        Write-Error -Message "Notepad++ does not exist in this system"
         Throw "Notepad++ does not exist in this system"
     }
 }
