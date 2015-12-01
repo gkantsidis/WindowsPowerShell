@@ -1,16 +1,21 @@
 function Open-InNotepad {
     param(
+        [parameter(Mandatory=$true)]
+        [ValidateNotNull]
         [System.IO.FileInfo]
         $File
     )
 
     notepad $File
-    $notepad = Get-Process emacs
+    $notepad = Get-Process -Name notepad
     [WindowingTricks]::SetForegroundWindow($notepad.MainWindowHandle)
 }
 
 function Open-InNotepadPlusPlus {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "Open-InNotepadPlusPlus")]
     param(
+        [parameter(Mandatory=$true)]
+        [ValidateNotNull]
         [System.IO.FileInfo]
         $File
     )
@@ -18,8 +23,8 @@ function Open-InNotepadPlusPlus {
     if (Test-HasNotepadPlusPlus) {
         $npp = Get-NotepadPlusPlusPath
         $cmd = "& '$npp' $File"
-        Invoke-Expression $cmd
-        $wnd = Get-Process notepad++
+        Invoke-Expression -Command $cmd
+        $wnd = Get-Process -Name notepad++
         [WindowingTricks]::SetForegroundWindow($wnd.MainWindowHandle)
     } else {
         Open-InNotepad -File $file
@@ -27,7 +32,10 @@ function Open-InNotepadPlusPlus {
 }
 
 function Open-InEmacs {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "Open-InEmacs")]
     param(
+        [parameter(Mandatory=$true)]
+        [ValidateNotNull]
         [System.IO.FileInfo]
         $File,
 
@@ -44,11 +52,11 @@ function Open-InEmacs {
 
         $currentWindow = [WindowingTricks]::GetForegroundWindow()
 
-        $emacs = Get-Process emacs -ErrorAction SilentlyContinue
-        if ($emacs -eq $null) {
+        $emacs = Get-Process -Name emacs -ErrorAction SilentlyContinue
+        if ($null -eq $emacs) {
             runemacs
             Read-Host -Prompt "Press <ENTER> after emacs initializes"
-            $emacs = Get-Process emacs -ErrorAction SilentlyContinue
+            $emacs = Get-Process -Name emacs -ErrorAction SilentlyContinue
         }
 
         [WindowingTricks]::SetForegroundWindow($emacs.MainWindowHandle)
@@ -67,6 +75,8 @@ function Open-InEmacs {
 
 function Open-InPowerShellIse {
     param(
+        [parameter(Mandatory=$true)]
+        [ValidateNotNull]
         [System.IO.FileInfo]
         $File
     )
@@ -102,7 +112,7 @@ function Get-FileInEditor {
     [CmdletBinding()]
     param(
         [string]
-        $Filename,
+        $Filename = $Editors.Session.LastFile,
 
         [Switch]
         $NoWait
@@ -110,8 +120,8 @@ function Get-FileInEditor {
 
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
         $Filename = $Editors.Session.LastFile
-    } elseif (Test-Path $Filename) {
-        $fullName = (Get-Item $Filename).FullName
+    } elseif (Test-Path -Path $Filename) {
+        $fullName = (Get-Item -Path $Filename).FullName
         $Script:Editors.Session.LastFile = $fullName
 
         if (-not $Script:Editors.Session.Files.Contains($fullName)) {
@@ -127,7 +137,7 @@ function Get-FileInEditor {
     }
 
     if ([System.String]::IsNullOrWhiteSpace($Filename)) {
-        Write-Error "Name of input file cannot be null or empty."
+        Write-Error -Message "Name of input file cannot be null or empty."
         throw [System.ArgumentNullException] "Input file has null or empty name."
     }
 
@@ -168,17 +178,29 @@ function Get-FileInEditor {
     }
 }
 
+<#
+.SYNOPSIS
+    Lists the recently opened files.
+
+.DESCRIPTION
+    Returns a list of the files that have been opened recently.
+#>
 function Get-FileEditHistory {
     $Editors.Session.Files
 }
 
 $Editors = @{}
 $Editors.Session = @{}
-$Editors.Session.Files = New-Object System.Collections.Generic.List``1[string]
+$Editors.Session.Files = New-Object -TypeName System.Collections.Generic.List``1[string]
 $Editors.Session.LastFile = ""
 
 Set-Alias -Name e -Value Get-FileInEditor
-function en { param($Filename); Get-FileInEditor -NoWait -Filename $Filename }
+<#
+.SYNOPSIS
+    Opens a file with an appropriate editor. 
+    Unlike e, it does not wait for the editor to return.
+#>
+function en { param($Filename = $Editors.Session.LastFile); Get-FileInEditor -NoWait -Filename $Filename }
 
 Export-ModuleMember -Function Get-FileInEditor
 Export-ModuleMember -Function Get-FileEditHistory
