@@ -11,7 +11,7 @@
     BEGIN {}
     PROCESS {
         foreach ($computer in $ComputerName) {
-	        Get-WmiObject -class Win32_OperatingSystem -ComputerName $computer
+	        Get-CimInstance -ClassName CIM_OperatingSystem -ComputerName $computer
         }
     }
     END {}
@@ -30,7 +30,7 @@ function Get-HwInfo {
     BEGIN {}
     PROCESS {
         foreach ($computer in $ComputerName) {
-	        Get-WmiObject -class Win32_ComputerSystem -ComputerName $computer
+	        Get-CimInstance -ClassName CIM_ComputerSystem -ComputerName $computer
         }
     }
     END {}
