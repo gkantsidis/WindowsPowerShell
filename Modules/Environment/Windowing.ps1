@@ -1,9 +1,9 @@
-﻿if ($Env:LIB -ne $null) {
-    $newLIB = $Env:LIB -split ';' |? { ($_.Length -gt 0) -and (Test-Path "$_") }
+﻿if ($null -ne $Env:LIB) {
+    $newLIB = $Env:LIB -split ';' | Where-Object { ($_.Length -gt 0) -and (Test-Path -Path "$_") }
     $env:LIB = [string]::Join(';', $newLIB)
 }
 
-Add-Type @"
+Add-Type -TypeDefinition @"
   using System;
   using System.Runtime.InteropServices;
   public class WindowingTricks {
