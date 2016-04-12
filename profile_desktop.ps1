@@ -47,7 +47,7 @@ if (Test-HasVisualStudio) {
 # Third party modules that do not require special initialization
 #
 
-Import-Module Invoke-MSBuild
+Import-Module Invoke-MSBuild\Invoke-MSBuild
 Import-Module Pester
 if (Test-IsIse) {
     Import-Module IsePester
