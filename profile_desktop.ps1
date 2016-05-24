@@ -5,9 +5,15 @@
 Import-Module Environment
 
 #
-# Third party installable modules
+# Build-in modules and initialization
 #
 
+Import-Module PSReadLine
+Set-PSReadlineOption -EditMode Emacs
+
+#
+# Third party installable modules
+#
 
 CheckInstall-Module -ModuleName pscx
 
