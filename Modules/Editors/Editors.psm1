@@ -203,10 +203,15 @@ function Stop-Emacs {
         Stop-Process -Name emacs -Force
     }
 
-    $target = [System.IO.Path]::Combine($env:HOMEPATH, ".emacs.d", "server", "server")
-    $target = Join-Path -Path $env:HOMEDRIVE -ChildPath $target
-    if (Test-Path -Path $target -PathType Leaf) {
-        Remove-Item -Path $target -Force
+    $server = [System.IO.Path]::Combine($env:HOMEPATH, ".emacs.d", "server", "server")
+    $server = Join-Path -Path $env:HOMEDRIVE -ChildPath $server
+    if (Test-Path -Path $server -PathType Leaf) {
+        Remove-Item -Path $server -Force
+    }
+    $lockfile = [System.IO.Path]::Combine($env:HOMEPATH, ".emacs.d", ".emacs.desktop.lock")
+    $lockfile = Join-Path -Path $env:HOMEDRIVE -ChildPath $lockfile
+    if (Test-Path -Path $lockfile -PathType Leaf) {
+        Remove-Item -Path $lockfile -Force
     }
 }
 
