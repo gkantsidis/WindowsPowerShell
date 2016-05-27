@@ -185,6 +185,31 @@ function Get-FileEditHistory {
     $Editors.Session.Files
 }
 
+<#
+.SYNOPSIS
+    Kills emacs and deletes left over state
+
+.DESCRIPTION
+    The Stop-Emacs command will terminate all emacs processes and remove leftover state (e.g. from ~\emacs.d\server\server).
+
+.EXAMPLE
+
+    Kills emacs and deletes ~\emacs.d\server\server file
+        Kill-Emacs
+#>
+function Stop-Emacs {
+    $emacs = @(Get-Process -Name emacs -ErrorAction Ignore)
+    if ($emacs -ne $null) {
+        Stop-Process -Name emacs -Force
+    }
+
+    $target = [System.IO.Path]::Combine($env:HOMEPATH, ".emacs.d", "server", "server")
+    $target = Join-Path -Path $env:HOMEDRIVE -ChildPath $target
+    if (Test-Path -Path $target -PathType Leaf) {
+        Remove-Item -Path $target -Force
+    }
+}
+
 $Editors = @{}
 $Editors.Session = @{}
 $Editors.Session.Files = New-Object -TypeName System.Collections.Generic.List``1[string]
@@ -200,6 +225,7 @@ function en { param($Filename = $Editors.Session.LastFile); Get-FileInEditor -No
 
 Export-ModuleMember -Function Get-FileInEditor
 Export-ModuleMember -Function Get-FileEditHistory
+Export-ModuleMember -Function Stop-Emacs
 Export-ModuleMember -Function en
 Export-ModuleMember -Variable Editors
 Export-ModuleMember -Alias e
