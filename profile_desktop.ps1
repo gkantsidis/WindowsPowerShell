@@ -60,6 +60,10 @@ if (Test-IsIse) {
 }
 Import-Module PowerShellArsenal
 
+if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -PathType Leaf) {
+    Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1" -Force
+}
+
 #
 # Local Modules
 # 
