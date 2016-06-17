@@ -22,7 +22,8 @@ function Open-InNotepadPlusPlus {
         $npp = Get-NotepadPlusPlusPath
         $cmd = "& '$npp' $File"
         Invoke-Expression -Command $cmd
-        $wnd = Get-Process -Name notepad++
+        $wnd = @(Get-Process -Name notepad++)
+        $wnd = $wnd[0]
         [WindowingTricks]::SetForegroundWindow($wnd.MainWindowHandle)
     } else {
         Open-InNotepad -File $file
