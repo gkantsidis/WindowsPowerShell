@@ -216,18 +216,35 @@ function Stop-Emacs {
     }
 }
 
+#
+# State object
+#
+
 $Editors = @{}
 $Editors.Session = @{}
 $Editors.Session.Files = New-Object -TypeName System.Collections.Generic.List``1[string]
 $Editors.Session.LastFile = ""
 
+#
+# Aliases
+#
+
 Set-Alias -Name e -Value Get-FileInEditor
+
 <#
 .SYNOPSIS
     Opens a file with an appropriate editor. 
     Unlike e, it does not wait for the editor to return.
 #>
-function en { param($Filename = $Editors.Session.LastFile); Get-FileInEditor -NoWait -Filename $Filename }
+function en {
+    [CmdletBinding()]
+    param($Filename = $Editors.Session.LastFile)
+    Get-FileInEditor -NoWait -Filename $Filename
+}
+
+#
+# Exports
+#
 
 Export-ModuleMember -Function Get-FileInEditor
 Export-ModuleMember -Function Get-FileEditHistory
