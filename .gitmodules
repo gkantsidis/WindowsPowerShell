@@ -9,7 +9,7 @@
 	url = https://git01.codeplex.com/invokemsbuild
 [submodule "Modules/PowerShellArsenal"]
 	path = Modules/PowerShellArsenal
-	url = https://github.com/mattifestation/PowerShellArsenal.git
+	url = https://github.com/gkantsidis/PowerShellArsenal.git
 [submodule "Modules/Posh-VsVars"]
 	path = Modules/Posh-VsVars
 	url = https://github.com/gkantsidis/Posh-VsVars.git
