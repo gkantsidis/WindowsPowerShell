@@ -1,4 +1,4 @@
-﻿function Save-Settings {
+﻿function Save-EnvironmentSettings {
     [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
