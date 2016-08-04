@@ -10,3 +10,7 @@ if ($Env:VSIDE) {
     . .\profile_desktop.ps1
 }
 Pop-Location
+
+# General alias
+function Get-GitLog { git log --oneline --all --graph --decorate $args }
+Set-alias gitlog Get-GitLog
