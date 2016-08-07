@@ -18,6 +18,7 @@ Set-PSReadlineKeyHandler -Key "Ctrl+RightArrow" -Function ShellForwardWord
 #
 
 CheckInstall-Module -ModuleName pscx
+CheckInstall-Module -ModuleName PowerShellCookbook
 
 #
 # Third party modules with special initialization
