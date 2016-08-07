@@ -9,6 +9,22 @@ function script:Write-Color-LS
         $hasLength = Get-Member -InputObject $file -Name Length -MemberType Properties
         if ($hasLength) {
             $length = $file.Length
+            if ($length -ge 1000) {
+                $length = $length / 1000
+                if ($length -ge 1000) {
+                    $length = $length  / 1000
+                    if ($length -ge 1000) {
+                        $length = $length / 1000
+                        $length = $length.ToString("F2") + "G"
+                    } else {
+                        $length = $length.ToString("F2") + "M"    
+                    }
+                } else {
+                    $length = $length.ToString("F2") + "K"
+                }
+            } else {
+                # do nothing; length is in bytes
+            }
         }
 
         Write-host ("{0,-7} {1,25} {2,10} {3}" -f $file.mode, ([String]::Format("{0,10}  {1,8}", $file.LastWriteTime.ToString("d"), $file.LastWriteTime.ToString("t"))), $length, $file.name) -foregroundcolor $color 
