@@ -29,7 +29,7 @@ New-CommandWrapper -Name Out-Default `
     $text_files = New-Object System.Text.RegularExpressions.Regex(
         '\.(txt|cfg|conf|ini|csv|log|xml)$', $regex_opts)
     $source_files = New-Object System.Text.RegularExpressions.Regex(
-        '\.(java|c|cpp|cs|fs|fsi|)$', $regex_opts)
+        '\.(java|c|cpp|cs|fs|fsi|ml|mli)$', $regex_opts)
 
     if(($_ -is [System.IO.DirectoryInfo]) -or ($_ -is [System.IO.FileInfo]))
     {
