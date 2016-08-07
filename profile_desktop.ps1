@@ -67,6 +67,11 @@ if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -Pat
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1" -Force
 }
 
+$loaderror = Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
+if (-not $loaderror) {
+    . .\set-file-colors.ps1
+}
+
 #
 # Local Modules
 # 
