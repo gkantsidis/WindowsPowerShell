@@ -14,3 +14,6 @@ Pop-Location
 # General alias
 function Get-GitLog { git log --oneline --all --graph --decorate $args }
 Set-alias gitlog Get-GitLog
+
+# Shortcuts
+New-PSDrive -Name me -PSProvider FileSystem -Root $Env:HOME
