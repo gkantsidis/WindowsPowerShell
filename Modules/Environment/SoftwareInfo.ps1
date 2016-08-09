@@ -23,7 +23,7 @@ function Test-IsIse {
     }
     catch
     {
-        return false
+        return $false
     }
 }
 

@@ -58,7 +58,8 @@ if (Test-HasVisualStudio) {
 
 Import-Module Invoke-MSBuild\Invoke-MSBuild
 Import-Module Pester
-if (Test-IsIse) {
+$isIse = Test-IsIse
+if ($isIse) {
     Import-Module IsePester
 }
 Import-Module PowerShellArsenal
@@ -69,7 +70,7 @@ if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -Pat
 
 Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
 $cwcmd = Get-Command -Name New-CommandWrapper -ErrorAction SilentlyContinue
-if ($cwcmd -ne $null) {
+if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
     . .\set-file-colors.ps1
 }
 
