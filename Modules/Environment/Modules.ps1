@@ -38,8 +38,8 @@
                 $available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
 
                 if ($null -eq $available) {
-                    Write-Host -Object "Consider installing $module ..."
-                    Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
+                    Write-Host -Object "Consider installing package $module ..."
+                    # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                 }
             } elseif ($lastChecked.ContainsKey($module)) {            
                 $last = $lastChecked[$module]
@@ -53,8 +53,8 @@
                     $available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
 
                     if ( ($null -ne $available) -and ($current.Version -ne $available.Version) ) {
-                        Write-Host -Object "Consider upgrading $module ..."
-                        Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
+                        Write-Host -Object "Consider upgrading package $module ..."
+                        # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                     } else {
                         # Installed version is updated
                         $now = Get-Date
@@ -72,7 +72,7 @@
                     Write-Error -Message "Cannot find $module in online repository"
                 } elseif ($current.Version -ne $available.Version) {
                     Write-Host -Object "Consider upgrading $module ..."
-                    Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
+                    # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                 } else {
                     $now = Get-Date
                     $lastChecked.Add($module, $now)
