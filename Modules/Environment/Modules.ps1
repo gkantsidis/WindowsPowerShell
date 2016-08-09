@@ -53,7 +53,10 @@
                     $available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
 
                     if ( ($null -ne $available) -and ($current.Version -ne $available.Version) ) {
-                        Write-Host -Object "Consider upgrading package $module ..."
+                        $currentVersion = $current.Version
+                        $availableVersion = $available.Version
+                    
+                        Write-Host -Object "Consider upgrading package $module (current: $currentVersion, available: $availableVersion) ..."
                         # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                     } else {
                         # Installed version is updated
@@ -64,14 +67,16 @@
                     Write-Verbose -Message "No need to check again for module $module"
                 }
             } else {
-                Write-Verbose -Message "Module $module is installed, but we do not have a record of checking of its version"
+                Write-Verbose -Message "Module $module is installed, but we do not have a record of checking its version"
                 # $available = Find-Package -Name $module | Where-Object -Property ProviderName -eq PSModule
                 $available = Find-Package -Name $module
 
                 if ($null -eq $available) {
                     Write-Error -Message "Cannot find $module in online repository"
                 } elseif ($current.Version -ne $available.Version) {
-                    Write-Host -Object "Consider upgrading $module ..."
+                    $currentVersion = $current.Version
+                    $availableVersion = $available.Version
+                    Write-Host -Object "Consider upgrading $module (current: $currentVersion, available: $availableVersion) ...."
                     # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                 } else {
                     $now = Get-Date
