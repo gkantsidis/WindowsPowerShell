@@ -76,7 +76,7 @@
                 } elseif ($current.Version -ne $available.Version) {
                     $currentVersion = $current.Version
                     $availableVersion = $available.Version
-                    Write-Host -Object "Consider upgrading $module (current: $currentVersion, available: $availableVersion) ...."
+                    Write-Host -Object "Consider upgrading $module (current: $currentVersion, available: $availableVersion) [look also for multiple installations of pscx, e.g. with choco] ...."
                     # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                 } else {
                     $now = Get-Date
