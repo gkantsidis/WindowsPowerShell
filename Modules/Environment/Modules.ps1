@@ -50,7 +50,7 @@
 
                 if ($diff.CompareTo($timeBetweenChecks) -gt 0) {
                     Write-Verbose -Message "Checking for update for module $module"
-                    $available = Find-Package -Name $module | Where-Object -Property ProviderName -eq PSModule
+                    $available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
 
                     if ( ($null -ne $available) -and ($current.Version -ne $available.Version) ) {
                         Write-Host -Object "Consider upgrading $module ..."
