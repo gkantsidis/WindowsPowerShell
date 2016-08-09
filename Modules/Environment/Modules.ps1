@@ -35,7 +35,7 @@
             if ($null -eq $current) {
                 Write-Verbose -Message "Module $module is not installed"
 
-                $available = Find-Package -Name $module | Where-Object -Property ProviderName -eq PSModule
+                $available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
 
                 if ($null -eq $available) {
                     Write-Host -Object "Consider installing $module ..."
