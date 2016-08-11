@@ -17,3 +17,4 @@ Set-alias gitlog Get-GitLog
 
 # Shortcuts
 New-PSDrive -Name me -PSProvider FileSystem -Root $Env:HOME
+New-PSDrive -Name ps -PSProvider FileSystem -Root $Env:HOME\Documents\WindowsPowerShell
