@@ -9,6 +9,11 @@ if ($Env:VSIDE) {
     # Regular (desktop) mode
     . .\profile_desktop.ps1
 }
+
+if (Test-Path -Path profile_local.ps1 -PathType Leaf) {
+    . .\profile_local.ps1
+}
+
 Pop-Location
 
 # General alias

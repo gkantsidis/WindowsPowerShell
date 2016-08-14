@@ -199,3 +199,4 @@ FakesAssemblies/
 *.opt
 
 Microsoft.PowerShell_profile.ps1
+profile_local.ps1
