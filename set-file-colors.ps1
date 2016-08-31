@@ -61,7 +61,7 @@ New-CommandWrapper -Name Out-Default `
 
         if ($_ -is [System.IO.DirectoryInfo]) 
         {
-            Write-Color-LS "Magenta" $_                
+            Write-Color-LS "Magenta" $_
         }
         elseif ($compressed.IsMatch($_.Name))
         {
@@ -84,7 +84,7 @@ New-CommandWrapper -Name Out-Default `
             Write-Color-LS "White" $_
         }
 
-    $_ = $null
+        $_ = $null
     }
 } `
 -End {

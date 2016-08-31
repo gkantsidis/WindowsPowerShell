@@ -48,8 +48,10 @@ if (Test-HasVisualStudio) {
     Invoke-Expression -Command .\Modules\Posh-VsVars\Posh-VsVars-Profile.ps1
 
     # TODO The Posh-VsVars module adds spurious entries in the LIB variable
-    $newLIB = $Env:LIB -split ';' |? { ($_.Length -gt 0) -and (Test-Path "$_") }
-    $env:LIB = [string]::Join(';', $newLIB)
+    if ($Env:LIB) {
+        $newLIB = $Env:LIB -split ';' |? { ($_.Length -gt 0) -and (Test-Path "$_") }
+        $env:LIB = [string]::Join(';', $newLIB)
+    }
 }
 
 #
