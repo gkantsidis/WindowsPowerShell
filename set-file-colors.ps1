@@ -86,6 +86,21 @@ New-CommandWrapper -Name Out-Default `
 
         $_ = $null
     }
+    elseif ($_ -is [System.Collections.Hashtable])
+    {
+        Write-Host "Key                        " -NoNewLine -ForegroundColor "Magenta"
+        Write-Host "  Value"                                -ForegroundColor "DarkGreen"
+        Write-Host "-------------------------- --------------------------"
+        $entries = $_.GetEnumerator()
+        $entries | ForEach-Object -Process {
+            $key = $_.Name
+            $value = $_.Value
+            Write-Host ("{0,-25}" -f $key) -NoNewLine -ForegroundColor "Magenta"
+            Write-Host " = " -NoNewLine
+            Write-Host ("{0,-25}" -f $value) -ForegroundColor "DarkGreen"
+        }
+        $_ = $null
+    }
 } `
 -End {
     write-host ""
