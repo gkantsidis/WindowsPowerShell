@@ -198,5 +198,6 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
+Microsoft.PowerShellISE_profile.ps1
 Microsoft.PowerShell_profile.ps1
 profile_local.ps1
