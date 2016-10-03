@@ -76,6 +76,9 @@ if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
     . .\set-file-colors.ps1
 }
 
+Import-Module -Name TypePx -ErrorAction SilentlyContinue
+
+
 #
 # Local Modules
 # 
