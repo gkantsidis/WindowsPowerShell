@@ -11,7 +11,7 @@ function global:prompt {
     if ($adjusted) {
         $path = "..." + $path.Substring($lastIndex)
     }
-    $p = $drive + ":" + $path + " ë"
+    $p = $drive + ":" + $path + " Î»"
     Write-Host $p -NoNewLine -ForegroundColor "DarkGray"
     return " "
 }
