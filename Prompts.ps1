@@ -1,4 +1,4 @@
-function global:prompt {
+﻿function global:prompt {
     $maxPath = 20
     $drive = $pwd.Drive.Name
     $path = $pwd.Path.Substring($drive.Length + 1)
