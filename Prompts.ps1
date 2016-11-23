@@ -1,4 +1,4 @@
-function global:prompt {
+﻿function global:prompt {
     $maxPath = 20
     $drive = $pwd.Drive.Name
     $path = $pwd.Path.Substring($drive.Length + 1)
@@ -11,7 +11,7 @@ function global:prompt {
     if ($adjusted) {
         $path = "..." + $path.Substring($lastIndex)
     }
-    $p = $drive + ":" + $path + " �"
+    $p = $drive + ":" + $path + " λ"
     Write-Host $p -NoNewLine -ForegroundColor "DarkGray"
     return " "
 }
