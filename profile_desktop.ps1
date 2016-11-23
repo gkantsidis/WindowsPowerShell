@@ -78,6 +78,11 @@ if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
 
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
 
+#
+# Command overrides
+#
+
+. $PSScriptRoot\Overrides\Get-ChildItem.ps1
 
 #
 # Local Modules
