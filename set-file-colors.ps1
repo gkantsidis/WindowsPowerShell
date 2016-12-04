@@ -2,7 +2,9 @@ function script:Write-Color-LS
     {
         param (
             [string]$color = "white",
-            $file
+            $file,
+
+            $rootDirectory
         )
 
         $length = ""
@@ -27,7 +29,22 @@ function script:Write-Color-LS
             }
         }
 
-        Write-host ("{0,-7} {1,25} {2,10} {3}" -f $file.mode, ([String]::Format("{0,10}  {1,8}", $file.LastWriteTime.ToString("d"), $file.LastWriteTime.ToString("t"))), $length, $file.name) -foregroundcolor $color 
+        $related = ""
+        if ($file -is [System.IO.DirectoryInfo]) {
+            $related = $file.Parent.FullName.Replace($rootDirectory.ProviderPath, "")
+        } elseif ($file -is [System.IO.FileInfo]) {
+            $related = $file.Directory.FullName.Replace($rootDirectory.ProviderPath, "")
+        }
+        if ($related.StartsWith("\")) {
+            $related = $related.Substring(1)
+        }
+
+        if ([System.String]::IsNullOrEmpty($related)) {
+            Write-host ("{0,-7} {1,25} {2,10} {3}" -f $file.mode, ([String]::Format("{0,10}  {1,8}", $file.LastWriteTime.ToString("d"), $file.LastWriteTime.ToString("t"))), $length, $file.name) -foregroundcolor $color
+        } else {
+            Write-host ("{0,-7} {1,25} {2,10} {3}" -f $file.mode, ([String]::Format("{0,10}  {1,8}", $file.LastWriteTime.ToString("d"), $file.LastWriteTime.ToString("t"))), $length, $file.name) -foregroundcolor $color -NoNewline
+            Write-Host (" [{0}]" -f $related) -ForegroundColor Gray
+        }
     }
 
 New-CommandWrapper -Name Out-Default `
@@ -59,29 +76,30 @@ New-CommandWrapper -Name Out-Default `
            $notfirst=$true
         }
 
+        $rootDirectory = $(pwd)
         if ($_ -is [System.IO.DirectoryInfo]) 
         {
-            Write-Color-LS "Magenta" $_
+            Write-Color-LS "Magenta" $_ $rootDirectory
         }
         elseif ($compressed.IsMatch($_.Name))
         {
-            Write-Color-LS "DarkGreen" $_
+            Write-Color-LS "DarkGreen" $_ $rootDirectory
         }
         elseif ($executable.IsMatch($_.Name))
         {
-            Write-Color-LS "Red" $_
+            Write-Color-LS "Red" $_ $rootDirectory
         }
         elseif ($text_files.IsMatch($_.Name))
         {
-            Write-Color-LS "Yellow" $_
+            Write-Color-LS "Yellow" $_ $rootDirectory
         }
         elseif ($source_files.IsMatch($_.Name))
         {
-            Write-Color-LS "DarkYellow" $_
+            Write-Color-LS "DarkYellow" $_ $rootDirectory
         }
         else
         {
-            Write-Color-LS "White" $_
+            Write-Color-LS "White" $_ $rootDirectory
         }
 
         $_ = $null
