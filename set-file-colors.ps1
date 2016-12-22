@@ -1,3 +1,75 @@
+$script:separator = @( [System.IO.Path]::DirectorySeparatorChar; [System.IO.Path]::AltDirectorySeparatorChar )
+
+function script:Get-RelativePath {
+    [CmdletBinding(SupportsShouldProcess=$true )]
+    param(
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Target,
+
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Base
+    )   
+        
+    $Target = $Target.Trim().TrimEnd($separator)
+    $Base = $Base.Trim().TrimEnd($separator)  
+    $orig_target = $Target
+      
+    if ($Target.StartsWith("\\")) {
+        $index = $Target.IndexOf([System.IO.Path]::DirectorySeparatorChar, 2)
+        $host_target = $Target.Substring(2,  $index - 2)
+        $Target = $Target.Substring($index + 1)
+    } else {
+        $host_target = $Env:COMPUTERNAME
+    }
+
+    if ($Base.StartsWith("\\")) {
+        $index = $Base.IndexOf([System.IO.Path]::DirectorySeparatorChar, 2)
+        $host_base = $Base.Substring(2, $index - 2)
+        $Base = $Base.Substring($index + 1)
+    } else {
+        $host_base = $Env:COMPUTERNAME
+    }
+
+    if ($host_target -ne $host_base) {
+        # They are on different machines; no point to compute relative path
+        $orig_target
+    } else {
+        $current = $Target.Split($separator)
+        $root = $Base.Split($separator)
+
+        $min_length = [Math]::Min($current.Length, $root.Length)
+        $i = 0;
+        while ( ($i -lt $min_length) -and ($current[$i] -eq $root[$i])) {
+            $i++
+        }
+
+        Write-Verbose -Message "Paths agree on $i"
+
+        $up = [Math]::Max(0, $root.Length - $i)
+        if ($up -gt 0) {
+            Write-Verbose -Message "Going up from position $up"
+            $relative = (".." + [System.IO.Path]::DirectorySeparatorChar) * $up
+        } else {
+            $relative = ""
+        }
+
+        if ($i -lt $current.Length) {
+            Write-Verbose -Message "Going down from position $i"
+            [string[]]$extra = $current[$i .. ($current.Length - 1)]
+            $relative += ([System.IO.Path]::Combine($extra))
+        }
+
+        $relative = $relative.TrimEnd([System.IO.Path]::DirectorySeparatorChar)        
+        if ($relative.Length -lt $orig_target.Length) {
+            $relative
+        } else {
+            $orig_target
+        }
+    }
+}
+
 function script:Write-Color-LS
     {
         param (
@@ -31,9 +103,9 @@ function script:Write-Color-LS
 
         $related = ""
         if ($file -is [System.IO.DirectoryInfo]) {
-            $related = $file.Parent.FullName.Replace($rootDirectory.ProviderPath.TrimEnd("\"), "")
+            $related = Get-RelativePath -Target $file.Parent.FullName -Base $rootDirectory.ProviderPath
         } elseif ($file -is [System.IO.FileInfo]) {
-            $related = $file.Directory.FullName.Replace($rootDirectory.ProviderPath.TrimEnd("\"), "")
+            $related = Get-RelativePath -Target $file.Directory.FullName -Base $rootDirectory.ProviderPath
         }
         if ($related.StartsWith("\")) {
             $related = $related.Substring(1)
