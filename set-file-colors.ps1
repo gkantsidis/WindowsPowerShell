@@ -31,9 +31,9 @@ function script:Write-Color-LS
 
         $related = ""
         if ($file -is [System.IO.DirectoryInfo]) {
-            $related = $file.Parent.FullName.Replace($rootDirectory.ProviderPath, "")
+            $related = $file.Parent.FullName.Replace($rootDirectory.ProviderPath.TrimEnd("\"), "")
         } elseif ($file -is [System.IO.FileInfo]) {
-            $related = $file.Directory.FullName.Replace($rootDirectory.ProviderPath, "")
+            $related = $file.Directory.FullName.Replace($rootDirectory.ProviderPath.TrimEnd("\"), "")
         }
         if ($related.StartsWith("\")) {
             $related = $related.Substring(1)
