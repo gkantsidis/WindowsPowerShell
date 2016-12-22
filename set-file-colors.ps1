@@ -20,6 +20,7 @@ function script:Get-RelativePath {
         $index = $Target.IndexOf([System.IO.Path]::DirectorySeparatorChar, 2)
         $host_target = $Target.Substring(2,  $index - 2)
         $Target = $Target.Substring($index + 1)
+        $Target = $Target.Replace("`$", ":")
     } else {
         $host_target = $Env:COMPUTERNAME
     }
@@ -28,6 +29,7 @@ function script:Get-RelativePath {
         $index = $Base.IndexOf([System.IO.Path]::DirectorySeparatorChar, 2)
         $host_base = $Base.Substring(2, $index - 2)
         $Base = $Base.Substring($index + 1)
+        $Base = $Base.Replace("`$", ":")
     } else {
         $host_base = $Env:COMPUTERNAME
     }
