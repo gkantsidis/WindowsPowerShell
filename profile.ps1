@@ -22,4 +22,11 @@ Set-alias gitlog Get-GitLog
 
 # Shortcuts
 New-PSDrive -Name me -PSProvider FileSystem -Root $Env:HOME
-New-PSDrive -Name ps -PSProvider FileSystem -Root $Env:HOME\Documents\WindowsPowerShell
+
+if (Test-Path -Path $Env:HOME\Documents\WindowsPowerShell) {
+    # Normal path
+    New-PSDrive -Name ps -PSProvider FileSystem -Root $Env:HOME\Documents\WindowsPowerShell
+} else {
+    # If the user changes the location of the Documents folder, then 
+    New-PSDrive -Name ps -PSProvider FileSystem -Root $PSScriptRoot
+}
