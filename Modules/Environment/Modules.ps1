@@ -35,12 +35,17 @@
             if ($null -eq $current) {
                 Write-Verbose -Message "Module $module is not installed"
 
-                $available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
+				if (Get-Module -Name PackageManagement) {
+					$available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
 
-                if ($null -eq $available) {
-                    Write-Host -Object "Consider installing package $module ..."
-                    # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
-                }
+					if ($null -eq $available) {
+						Write-Host -Object "Consider installing package $module ..."
+						# Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
+					}
+				} else {
+					Write-Warning -Message "Consider installing PackageManagement module"
+					Write-Warning -Message "Consider installing $module module"
+				}
             } elseif ($lastChecked.ContainsKey($module)) {            
                 $last = $lastChecked[$module]
 

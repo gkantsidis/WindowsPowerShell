@@ -14,7 +14,7 @@ if (Get-Module -Name PSReadLine) {
 	Set-PSReadlineKeyHandler -Key "Ctrl+LeftArrow" -Function ShellBackwardWord
 	Set-PSReadlineKeyHandler -Key "Ctrl+RightArrow" -Function ShellForwardWord
 } else {
-	Write-Warning "Consider installing PSReadLine module"
+	Write-Warning -Message "Consider installing PSReadLine module"
 }
 
 #
