@@ -8,10 +8,14 @@ Import-Module Environment
 # Build-in modules and initialization
 #
 
-Import-Module PSReadLine
-Set-PSReadlineOption -EditMode Emacs
-Set-PSReadlineKeyHandler -Key "Ctrl+LeftArrow" -Function ShellBackwardWord
-Set-PSReadlineKeyHandler -Key "Ctrl+RightArrow" -Function ShellForwardWord
+if (Get-Module -Name PSReadLine) {
+	Import-Module PSReadLine
+	Set-PSReadlineOption -EditMode Emacs
+	Set-PSReadlineKeyHandler -Key "Ctrl+LeftArrow" -Function ShellBackwardWord
+	Set-PSReadlineKeyHandler -Key "Ctrl+RightArrow" -Function ShellForwardWord
+} else {
+	Write-Warning "Consider installing PSReadLine module"
+}
 
 #
 # Third party installable modules
