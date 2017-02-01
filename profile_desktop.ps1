@@ -8,6 +8,7 @@ Import-Module Environment
 # Build-in modules and initialization
 #
 
+Get-Module -Name PSReadLine -ErrorAction SilentlyContinue
 if (Get-Module -Name PSReadLine) {
 	. $PSScriptRoot\profile_readline.ps1
 } else {
