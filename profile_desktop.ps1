@@ -18,8 +18,20 @@ if (Get-Module -Name PSReadLine) {
 # Third party installable modules
 #
 
-CheckInstall-Module -ModuleName pscx
-CheckInstall-Module -ModuleName PowerShellCookbook
+try {
+    CheckInstall-Module -ModuleName pscx    
+}
+catch {
+    Write-Warning -Message "Consider installing pscx"
+}
+
+try {
+    CheckInstall-Module -ModuleName PowerShellCookbook    
+}
+catch {
+    Write-Warning -Message "Consider installing PowerShellCookbook"
+}
+
 
 #
 # Third party modules with special initialization
