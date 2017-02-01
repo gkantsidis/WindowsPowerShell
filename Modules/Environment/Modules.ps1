@@ -74,7 +74,7 @@
             } else {
                 Write-Verbose -Message "Module $module is installed, but we do not have a record of checking its version"
                 # $available = Find-Package -Name $module | Where-Object -Property ProviderName -eq PSModule
-                $available = Find-Package -Name $module
+                $available = Find-Package -Name $module -ErrorAction SilentlyContinue
 
                 if ($null -eq $available) {
                     Write-Error -Message "Cannot find $module in online repository"
