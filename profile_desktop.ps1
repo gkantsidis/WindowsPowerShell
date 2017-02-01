@@ -50,7 +50,7 @@ if (Test-HasVisualStudio) {
 
     # TODO The Posh-VsVars module adds spurious entries in the LIB variable
     if ($Env:LIB) {
-        $newLIB = $Env:LIB -split ';' |? { ($_.Length -gt 0) -and (Test-Path "$_") }
+        $newLIB = $Env:LIB -split ';' | Where-Object -FilterScript { ($_.Length -gt 0) -and (Test-Path "$_") }
         $env:LIB = [string]::Join(';', $newLIB)
     }
 }
@@ -83,7 +83,15 @@ Import-Module -Name TypePx -ErrorAction SilentlyContinue
 # Command overrides
 #
 
-. $PSScriptRoot\Overrides\Get-ChildItem.ps1
+try {
+    # test that the GetCommand takes 3 argument, if not it will throw an exception and we will not overload gci
+    $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Management\Get-ChildItem', [System.Management.Automation.CommandTypes]::Cmdlet, "") | Out-Null
+    . $PSScriptRoot\Overrides\Get-ChildItem.ps1    
+}
+catch {
+    # do nothing; keep standard gci
+}
+
 
 #
 # Local Modules
