@@ -9,10 +9,7 @@ Import-Module Environment
 #
 
 if (Get-Module -Name PSReadLine) {
-	Import-Module PSReadLine
-	Set-PSReadlineOption -EditMode Emacs
-	Set-PSReadlineKeyHandler -Key "Ctrl+LeftArrow" -Function ShellBackwardWord
-	Set-PSReadlineKeyHandler -Key "Ctrl+RightArrow" -Function ShellForwardWord
+	. $PSScriptRoot\profile_readline.ps1
 } else {
 	Write-Warning -Message "Consider installing PSReadLine module"
 }
