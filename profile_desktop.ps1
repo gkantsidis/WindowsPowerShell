@@ -39,17 +39,22 @@ if (-not (Get-Module -Name PowerShellCookbook)) {
 # If the module isn't installed, then attempt to load it from the cloned posh-git Git repo.
 $localPoshGitModule = Join-Path -Path (Split-Path $MyInvocation.MyCommand.Path -Parent) -ChildPath "Modules" | `
                       Join-Path -ChildPath "posh-git" | `
-                      Join-Path -ChildPath "src"
+                      Join-Path -ChildPath "src" | `
+                      Join-Path -ChildPath "posh-git.psd1"
 
 $poshGitModule = Get-Module posh-git -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
 if ($poshGitModule) {
     $poshGitModule | Import-Module
 }
-elseif (Test-Path -LiteralPath $localPoshGitModule) {
-    Import-Module $localPoshGitModule
-}
 else {
-    throw "Failed to import posh-git."
+    Write-Warning "Consider installing posh-git module (as admin): Install-Module -Name posh-git -Force -AllowClobber"
+    
+    if (Test-Path -LiteralPath $localPoshGitModule) {
+        Import-Module $localPoshGitModule
+    }
+    else {
+        throw "Failed to import posh-git."
+    }
 }
                                                                                                                                               
 # Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.                                                     
