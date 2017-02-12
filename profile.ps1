@@ -7,10 +7,12 @@ if ($Env:VSIDE) {
     # Inside Visual Studio --- ignore all initializations
 } else {
     # Regular (desktop) mode
+    Write-Verbose -Message "Calling profile_desktop.ps1"
     . .\profile_desktop.ps1
 }
 
 if (Test-Path -Path profile_local.ps1 -PathType Leaf) {
+    Write-Verbose -Message "Calling profile_local.ps1"
     . .\profile_local.ps1
 }
 
@@ -30,3 +32,6 @@ if (Test-Path -Path $Env:HOME\Documents\WindowsPowerShell) {
     # If the user changes the location of the Documents folder, then 
     New-PSDrive -Name ps -PSProvider FileSystem -Root $PSScriptRoot
 }
+
+Write-Verbose -Message "Settting prompt"
+. $PSScriptRoot\Prompts.ps1

@@ -1,4 +1,14 @@
 ﻿function global:Set-NormalPrompt {
+    param(
+        [switch]
+        $DoNotRemoveAlias
+    )
+
+    # Some modules (e.g. xUtility) create this alias to modify the prompt
+    if(-not $DoNotRemoveAlias) {
+        Remove-Item Alias:\Prompt -ErrorAction SilentlyContinue
+    }
+
     function global:prompt {
         $maxPath = 20
         $pp = $pwd.ProviderPath
@@ -45,6 +55,16 @@
 }
 
 function global:Set-GitPrompt {
+    param(
+        [switch]
+        $DoNotRemoveAlias
+    )
+    
+    # Some modules (e.g. xUtility) create this alias to modify the prompt
+    if(-not $DoNotRemoveAlias) {
+        Remove-Item Alias:\Prompt -ErrorAction SilentlyContinue
+    }
+
     function global:prompt {
         $realLASTEXITCODE = $LASTEXITCODE
         Write-Host($pwd.ProviderPath) -nonewline
