@@ -55,4 +55,11 @@ function global:Set-GitPrompt {
     }
 }
 
-Set-NormalPrompt
+try {
+    Set-NormalPrompt
+}
+catch [System.Management.Automation.SessionStateUnauthorizedAccessException] {
+    Write-Verbose -Message "The prompt seems to be set as readonly, removing ..."
+    Remove-Item -Path Function:prompt -Force
+    Set-NormalPrompt
+}

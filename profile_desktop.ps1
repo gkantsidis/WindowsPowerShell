@@ -35,20 +35,28 @@ if (-not (Get-Module -Name PowerShellCookbook)) {
 
 # Module: posh-git
 
-Invoke-Expression -Command .\Modules\posh-git\profile.example.ps1
+# Import the posh-git module, first via installed posh-git module.
+# If the module isn't installed, then attempt to load it from the cloned posh-git Git repo.
+$localPoshGitModule = Join-Path -Path (Split-Path $MyInvocation.MyCommand.Path -Parent) -ChildPath "Modules" | `
+                      Join-Path -ChildPath "posh-git" | `
+                      Join-Path -ChildPath "src"
 
-Rename-Item Function:\Prompt PoshGitPrompt -Force
-function Prompt() {
-    if (Test-Path Function:\PrePoshGitPrompt) {
-        ++$global:poshScope
-        New-Item function:\script:Write-host -value "param([object] `$object, `$backgroundColor, `$foregroundColor, [switch] `$nonewline) " -Force | Out-Null
-        $private:p = PrePoshGitPrompt
-        if(--$global:poshScope -eq 0) {
-            Remove-Item function:\Write-Host -Force
-        }
-    }
-    PoshGitPrompt
+$poshGitModule = Get-Module posh-git -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
+if ($poshGitModule) {
+    $poshGitModule | Import-Module
 }
+elseif (Test-Path -LiteralPath $localPoshGitModule) {
+    Import-Module $localPoshGitModule
+}
+else {
+    throw "Failed to import posh-git."
+}
+                                                                                                                                              
+# Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.                                                     
+# Example:                                                                                                                                    
+#     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"                                                                       
+                                                                                                                                              
+Start-SshAgent -Quiet                                                                                                                         
 
 # Other modules
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
