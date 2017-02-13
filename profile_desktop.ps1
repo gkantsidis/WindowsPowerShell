@@ -113,6 +113,7 @@ catch {
     # do nothing; keep standard gci
 }
 
+. $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
 
 #
 # Local Modules
