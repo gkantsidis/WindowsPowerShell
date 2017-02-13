@@ -2,7 +2,7 @@
 Windows Powershell Profile
 
 This directory should be cloned under %HOME%\Documents\WindowsPowerShell
-(e.g. C:\users\&lt;UserName&gt;\Documents\WindowsPowerShell).
+(e.g. C:\users\\&lt;UserName&gt;\\Documents\WindowsPowerShell).
 After cloning, pull submodules with:
 - git submodule init and
 - git submodule update.
