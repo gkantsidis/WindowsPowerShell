@@ -93,10 +93,7 @@ $StartMS = Get-Date
 
 Import-Module Invoke-MSBuild\Invoke-MSBuild
 Import-Module Pester
-$isIse = Test-IsIse
-if ($isIse) {
-    Import-Module IsePester
-}
+Import-Module IsePester
 Import-Module PowerShellArsenal
 
 if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -PathType Leaf) {
@@ -104,11 +101,6 @@ if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -Pat
 }
 
 Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
-$cwcmd = Get-Command -Name New-CommandWrapper -ErrorAction SilentlyContinue
-if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
-    . .\set-file-colors.ps1
-}
-
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
 
 $EndMS = Get-Date
@@ -120,15 +112,6 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 #
 
 $StartMS = Get-Date
-
-try {
-    # test that the GetCommand takes 3 argument, if not it will throw an exception and we will not overload gci
-    $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Management\Get-ChildItem', [System.Management.Automation.CommandTypes]::Cmdlet, "") | Out-Null
-    . $PSScriptRoot\Overrides\Get-ChildItem.ps1    
-}
-catch {
-    # do nothing; keep standard gci
-}
 
 . $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
 

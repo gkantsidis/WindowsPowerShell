@@ -5,6 +5,8 @@ Push-Location $private:PowerShellProfileDirectory
 
 if ($Env:VSIDE) {
     # Inside Visual Studio --- ignore all initializations
+} elseif ($Host.Name -eq "Windows PowerShell ISE Host") {
+    . .\profile_ise.ps1
 } else {
     # Regular (desktop) mode
     Write-Verbose -Message "Calling profile_desktop.ps1"
