@@ -130,7 +130,12 @@ catch {
     # do nothing; keep standard gci
 }
 
-. $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
+CheckInstall-Module -ModuleName xUtility -ErrorAction SilentlyContinue
+if ((Get-Module -Name xUtility) -ne $null) {
+    . $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
+} else {
+    Write-Warning -Message "Consider installing xUtility (admin):  Install-Module -Name xUtility -Force -AllowClobber"
+}
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
