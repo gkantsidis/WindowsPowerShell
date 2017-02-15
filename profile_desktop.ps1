@@ -5,7 +5,7 @@
 $usermodules = Join-Path -Path $PSScriptRoot -ChildPath Modules
 if ($Env:PSModulePath -ne $null) {
     if (-not $Env:PSModulePath.Contains($usermodules)) {
-        $Env:PSModulesPath += ";$usermodules"
+        $Env:PSModulePath += ";$usermodules"
     }
 }
 Import-Module Environment
