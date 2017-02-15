@@ -2,6 +2,12 @@
 # Initialization
 #
 
+$usermodules = Join-Path -Path $PSScriptRoot -ChildPath Modules
+if ($Env:PSModulePath -ne $null) {
+    if (-not $Env:PSModulePath.Contains($usermodules)) {
+        $Env:PSModulesPath += ";$usermodules"
+    }
+}
 Import-Module Environment
 
 #
