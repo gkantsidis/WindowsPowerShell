@@ -15,6 +15,7 @@ Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
 Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
 Get-ModuleInstall -ModuleName posh-git -ErrorAction SilentlyContinue
 Get-ModuleInstall -ModuleName TypePx -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName ISEModuleBrowserAddon -ErrorAction SilentlyContinue
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
