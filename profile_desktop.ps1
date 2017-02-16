@@ -8,6 +8,7 @@ if ($Env:PSModulePath -ne $null) {
         $Env:PSModulePath += ";$usermodules"
     }
 }
+
 Import-Module Environment
 
 #
@@ -26,12 +27,12 @@ if (Get-Module -Name PSReadLine) {
 #
 
 $StartMS = Get-Date
-CheckInstall-Module -ModuleName pscx -ErrorAction SilentlyContinue
-if (-not (Get-Module -Name pscx)) {
+Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
+if (-not (Get-Module -Name pscx -ListAvailable)) {
     Write-Warning -Message "Consider installing pscx"
 }
-CheckInstall-Module -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
-if (-not (Get-Module -Name PowerShellCookbook)) {
+Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
+if (-not (Get-Module -Name PowerShellCookbook -ListAvailable)) {
     Write-Warning -Message "Consider installing PowerShellCookbook"
 }
 $EndMS = Get-Date
@@ -53,6 +54,7 @@ $localPoshGitModule = Join-Path -Path (Split-Path $MyInvocation.MyCommand.Path -
                       Join-Path -ChildPath "src" | `
                       Join-Path -ChildPath "posh-git.psd1"
 
+Get-ModuleInstall -ModuleName posh-git -ErrorAction SilentlyContinue
 $poshGitModule = Get-Module posh-git -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
 if ($poshGitModule) {
     $poshGitModule | Import-Module
@@ -97,6 +99,7 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 $StartMS = Get-Date
 
+# The following three are included as submodules
 Import-Module Invoke-MSBuild\Invoke-MSBuild
 Import-Module Pester
 $isIse = Test-IsIse
@@ -109,12 +112,14 @@ if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -Pat
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1" -Force
 }
 
-Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
+# Not needed here, we have imported it above:
+# Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
 $cwcmd = Get-Command -Name New-CommandWrapper -ErrorAction SilentlyContinue
 if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
     . .\set-file-colors.ps1
 }
 
+Get-ModuleInstall -ModuleName TypePx -ErrorAction SilentlyContinue
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
 
 $EndMS = Get-Date
@@ -136,8 +141,8 @@ catch {
     # do nothing; keep standard gci
 }
 
-CheckInstall-Module -ModuleName xUtility -ErrorAction SilentlyContinue
-if ((Get-Module -Name xUtility) -ne $null) {
+Get-ModuleInstall -ModuleName xUtility -ErrorAction SilentlyContinue
+if ((Get-Module -Name xUtility -ListAvailable) -ne $null) {
     . $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
 } else {
     Write-Warning -Message "Consider installing xUtility (admin):  Install-Module -Name xUtility -Force -AllowClobber"

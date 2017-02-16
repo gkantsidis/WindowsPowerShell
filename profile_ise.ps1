@@ -9,7 +9,7 @@ Import-Module Environment
 #
 
 Import-Module -Name PSReadLine -ErrorAction SilentlyContinue
-if (Get-Module -Name PSReadLine) {
+if (Get-Module -Name PSReadLine -ListAvailable) {
 	. $PSScriptRoot\profile_readline.ps1
 } else {
 	Write-Warning -Message "Consider installing PSReadLine module"
@@ -20,12 +20,12 @@ if (Get-Module -Name PSReadLine) {
 #
 
 $StartMS = Get-Date
-CheckInstall-Module -ModuleName pscx -ErrorAction SilentlyContinue
-if (-not (Get-Module -Name pscx)) {
+Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
+if (-not (Get-Module -Name pscx -ListAvailable)) {
     Write-Warning -Message "Consider installing pscx"
 }
-CheckInstall-Module -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
-if (-not (Get-Module -Name PowerShellCookbook)) {
+Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
+if (-not (Get-Module -Name PowerShellCookbook -ListAvailable)) {
     Write-Warning -Message "Consider installing PowerShellCookbook"
 }
 $EndMS = Get-Date

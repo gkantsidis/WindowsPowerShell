@@ -1,5 +1,4 @@
-﻿function CheckInstall-Module {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "CheckInstall-Module")]
+﻿function Get-ModuleInstall {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
     [CmdletBinding()]
     param(
@@ -12,6 +11,11 @@
     )
     BEGIN {
         [string]$lastCheckedFile = ".LastChecked"
+        if ((Get-Variable -Name RootOfPowershellDirectory -ErrorAction SilentlyContinue) -ne $null) {
+            $lastCheckedFile = Join-Path -Path $RootOfPowershellDirectory -ChildPath $lastCheckedFile
+        }
+        Write-Verbose -Message "Will check modules against the timestamps in $LastCheckedFile"
+
         [System.Collections.Hashtable]$lastChecked = @{}
         [System.TimeSpan]$timeBetweenChecks = [System.TimeSpan]::FromDays(7)
 
@@ -24,22 +28,36 @@
                 $lastChecked.Add($key, $last)
             }
         }
+
+        Write-Verbose -Message ("Module path is: " + $Env:PSModulePath)
     }
     PROCESS {
         foreach($module in $ModuleName) {
             Write-Verbose -Message "Checking for $module"
 
-            Import-Module -Name $module -ErrorAction SilentlyContinue
+            try {
+                Import-Module -Name $module
+            }
+            catch [System.Management.Automation.ParameterBindingValidationException]{
+                # TODO: Some times the first import fails; let's try a second time
+                Write-Warning -Message "Trying to import $module for the second time" -ErrorAction SilentlyContinue
+                Import-Module -Name $module
+            }
+            
             $current = Get-Module -Name $module
+            if ($null -eq $current) {
+                Write-Warning -Message "Cannot get module $module; trying a second time"
+                $current = Get-Module -Name $module -ListAvailable
+            }
 
             if ($null -eq $current) {
                 Write-Verbose -Message "Module $module is not installed"
 
 				if (Get-Module -Name PackageManagement) {
-					$available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
+					$available = Find-Package -Name $module -Source PSGallery # | Where-Object -Property ProviderName -eq PSModule
 
 					if ($null -eq $available) {
-						Write-Host -Object "Consider installing package $module ..."
+						Write-Warning -Message "Consider installing package $module ..."
 						# Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
 					}
 				} else {
@@ -61,7 +79,7 @@
                         $currentVersion = $current.Version
                         $availableVersion = $available.Version
                     
-                        Write-Host -Object "Consider upgrading package $module (current: $currentVersion, available: $availableVersion) ..."
+                        Write-Warning -Message "Consider upgrading package $module (current: $currentVersion, available: $availableVersion) ..."
                         # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                     } else {
                         # Installed version is updated
@@ -74,14 +92,14 @@
             } else {
                 Write-Verbose -Message "Module $module is installed, but we do not have a record of checking its version"
                 # $available = Find-Package -Name $module | Where-Object -Property ProviderName -eq PSModule
-                $available = Find-Package -Name $module -ErrorAction SilentlyContinue
+                $available = Find-Package -Name $module -Source PSGallery -ErrorAction SilentlyContinue
 
                 if ($null -eq $available) {
                     Write-Error -Message "Cannot find $module in online repository"
                 } elseif ($current.Version -ne $available.Version) {
                     $currentVersion = $current.Version
                     $availableVersion = $available.Version
-                    Write-Host -Object "Consider upgrading $module (current: $currentVersion, available: $availableVersion) [look also for multiple installations of pscx, e.g. with choco] ...."
+                    Write-Warning -Message "Consider upgrading $module (current: $currentVersion, available: $availableVersion) [look also for multiple installations of pscx, e.g. with choco] ...."
                     # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                 } else {
                     $now = Get-Date
