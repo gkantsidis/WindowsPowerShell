@@ -5,6 +5,30 @@
 Import-Module Environment
 
 #
+# Checking for external modules
+# These are the external modules that we would like to have installed in the system
+#
+$StartMS = Get-Date
+
+Get-ModuleInstall -ModuleName PSReadLine -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName posh-git -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName TypePx -ErrorAction SilentlyContinue
+
+$EndMS = Get-Date
+$Diff = ($EndMS - $StartMS).TotalMilliseconds
+
+"{0,-50} {1,10:F3} msec to load" -f "Checking for external modules",$Diff
+
+# The other modules are local (i.e. in the repo or in submodules):
+# - Posh-VsVars (not really a module)
+# - Invoke-MSBuild
+# - Pester
+# - IsePester
+# - PowerShellArsenal
+
+#
 # Build-in modules and initialization
 #
 
@@ -20,11 +44,9 @@ if (Get-Module -Name PSReadLine -ListAvailable) {
 #
 
 $StartMS = Get-Date
-Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
 if (-not (Get-Module -Name pscx -ListAvailable)) {
     Write-Warning -Message "Consider installing pscx"
 }
-Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
 if (-not (Get-Module -Name PowerShellCookbook -ListAvailable)) {
     Write-Warning -Message "Consider installing PowerShellCookbook"
 }
@@ -100,7 +122,6 @@ if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -Pat
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1" -Force
 }
 
-Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
 
 $EndMS = Get-Date

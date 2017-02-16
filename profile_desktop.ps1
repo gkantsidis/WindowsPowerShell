@@ -12,6 +12,32 @@ if ($Env:PSModulePath -ne $null) {
 Import-Module Environment
 
 #
+# Checking for external modules
+# These are the external modules that we would like to have installed in the system
+#
+$StartMS = Get-Date
+
+Get-ModuleInstall -ModuleName PSReadLine -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName posh-git -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName TypePx -ErrorAction SilentlyContinue
+Get-ModuleInstall -ModuleName xUtility -ErrorAction SilentlyContinue
+
+$EndMS = Get-Date
+$Diff = ($EndMS - $StartMS).TotalMilliseconds
+
+"{0,-50} {1,10:F3} msec to load" -f "Checking for external modules",$Diff
+
+# The other modules are local (i.e. in the repo or in submodules):
+# - Editors
+# - Invoke-MSBuild
+# - Pester
+# - IsePester
+# - PowerShellArsenal
+# - Posh-VsVars (not really a module)
+
+#
 # Build-in modules and initialization
 #
 
@@ -27,11 +53,9 @@ if (Get-Module -Name PSReadLine) {
 #
 
 $StartMS = Get-Date
-Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
 if (-not (Get-Module -Name pscx -ListAvailable)) {
     Write-Warning -Message "Consider installing pscx"
 }
-Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
 if (-not (Get-Module -Name PowerShellCookbook -ListAvailable)) {
     Write-Warning -Message "Consider installing PowerShellCookbook"
 }
@@ -54,7 +78,6 @@ $localPoshGitModule = Join-Path -Path (Split-Path $MyInvocation.MyCommand.Path -
                       Join-Path -ChildPath "src" | `
                       Join-Path -ChildPath "posh-git.psd1"
 
-Get-ModuleInstall -ModuleName posh-git -ErrorAction SilentlyContinue
 $poshGitModule = Get-Module posh-git -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
 if ($poshGitModule) {
     $poshGitModule | Import-Module
@@ -119,7 +142,6 @@ if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
     . .\set-file-colors.ps1
 }
 
-Get-ModuleInstall -ModuleName TypePx -ErrorAction SilentlyContinue
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
 
 $EndMS = Get-Date
@@ -141,7 +163,6 @@ catch {
     # do nothing; keep standard gci
 }
 
-Get-ModuleInstall -ModuleName xUtility -ErrorAction SilentlyContinue
 if ((Get-Module -Name xUtility -ListAvailable) -ne $null) {
     . $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
 } else {
