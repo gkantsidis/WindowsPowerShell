@@ -1,9 +1,6 @@
 [submodule "Modules/Posh-GitHub"]
 	path = Modules/Posh-GitHub
 	url = https://github.com/Iristyle/Posh-GitHub.git
-[submodule "Modules/posh-git"]
-	path = Modules/posh-git
-	url = https://github.com/dahlbyk/posh-git.git
 [submodule "Modules/Invoke-MSBuild"]
 	path = Modules/Invoke-MSBuild
 	url = https://git01.codeplex.com/invokemsbuild
@@ -25,6 +22,4 @@
 [submodule "Source/NTFS-Streams"]
 	path = Source/NTFS-Streams
 	url = https://github.com/RichardD2/NTFS-Streams.git
-[submodule "Source/PSScriptAnalyzer"]
-	path = Source/PSScriptAnalyzer
-	url = https://github.com/PowerShell/PSScriptAnalyzer.git
+
