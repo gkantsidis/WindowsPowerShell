@@ -43,6 +43,10 @@ If you experience any other issue during startup, please create an [issue](https
 There is a separate customization for ISE. Some modules do not work well with ISE, and
 they are not invoked.
 
+# Per-machine customizations
+Settings that are local to a machine, and do not need to be checked in should to to `profile_local.ps1`.
+If this file is present, then it will be executed at the end of initialization.
+
 # Other information
 See the [wiki](https://github.com/gkantsidis/WindowsPowerShell/wiki) for information
 about the customizations.
