@@ -204,7 +204,7 @@ New-CommandWrapper -Name Out-Default `
             $value = Get-Command -Name $key -Module $fn.ModuleName -Syntax -ErrorAction SilentlyContinue
             if ($value -eq $null)
             {
-                $value = $_.Value
+                $value = $_.Value.ToString()
                 Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor "DarkGreen"
             } elseif ($fn.CommandType -eq [System.Management.Automation.CommandTypes]::Alias) {
                 Write-Host ("{0}" -f $fn.DisplayName) -ForegroundColor "Green"
@@ -216,7 +216,8 @@ New-CommandWrapper -Name Out-Default `
     }
     elseif ($_ -eq $null)
     {
-        Write-Host "<null>" -ForegroundColor Red
+        # Disable the following for the default behavior
+        # Write-Host "<null>" -ForegroundColor Red
     }    
     elseif ($_.GetType().ImplementedInterfaces.Contains([System.Collections.IDictionary]))
     {
