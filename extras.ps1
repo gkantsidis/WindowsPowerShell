@@ -1,4 +1,4 @@
-#Requires -Modules Environment
+#Requires -Modules Environment,xUtility
 
 [CmdletBinding()]
 param(
@@ -12,7 +12,6 @@ $modules = (
     'DeployImage',
     'Find-String',
     'GistProvider',
-    'IsePackV2',
     'LibGit2',
     'LINQ',
     'Logman',
@@ -31,21 +30,46 @@ $modules = (
     'ShowUI',
     'SnippetPx',
     'TypePx',
-    'WindowsImageTools',
     'xNetworking'
 )
 
-$modules | ForEach-Object -Process {
-    $m = $_
-    Write-Verbose -Message "Examining $m"
-    Get-ModuleInstall -ModuleName $m -ErrorAction SilentlyContinue
+$modulesIse = (
+    'IsePackV2'
+)
 
-    $load = -not $DoNotLoad
-    $isLoaded = (Get-Module -Name $m) -ne $null
-    $isAvailable = (Get-Module $m -ListAvailable) -ne $null
-    Write-Verbose -Message "Module: $m, loaded: $isLoaded, available: $isAvailable"
+$modulesAsAdmin = (
+    'WindowsImageTools'
+)
+
+function ProcessModule {
+    [CmdletBinding()]
+    param (
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $module,
+
+        [bool]
+        $load
+    )
+    Write-Verbose -Message "Examining $module, will load? $load"
+    Get-ModuleInstall -ModuleName $module -ErrorAction SilentlyContinue
+
+    $isLoaded = (Get-Module -Name $module) -ne $null
+    $isAvailable = (Get-Module $module -ListAvailable) -ne $null
+    Write-Verbose -Message "Module: $module, loaded: $isLoaded, available: $isAvailable"
     if ($load -and (-not $isLoaded) -and $isAvailable) {
-        Write-Verbose -Message "Importing module $m"
-        Import-Module -Name $m
+        Write-Verbose -Message "Importing module $module"
+        Import-Module -Name $module
     }
 }
+
+$load = -not $DoNotLoad
+$modules | ForEach-Object -Process { ProcessModule -module $_ -load $load }
+
+$load = (Test-AdminRights) -and (-not $DoNotLoad)
+Write-Verbose -Message "Checking modules that require admin rights"
+$modulesAsAdmin | ForEach-Object -Process { ProcessModule -module $_ -load $load }
+
+$load = ($Host.Name -eq "Windows PowerShell ISE Host") -and (-not $DoNotLoad)
+Write-Verbose -Message "Checking ISE modules"
+$modulesIse | ForEach-Object -Process { ProcessModule -module $_ -load $load }
