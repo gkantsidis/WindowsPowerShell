@@ -193,6 +193,51 @@ New-CommandWrapper -Name Out-Default `
         }
         $_ = $null
     }
+    elseif (($_ -is [System.Collections.Generic.Dictionary`2[System.String,System.Management.Automation.FunctionInfo]]) -or
+            ($_ -is [System.Collections.Generic.Dictionary`2[System.String,System.Management.Automation.CommandInfo]]))
+    {
+        $entries = $_.GetEnumerator()
+        $entries | ForEach-Object -Process {
+            $key = $_.Key
+            $fn = $_.Value
+            
+            $value = Get-Command -Name $key -Module $fn.ModuleName -Syntax -ErrorAction SilentlyContinue
+            if ($value -eq $null)
+            {
+                $value = $_.Value
+                Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor "DarkGreen"
+            } elseif ($fn.CommandType -eq [System.Management.Automation.CommandTypes]::Alias) {
+                Write-Host ("{0}" -f $fn.DisplayName) -ForegroundColor "Green"
+            } else {                
+                Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor "DarkGreen"
+            }
+        }
+        $_ = $null
+    }
+    elseif ($_ -eq $null)
+    {
+        Write-Host "<null>" -ForegroundColor Red
+    }    
+    elseif ($_.GetType().ImplementedInterfaces.Contains([System.Collections.IDictionary]))
+    {
+        Write-Host "Key                        " -NoNewLine -ForegroundColor "Magenta"
+        Write-Host "  Value"                                -ForegroundColor "DarkGreen"
+        Write-Host "-------------------------- --------------------------"
+        $entries = $_.GetEnumerator()
+        $entries | ForEach-Object -Process {
+            $key = $_.Key
+            $value = $_.Value
+            Write-Host ("{0,-25}" -f $key) -NoNewLine -ForegroundColor "Magenta"
+            Write-Host " = " -NoNewLine
+            Write-Host ("{0,-25}" -f $value) -ForegroundColor "DarkGreen"
+        }
+        $_ = $null
+    }
+    else 
+    {
+        # Write-Host $_.ToString()
+        # $_ = $null
+    }
 } `
 -End {
     write-host ""

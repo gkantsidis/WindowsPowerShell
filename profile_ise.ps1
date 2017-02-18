@@ -10,6 +10,7 @@ Import-Module Environment
 #
 $StartMS = Get-Date
 
+Get-ModuleInstall -ModuleName PowerShellGet -ErrorAction SilentlyContinue
 Get-ModuleInstall -ModuleName PSReadLine -ErrorAction SilentlyContinue
 Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
 Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
@@ -32,6 +33,8 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 #
 # Build-in modules and initialization
 #
+
+Import-Module -Name powershellGet -ErrorAction SilentlyContinue
 
 Import-Module -Name PSReadLine -ErrorAction SilentlyContinue
 if (Get-Module -Name PSReadLine -ListAvailable) {
