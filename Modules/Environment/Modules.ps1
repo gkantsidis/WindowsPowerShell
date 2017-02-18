@@ -1,4 +1,46 @@
-﻿function Get-ModuleInstall {
+﻿function script:LoadModule {
+    [CmdletBinding()]
+    param(
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name
+    )
+
+    try {
+        Import-Module -Name $Name
+    }
+    catch [System.Management.Automation.ParameterBindingValidationException]{
+        # TODO: Some times the first import fails; let's try a second time
+        Write-Warning -Message "Trying to import $Name for the second time" -ErrorAction SilentlyContinue
+        Import-Module -Name $Name
+    }
+}
+
+# Do not rename to Install-Module, as it may collide with the available commands
+function script:InstallModule {
+    [CmdletBinding()]
+    param(
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name
+    )
+
+    # There are a number of ways to install the package. Not sure which order is the best,
+    # or the differences between them.
+    if (Get-Command -Name Install-Module -Module PowerShellGet -ErrorAction SilentlyContinue) {
+        PowerShellGet\Install-Module -Name $Name -Force -AllowClobber
+    } elseif (Get-Command -Name Install-Module -Module PsGet -ErrorAction SilentlyContinue) {
+        PsGet\Install-Module -ModuleName $Name -Force
+    } elseif (Get-Command -Name Install-Package -Module PackageManagement -ErrorAction SilentlyContinue) {
+        PackageManagement\Install-Package -Name $Name -Force        
+    } elseif (Get-Command -Name Install-Module -ErrorAction SilentlyContinue) {
+        Install-Module $Name
+    } else {
+        Write-Error -Message "Cannot find facility to install module $Name; please install manually"
+    }
+}
+
+function Get-ModuleInstall {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
     [CmdletBinding()]
     param(
@@ -7,7 +49,10 @@
                    ValueFromPipelineByPropertyName=$True)]
         [ValidateNotNullOrEmpty()]
         [string[]]
-        $ModuleName
+        $ModuleName,
+
+        [switch]
+        $Local
     )
     BEGIN {
         [string]$lastCheckedFile = ".LastChecked"
@@ -29,42 +74,57 @@
             }
         }
 
+        $myIdentity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+        $wp = New-Object Security.Principal.WindowsPrincipal($myIdentity)
+        $isAdmin = $wp.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+
         Write-Verbose -Message ("Module path is: " + $Env:PSModulePath)
     }
     PROCESS {
         foreach($module in $ModuleName) {
             Write-Verbose -Message "Checking for $module"
 
-            try {
-                Import-Module -Name $module
+            $isLoaded = (Get-Module -Name $module) -ne $null
+            $isAvailable = (Get-Module $module -ListAvailable) -ne $null
+
+            if ($isAvailable -and (-not $isLoaded)) {
+                Write-Verbose -Message "Module $module is available but not loaded; trying to load"
+                LoadModule -Name $module 
             }
-            catch [System.Management.Automation.ParameterBindingValidationException]{
-                # TODO: Some times the first import fails; let's try a second time
-                Write-Warning -Message "Trying to import $module for the second time" -ErrorAction SilentlyContinue
-                Import-Module -Name $module
+            elseif (-not $isAvailable) {
+                $isInRepo = Find-Package -Name $module -Source PSGallery
+                if ($null -eq $isInRepo) {
+                    Write-Warning -Message "Module $module is not in PSGallery; consider installing manually"
+                } elseif ($isAdmin) {
+                    # The module is available, and the script is running in admin mode: try to install
+                    Write-Verbose -Message "Trying to install package $module"
+                    InstallModule -Name $module
+                    LoadModule -Name $module              
+                } else {
+                    # The module is available, but we are not in elevated mode
+                    Write-Warning -Message "Please install module $module in elevated mode, e.g. Install-Module $module, or run again elevated"
+                }
+            } else {
+                # It is available and loaded; nothing to do.
             }
             
-            $current = Get-Module -Name $module
-            if ($null -eq $current) {
-                Write-Warning -Message "Cannot get module $module; trying a second time"
-                $current = Get-Module -Name $module -ListAvailable
+            [PSModuleInfo[]]$current = Get-Module -Name $module
+            $isLoaded = $current -ne $null
+
+            if (-not $isLoaded) {
+                continue
             }
 
-            if ($null -eq $current) {
-                Write-Verbose -Message "Module $module is not installed"
+            if ($current.Length -gt 1) {
+                Write-Warning -Message "Multiple installations of $module detected"
+            }
+            $current = $current[0]
 
-				if (Get-Module -Name PackageManagement) {
-					$available = Find-Package -Name $module -Source PSGallery # | Where-Object -Property ProviderName -eq PSModule
+            if ($Local) {
+                continue
+            }
 
-					if ($null -eq $available) {
-						Write-Warning -Message "Consider installing package $module ..."
-						# Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
-					}
-				} else {
-					Write-Warning -Message "Consider installing PackageManagement module"
-					Write-Warning -Message "Consider installing $module module"
-				}
-            } elseif ($lastChecked.ContainsKey($module)) {            
+            if ($lastChecked.ContainsKey($module)) {
                 $last = $lastChecked[$module]
 
                 Write-Verbose -Message "Module $module is installed, last time checked: $last"
@@ -73,14 +133,13 @@
 
                 if ($diff.CompareTo($timeBetweenChecks) -gt 0) {
                     Write-Verbose -Message "Checking for update for module $module"
-                    $available = Find-Package -Name $module # | Where-Object -Property ProviderName -eq PSModule
+                    $available = Find-Package -Name $module
 
                     if ( ($null -ne $available) -and ($current.Version -ne $available.Version) ) {
                         $currentVersion = $current.Version
                         $availableVersion = $available.Version
                     
                         Write-Warning -Message "Consider upgrading package $module (current: $currentVersion, available: $availableVersion) ..."
-                        # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
                     } else {
                         # Installed version is updated
                         $now = Get-Date
@@ -91,7 +150,6 @@
                 }
             } else {
                 Write-Verbose -Message "Module $module is installed, but we do not have a record of checking its version"
-                # $available = Find-Package -Name $module | Where-Object -Property ProviderName -eq PSModule
                 $available = Find-Package -Name $module -Source PSGallery -ErrorAction SilentlyContinue
 
                 if ($null -eq $available) {
@@ -99,8 +157,7 @@
                 } elseif ($current.Version -ne $available.Version) {
                     $currentVersion = $current.Version
                     $availableVersion = $available.Version
-                    Write-Warning -Message "Consider upgrading $module (current: $currentVersion, available: $availableVersion) [look also for multiple installations of pscx, e.g. with choco] ...."
-                    # Write-Host -Object "... using: Find-Package $module | ? ProviderName -eq PSModule | Install-Package -Force (in elevated prompt)"
+                    Write-Warning -Message "Consider upgrading $module (current: $currentVersion, available: $availableVersion) ...."
                 } else {
                     $now = Get-Date
                     $lastChecked.Add($module, $now)
