@@ -45,7 +45,7 @@ function ProcessModule {
     [CmdletBinding()]
     param (
         [ValidateNotNullOrEmpty()]
-        [string]
+        [string[]]
         $module,
 
         [bool]
@@ -64,12 +64,12 @@ function ProcessModule {
 }
 
 $load = -not $DoNotLoad
-$modules | ForEach-Object -Process { ProcessModule -module $_ -load $load }
+ProcessModule -module $modules -load $load
 
 $load = (Test-AdminRights) -and (-not $DoNotLoad)
 Write-Verbose -Message "Checking modules that require admin rights"
-$modulesAsAdmin | ForEach-Object -Process { ProcessModule -module $_ -load $load }
+ProcessModule -module $modulesAsAdmin -load $load
 
 $load = ($Host.Name -eq "Windows PowerShell ISE Host") -and (-not $DoNotLoad)
 Write-Verbose -Message "Checking ISE modules"
-$modulesIse | ForEach-Object -Process { ProcessModule -module $_ -load $load }
+ProcessModule -module $modulesIse -load $load

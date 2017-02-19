@@ -10,13 +10,17 @@ Import-Module Environment
 #
 $StartMS = Get-Date
 
-Get-ModuleInstall -ModuleName PowerShellGet -ErrorAction SilentlyContinue
-Get-ModuleInstall -ModuleName PSReadLine -ErrorAction SilentlyContinue
-Get-ModuleInstall -ModuleName pscx -ErrorAction SilentlyContinue
-Get-ModuleInstall -ModuleName PowerShellCookbook -ErrorAction SilentlyContinue
-Get-ModuleInstall -ModuleName posh-git -ErrorAction SilentlyContinue
-Get-ModuleInstall -ModuleName TypePx -ErrorAction SilentlyContinue
-Get-ModuleInstall -ModuleName ISEModuleBrowserAddon -ErrorAction SilentlyContinue
+$modules = (
+    'PowerShellGet',
+    'PSReadLine',
+    'pscx',
+    'PowerShellCookbook',
+    'posh-git',
+    'TypePx',
+    'ISEModuleBrowserAddon'
+)
+
+Get-ModuleInstall -ModuleName $modules -ErrorAction SilentlyContinue
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
