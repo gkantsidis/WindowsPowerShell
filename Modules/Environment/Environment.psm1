@@ -10,4 +10,5 @@ $RootOfPowershellDirectory = $PSScriptRoot
 . $PSScriptRoot/Settings.ps1
 . $PSScriptRoot/SoftwareInfo.ps1
 . $PSScriptRoot/SystemInfo.ps1
+. $PSScriptRoot/TextFile.ps1
 . $PSScriptRoot/Windowing.ps1

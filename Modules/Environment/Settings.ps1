@@ -10,7 +10,7 @@
         $Name = [System.String]::Format("{0}.settings", [System.DateTime]::Now.ToUniversalTime().ToString("yyyyMMdd-hhmmss")),
 
         [switch]
-        $IgnoreMachineSpecific = $true
+        $SaveMachineSpecific
     )
 
     if (-not (Test-Path -Path $Path -PathType Container)) {
@@ -24,7 +24,7 @@
     }
 
     $settings = Get-ChildItem Env: -Recurse
-    if ($IgnoreMachineSpecific) {       
+    if (-not $SaveMachineSpecific) {       
         $settings = $settings | ForEach-Object -Process {
             $entry = $_
             if ( ($entry.Name -match "^PROCESSOR")  -or
