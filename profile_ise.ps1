@@ -103,13 +103,8 @@ Start-SshAgent -Quiet
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
 
 if (Test-HasVisualStudio) {
-    Invoke-Expression -Command .\Modules\Posh-VsVars\Posh-VsVars-Profile.ps1
-
-    # TODO The Posh-VsVars module adds spurious entries in the LIB variable
-    if ($Env:LIB) {
-        $newLIB = $Env:LIB -split ';' | Where-Object -FilterScript { ($_.Length -gt 0) -and (Test-Path "$_") }
-        $env:LIB = [string]::Join(';', $newLIB)
-    }
+    Import-Module -Name .\Modules\Posh-VsVars
+    Write-Warning -Message "You may want to call Set-VsVars to import Visual Studio settings"
 }
 
 $EndMS = Get-Date
