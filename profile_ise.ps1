@@ -17,6 +17,7 @@ $modules = (
     'PowerShellCookbook',
     'posh-git',
     'TypePx',
+    'VSSetup',
     'ISEModuleBrowserAddon'
 )
 
