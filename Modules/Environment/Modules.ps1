@@ -28,7 +28,7 @@ function script:InstallModule {
     # There are a number of ways to install the package. Not sure which order is the best,
     # or the differences between them.
     if (Get-Command -Name Install-Module -Module PowerShellGet -ErrorAction SilentlyContinue) {
-        PowerShellGet\Install-Module -Name $Name -Force -AllowClobber
+        PowerShellGet\Install-Module -Name $Name -Force -AllowClobber -Repository PSGallery
     } elseif (Get-Command -Name Install-Module -Module PsGet -ErrorAction SilentlyContinue) {
         PsGet\Install-Module -ModuleName $Name -Force
     } elseif (Get-Command -Name Install-Package -Module PackageManagement -ErrorAction SilentlyContinue) {
@@ -133,7 +133,7 @@ function Get-ModuleInstall {
 
                 if ($diff.CompareTo($timeBetweenChecks) -gt 0) {
                     Write-Verbose -Message "Checking for update for module $module"
-                    $available = Find-Package -Name $module
+                    $available = Find-Package -Name $module -Source PSGallery
 
                     if ( ($null -ne $available) -and ($current.Version -ne $available.Version) ) {
                         $currentVersion = $current.Version
