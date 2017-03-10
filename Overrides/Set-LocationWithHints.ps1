@@ -110,9 +110,11 @@ function Set-LocationWithHints {
 
         $leaf = Split-Path $pwd.ProviderPath -Leaf
 
+        # The command Get-GitStatus may return a non-null object even if the path is not part of a git repository.
+        # For example, it is possible to put .git in the root (e.g. C:\.git) to register hooks.
         $git = Get-GitStatus
-        if ($git -ne $null) {
-            $gitroot = Split-Path (Split-Path (Get-GitStatus).GitDir -Parent) -Leaf
+        if ( ($git -ne $null) -and (Test-Path -Path (Join-Path -Path $git.GitDir -ChildPath "config")) ) {
+            $gitroot = Split-Path (Split-Path $git.GitDir -Parent) -Leaf
         } else {
             $gitroot = $null
         }
