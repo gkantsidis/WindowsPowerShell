@@ -18,6 +18,9 @@ function Set-LocationWithHints {
         [string[]]
         $UnboundArguments,
 
+        [switch]
+        $ExpandPath,
+
         [Parameter()]
         [switch]
         $PassThru,
@@ -44,44 +47,56 @@ function Set-LocationWithHints {
 
     Process
     {
-        switch($realcd)
-        {
-            'Set-LocationEx' {
-                if ($PSCmdlet.ParameterSetName -eq 'Path') {
-                    if ($UnboundArguments -ne $null) {
-                        Set-LocationEx  -Path $Path `
-                                        -UnboundArguments $UnboundArguments `
-                                        -PassThru:$PassThru.IsPresent `
-                                        -UseTransaction:$UseTransaction.IsPresent
+        function DoChangePath($realcd, $Path) {
+            switch($realcd)
+            {
+                'Set-LocationEx' {
+                    if ($PSCmdlet.ParameterSetName -eq 'Path') {
+                        if ($UnboundArguments -ne $null) {
+                            Set-LocationEx  -Path $Path `
+                                            -UnboundArguments $UnboundArguments `
+                                            -PassThru:$PassThru.IsPresent `
+                                            -UseTransaction:$UseTransaction.IsPresent
+                        } else {
+                            Set-LocationEx  -Path $Path `
+                                            -PassThru:$PassThru.IsPresent `
+                                            -UseTransaction:$UseTransaction.IsPresent                        
+                        }
                     } else {
-                        Set-LocationEx  -Path $Path `
-                                        -PassThru:$PassThru.IsPresent `
-                                        -UseTransaction:$UseTransaction.IsPresent                        
+                        if ($UnboundArguments -ne $null) {
+                            Set-LocationEx  -LiteralPath $Path `
+                                            -UnboundArguments $UnboundArguments `
+                                            -PassThru:$PassThru.IsPresent `
+                                            -UseTransaction:$UseTransaction.IsPresent
+                        } else {
+                            Set-LocationEx  -LiteralPath $Path `
+                                            -PassThru:$PassThru.IsPresent `
+                                            -UseTransaction:$UseTransaction.IsPresent                        
+                        }                    
                     }
-                } else {
-                    if ($UnboundArguments -ne $null) {
-                        Set-LocationEx  -LiteralPath $Path `
-                                        -UnboundArguments $UnboundArguments `
+                }
+                'Set-Location' {
+                    if ($PSCmdlet.ParameterSetName -eq 'Path') {
+                        Set-Location    -Path $Path `
                                         -PassThru:$PassThru.IsPresent `
                                         -UseTransaction:$UseTransaction.IsPresent
                     } else {
-                        Set-LocationEx  -LiteralPath $Path `
+                        Set-Location    -LiteralPath $Path `
                                         -PassThru:$PassThru.IsPresent `
-                                        -UseTransaction:$UseTransaction.IsPresent                        
-                    }                    
+                                        -UseTransaction:$UseTransaction.IsPresent
+                    }
                 }
             }
-            'Set-Location' {
-                if ($PSCmdlet.ParameterSetName -eq 'Path') {
-                    Set-Location    -Path $Path `
-                                    -PassThru:$PassThru.IsPresent `
-                                    -UseTransaction:$UseTransaction.IsPresent
-                } else {
-                    Set-Location    -LiteralPath $Path `
-                                    -PassThru:$PassThru.IsPresent `
-                                    -UseTransaction:$UseTransaction.IsPresent
-                }
-            }
+        }
+
+        DoChangePath $realcd $Path
+
+        if ($ExpandPath) {
+            $realpath = $pwd.ProviderPath
+            DoChangePath $realcd $realpath
+
+            $realpath = Get-Item . | Select-Object -ExpandProperty Target
+            DoChangePath $realcd $realpath
         }
 
         $pwd = Get-Location
