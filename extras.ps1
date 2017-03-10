@@ -23,6 +23,7 @@ $modules = (
     'PSConfig',
     'PSParallel',
     'PSScriptAnalyzer',
+    'PSWindowsUpdate',
     'Posh-Gist',
     'RoughDraft',
     'ScriptBrowser',
