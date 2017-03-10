@@ -14,10 +14,6 @@ function Set-LocationWithHints {
         [string]
         $LiteralPath,
 
-        [Parameter(ValueFromRemainingArguments=$true)]
-        [string[]]
-        $UnboundArguments,
-
         [switch]
         $ExpandPath,
 
@@ -27,13 +23,23 @@ function Set-LocationWithHints {
 
         [Parameter()]
         [switch]
-        $UseTransaction
+        $UseTransaction,
+
+        [Parameter(ValueFromRemainingArguments=$true)]
+        [string[]]
+        $UnboundArguments
     )
 
     Begin
     {
+        Write-Verbose -Message "Starting initialization"
+
         Set-StrictMode -Version Latest
-        $realcd = (Get-Alias cd).ResolvedCommandName
+        $realcd = (Get-Alias cd).Definition
+        if ([System.String]::IsNullOrWhiteSpace($realcd)) {
+            Write-Verbose -Message "Cannot find alias for cd; will use default"
+            $realcd = "Set-Location"
+        }
 
         $isAdmin = Test-AdminRights
 
@@ -43,6 +49,8 @@ function Set-LocationWithHints {
         } else {
             $isCmder = $true
         }
+
+        Write-Verbose -Message "Done with initialization"
     }
 
     Process
@@ -50,25 +58,29 @@ function Set-LocationWithHints {
         function DoChangePath($realcd, $Path) {
             switch($realcd)
             {
-                'Set-LocationEx' {
+                'Pscx\Set-LocationEx' {
                     if ($PSCmdlet.ParameterSetName -eq 'Path') {
                         if ($UnboundArguments -ne $null) {
+                            Write-Verbose -Message "Changing path with Set-LocationEx and unbound arguments"
                             Set-LocationEx  -Path $Path `
                                             -UnboundArguments $UnboundArguments `
                                             -PassThru:$PassThru.IsPresent `
                                             -UseTransaction:$UseTransaction.IsPresent
                         } else {
+                            Write-Verbose -Message "Changing path with Set-LocationEx"
                             Set-LocationEx  -Path $Path `
                                             -PassThru:$PassThru.IsPresent `
                                             -UseTransaction:$UseTransaction.IsPresent                        
                         }
                     } else {
                         if ($UnboundArguments -ne $null) {
+                            Write-Verbose -Message "Changing path with Set-LocationEx, literal path, and unbound arguments"
                             Set-LocationEx  -LiteralPath $Path `
                                             -UnboundArguments $UnboundArguments `
                                             -PassThru:$PassThru.IsPresent `
                                             -UseTransaction:$UseTransaction.IsPresent
                         } else {
+                            Write-Verbose -Message "Changing path with Set-LocationEx and literal path"
                             Set-LocationEx  -LiteralPath $Path `
                                             -PassThru:$PassThru.IsPresent `
                                             -UseTransaction:$UseTransaction.IsPresent                        
@@ -77,10 +89,12 @@ function Set-LocationWithHints {
                 }
                 'Set-Location' {
                     if ($PSCmdlet.ParameterSetName -eq 'Path') {
+                        Write-Verbose -Message "Changing path with Set-Location"
                         Set-Location    -Path $Path `
                                         -PassThru:$PassThru.IsPresent `
                                         -UseTransaction:$UseTransaction.IsPresent
                     } else {
+                        Write-Verbose -Message "Changing path with Set-Location and literal path"
                         Set-Location    -LiteralPath $Path `
                                         -PassThru:$PassThru.IsPresent `
                                         -UseTransaction:$UseTransaction.IsPresent
