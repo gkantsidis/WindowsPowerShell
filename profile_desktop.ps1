@@ -141,7 +141,7 @@ if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -Pat
 # Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
 $cwcmd = Get-Command -Name New-CommandWrapper -ErrorAction SilentlyContinue
 if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
-    . .\set-file-colors.ps1
+    . .\customize-console-output.ps1
 }
 
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
