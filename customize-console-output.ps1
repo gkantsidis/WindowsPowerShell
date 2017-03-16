@@ -236,10 +236,22 @@ New-CommandWrapper -Name Out-Default `
     }
     elseif (("System.Security.Cryptography.X509Certificates.X509CertificateContextProperty" -as [type]) -and ($_ -is [System.Security.Cryptography.X509Certificates.X509CertificateContextProperty]))
     {
+        if(-not ($notfirst)) 
+        {
+           Write-Host
+           Write-Host ("{0,-50} {1,-17} {2}" -f "Certificate","Property","Value")
+           Write-Host ("{0} {1} {2}" -f [System.String]::new('-', 50),[System.String]::new('-', 17),[System.String]::new('-', 30))
+           $notfirst=$true
+        }
+
         $certproperty = [System.Security.Cryptography.X509Certificates.X509CertificateContextProperty]$_
-        $certificate = $certproperty.Certificate.Subject
+        $certificate = $certproperty.Certificate.Subject.ToString()
         $property = $certproperty.PropertyName        
         $value = $certproperty.PropertyValue
+
+        if ($certificate.Length -gt 45) {
+            $certificate = "{0}..." -f $certificate.Substring(0, 45)
+        }
 
         if ($value -is [PKI.Structs.Wincrypt+CRYPT_KEY_PROV_INFO]) {
             [PKI.Structs.Wincrypt+CRYPT_KEY_PROV_INFO]$v = $value
@@ -250,7 +262,7 @@ New-CommandWrapper -Name Out-Default `
             $valuestr = ""
         }
         
-        Write-Host ("{0,-25} [{1,-15}] {2}" -f $certificate,$property,$valuestr)
+        Write-Host ("{0,-50} [{1,-15}] {2}" -f $certificate,$property,$valuestr)
         $_ = $null
     }
     else 
