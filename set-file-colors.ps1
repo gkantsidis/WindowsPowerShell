@@ -234,6 +234,25 @@ New-CommandWrapper -Name Out-Default `
         }
         $_ = $null
     }
+    elseif (("System.Security.Cryptography.X509Certificates.X509CertificateContextProperty" -as [type]) -and ($_ -is [System.Security.Cryptography.X509Certificates.X509CertificateContextProperty]))
+    {
+        $certproperty = [System.Security.Cryptography.X509Certificates.X509CertificateContextProperty]$_
+        $certificate = $certproperty.Certificate.Subject
+        $property = $certproperty.PropertyName        
+        $value = $certproperty.PropertyValue
+
+        if ($value -is [PKI.Structs.Wincrypt+CRYPT_KEY_PROV_INFO]) {
+            [PKI.Structs.Wincrypt+CRYPT_KEY_PROV_INFO]$v = $value
+            $valuestr = $v.pwszContainerName
+        } elseif ($null -ne $value) {
+            $valuestr = $value.ToString()
+        } else {
+            $valuestr = ""
+        }
+        
+        Write-Host ("{0,-25} [{1,-15}] {2}" -f $certificate,$property,$valuestr)
+        $_ = $null
+    }
     else 
     {
         # Write-Host $_.ToString()
