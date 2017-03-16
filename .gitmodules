@@ -20,3 +20,6 @@
 	path = Source/NTFS-Streams
 	url = https://github.com/RichardD2/NTFS-Streams.git
 
+[submodule "Source/PSPKI"]
+	path = Source/PSPKI
+	url = https://github.com/gkantsidis/PSPKI.git

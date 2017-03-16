@@ -146,6 +146,8 @@ if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
 
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
 
+Import-Module $PSScriptRoot\Source\PSPKI\PSPKI
+
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
 "{0,-50} {1,10:F3} msec to load" -f "Third party modules took",$Diff
