@@ -109,8 +109,36 @@ function Set-LocationWithHints {
             $realpath = $pwd.ProviderPath
             DoChangePath $realcd $realpath
 
-            $realpath = Get-Item . | Select-Object -ExpandProperty Target
+            [string[]]$components = @()
+            $current = Get-Item -Path .
+            $stopsearch = $false
+            do {
+                Write-Debug -Message "Examining $current"            
+                if ([System.String]::Equals($current.LinkType, "Junction", [System.StringComparison]::InvariantCultureIgnoreCase)) {
+                    Write-Debug -Message "Detected that $current is junction"
+                    $realpath = Select-Object -InputObject $current -ExpandProperty Target                    
+                    DoChangePath $realcd $realpath
+                    $current = Get-Item -Path .
+                } else {
+                    $thispath = Split-Path -Path $current -Leaf
+                    $components += $thispath
+                    $parent = Split-Path -Path $current -Parent
+                    if ([System.String]::IsNullOrWhiteSpace($parent)) {
+                        $stopsearch = $true
+                        $current = $null
+                    } else {
+                        $current = Get-Item -Path $parent
+                    }
+                }
+            } until ($stopsearch -or ($current -eq $null))
+
+            Write-Debug -Message "Components: $components"
+            $components = $components.Reverse()
+            Write-Debug -Message "Components in order: $components"
+            $realpath = [System.IO.Path]::Combine($components)
+            Write-Verbose -Message "Switching to $realpath"
             DoChangePath $realcd $realpath
+            
         }
 
         $pwd = Get-Location
