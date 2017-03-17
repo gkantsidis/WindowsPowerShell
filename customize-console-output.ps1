@@ -105,7 +105,12 @@ function script:Write-Color-LS
 
         $related = ""
         if ($file -is [System.IO.DirectoryInfo]) {
-            $related = Get-RelativePath -Target $file.Parent.FullName -Base $rootDirectory.ProviderPath
+            if ($null -ne $file.Parent) {
+                $related = Get-RelativePath -Target $file.Parent.FullName -Base $rootDirectory.ProviderPath
+            } else {
+                $related = ""
+            }
+
         } elseif ($file -is [System.IO.FileInfo]) {
             $related = Get-RelativePath -Target $file.Directory.FullName -Base $rootDirectory.ProviderPath
         }
@@ -117,7 +122,12 @@ function script:Write-Color-LS
             Write-host ("{0,-7} {1,25} {2,10} {3}" -f $file.mode, ([String]::Format("{0,10}  {1,8}", $file.LastWriteTime.ToString("d"), $file.LastWriteTime.ToString("t"))), $length, $file.name) -foregroundcolor $color
         } else {
             Write-host ("{0,-7} {1,25} {2,10} {3}" -f $file.mode, ([String]::Format("{0,10}  {1,8}", $file.LastWriteTime.ToString("d"), $file.LastWriteTime.ToString("t"))), $length, $file.name) -foregroundcolor $color -NoNewline
-            Write-Host (" [{0}]" -f $related) -ForegroundColor Gray
+            if (-not [System.String]::IsNullOrWhiteSpace($related)) {
+                Write-Host (" [{0}]" -f $related) -ForegroundColor Gray
+            } else {
+                # We need that to print a new line
+                Write-Host ""
+            }
         }
     }
 
