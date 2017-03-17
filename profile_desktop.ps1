@@ -111,7 +111,6 @@ Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
 
 if (Test-HasVisualStudio) {
     Import-Module -Name .\Modules\Posh-VsVars
-    Write-Warning -Message "You may want to call Set-VsVars to import Visual Studio settings; it is not default any more"
 }
 
 $EndMS = Get-Date
