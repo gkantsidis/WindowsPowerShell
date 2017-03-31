@@ -176,6 +176,7 @@ function script:Write-HostCustomized-Dispatcher
     if ($str.Length -lt 100) {
         $str = [Regex]::Replace($str, "\n|\r", "")
         $str = [Regex]::Replace($str, "\t", "; ")
+        $str = [Regex]::Replace($str, "[; ", "[ ")
     }
 
     Write-Host $str
@@ -247,15 +248,18 @@ New-CommandWrapper -Name Out-Default `
 -Process {
     $regex_opts = ([System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
 
-
     $compressed = New-Object System.Text.RegularExpressions.Regex(
-        '\.(zip|tar|gz|rar|jar|war)$', $regex_opts)
+        '\.(7z|zip|tar|gz|rar|jar|war)$', $regex_opts)
     $executable = New-Object System.Text.RegularExpressions.Regex(
-        '\.(exe|bat|cmd|py|pl|ps1|psm1|vbs|rb|reg)$', $regex_opts)
+        '\.(exe|bat|cmd|py|pl|ps1|psm1|psd1|vbs|rb|reg)$', $regex_opts)
     $text_files = New-Object System.Text.RegularExpressions.Regex(
-        '\.(txt|cfg|conf|ini|csv|log|xml)$', $regex_opts)
+        '\.(txt|cfg|conf|ini|csv|log|xml|yml|json)$', $regex_opts)
+    $doc_files = New-Object System.Text.RegularExpressions.Regex(
+        '\.(doc|docx|ppt|pptx|xls|xlsx|mdb|mdf|ldf)$', $regex_opts)
     $source_files = New-Object System.Text.RegularExpressions.Regex(
-        '\.(java|c|cpp|cs|fs|fsi|ml|mli)$', $regex_opts)
+        '\.(java|c|cpp|cs|fs|fsi|fsx|ml|mli)$', $regex_opts)
+    $solution_files = New-Object System.Text.RegularExpressions.Regex(
+        '\.(sln|csproj|sqlproj|proj|targets)$', $regex_opts) 
 
     if(($_ -is [System.IO.DirectoryInfo]) -or ($_ -is [System.IO.FileInfo]))
     {
@@ -276,20 +280,28 @@ New-CommandWrapper -Name Out-Default `
         }
         elseif ($compressed.IsMatch($_.Name))
         {
-            Write-Color-LS "DarkGreen" $_ $rootDirectory
+            Write-Color-LS "DarkRed" $_ $rootDirectory
         }
         elseif ($executable.IsMatch($_.Name))
         {
-            Write-Color-LS "Red" $_ $rootDirectory
+            Write-Color-LS "DarkGreen" $_ $rootDirectory
         }
         elseif ($text_files.IsMatch($_.Name))
         {
-            Write-Color-LS "Yellow" $_ $rootDirectory
-        }
-        elseif ($source_files.IsMatch($_.Name))
-        {
             Write-Color-LS "DarkYellow" $_ $rootDirectory
         }
+        elseif ($doc_files.IsMatch($_.Name))
+        {
+            Write-Color-LS "Yellow" $_ $rootDirectory
+        }        
+        elseif ($source_files.IsMatch($_.Name))
+        {
+            Write-Color-LS "Cyan" $_ $rootDirectory
+        }
+        elseif ($solution_files.IsMatch($_.Name))
+        {
+            Write-Color-LS "DarkCyan" $_ $rootDirectory
+        }        
         else
         {
             Write-Color-LS "White" $_ $rootDirectory
