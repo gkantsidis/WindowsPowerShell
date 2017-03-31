@@ -176,7 +176,7 @@ function script:Write-HostCustomized-Dispatcher
     if ($str.Length -lt 100) {
         $str = [Regex]::Replace($str, "\n|\r", "")
         $str = [Regex]::Replace($str, "\t", "; ")
-        $str = [Regex]::Replace($str, "[; ", "[ ")
+        $str = [Regex]::Replace($str, "\[; ", "[")
     }
 
     Write-Host $str
