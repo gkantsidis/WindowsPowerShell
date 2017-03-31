@@ -100,6 +100,19 @@ function Set-LocationWithHints {
                                         -UseTransaction:$UseTransaction.IsPresent
                     }
                 }
+                'cdX' {
+                    if ($PSCmdlet.ParameterSetName -eq 'Path') {
+                        Write-Verbose -Message "Changing path with Set-Location"
+                        cdX -Path $Path `
+                            -PassThru:$PassThru.IsPresent `
+                            -UseTransaction:$UseTransaction.IsPresent
+                    } else {
+                        Write-Verbose -Message "Changing path with Set-Location and literal path"
+                        cdX -LiteralPath $Path `
+                            -PassThru:$PassThru.IsPresent `
+                            -UseTransaction:$UseTransaction.IsPresent
+                    }
+                }
             }
         }
 
@@ -179,4 +192,4 @@ function Set-LocationWithHints {
     }
 }
 
-Set-Alias -Name cdx -Value Set-LocationWithHints
+Set-Alias -Name cdz -Value Set-LocationWithHints
