@@ -31,8 +31,7 @@ $modules = (
     'ShowUI',
     'SnippetPx',
     'TypePx',
-    'xNetworking',
-    'Z'
+    'xNetworking'
 )
 
 $modulesIse = (
