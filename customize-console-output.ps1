@@ -154,13 +154,13 @@ New-CommandWrapper -Name Out-Default `
         {
            Write-Host
            Write-Host "    Directory: " -noNewLine
-           Write-Host " $(pwd)`n" -foregroundcolor "Magenta"           
+           Write-Host " $(Get-Location)`n" -foregroundcolor "Magenta"           
            Write-Host "Mode                LastWriteTime     Length Name"
            Write-Host "----                -------------     ------ ----"
            $notfirst=$true
         }
 
-        $rootDirectory = $(pwd)
+        $rootDirectory = $(Get-Location)
         if ($_ -is [System.IO.DirectoryInfo]) 
         {
             Write-Color-LS "Magenta" $_ $rootDirectory
