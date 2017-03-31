@@ -72,6 +72,115 @@ function script:Get-RelativePath {
     }
 }
 
+function script:Write-HostCustomized-Array
+{
+    param (
+        [ValidateNotNull()]
+        [Object[]]
+        $Target,
+
+        [int]
+        $Tabs = 0,
+
+        [ValidateNotNull()]
+        [System.Text.StringBuilder]
+        $SB
+    )
+
+    $ntabs = $Tabs + 1
+    $SB.AppendFormat("{0}[", ("`t" * $Tabs)) | Out-Null
+    $SB.AppendLine() | Out-Null
+    for($i = 0; $i -lt $Target.Length; $i++) {
+        $item = $Target[$i]
+        Write-HostCustomized-Dispatcher-Internal -Target $item -Tabs $ntabs -SB $SB
+    }
+    $SB.AppendFormat("{0}]", ("`t" * $Tabs)) | Out-Null
+    $SB.AppendLine() | Out-Null
+}
+
+function script:Write-HostCustomized-Enumerator
+{
+    param (
+        # [ValidateNotNull()] --- Observe that this attribute will consume the enumerator and the code below will print nothing
+        [System.Collections.IEnumerator]
+        $Target,
+
+        [int]
+        $Tabs = 0,
+
+        [ValidateNotNull()]
+        [System.Text.StringBuilder]
+        $SB        
+    )
+
+    if ($null -eq $Target) {
+        return
+    }
+    
+    $ntabs = $Tabs + 1
+    $SB.AppendFormat("{0}[", ("`t" * $Tabs)) | Out-Null
+    $SB.AppendLine() | Out-Null
+    while ($Target.MoveNext()) {
+        $item = $Target.Current
+        Write-HostCustomized-Dispatcher-Internal -Target $item -Tabs $ntabs -SB $SB
+    }
+    $SB.AppendFormat("{0}]", ("`t" * $Tabs)) | Out-Null
+    $SB.AppendLine() | Out-Null
+}
+
+function script:Write-HostCustomized-Dispatcher-Internal
+{
+    param (
+        $Target,
+
+        [int]
+        $Tabs = 0,
+
+        [ValidateNotNull()]
+        [System.Text.StringBuilder]
+        $SB
+    )
+
+    if ($null -eq $Target) {
+        # write nothing
+    }
+    elseif ($Target -is [Object[]]) {
+        Write-HostCustomized-Array -Target $Target -Tabs $Tabs -SB $SB
+    }
+    elseif ($Target -is [System.Collections.IEnumerator]) {
+        Write-HostCustomized-Enumerator -Target $Target -Tabs $Tabs -SB $SB
+    }
+    elseif ($Target -is [System.Char]) {
+        $SB.AppendFormat("{0}{1}", ("`t" * $Tabs), $Target) | Out-Null
+        $SB.AppendLine() | Out-Null
+    }
+    else {
+        $v = $Target.ToString()
+        $SB.AppendFormat("{0}{1}", ("`t" * $Tabs), $v) | Out-Null
+        $SB.AppendLine() | Out-Null
+    }
+}
+
+function script:Write-HostCustomized-Dispatcher
+{
+    param (
+        $Target,
+
+        [int]
+        $Tabs = 0
+    )
+
+    $sb = [System.Text.StringBuilder]::new()
+    Write-HostCustomized-Dispatcher-Internal -Target $Target -Tabs $Tabs -SB $sb
+    $str = $sb.ToString()
+    if ($str.Length -lt 100) {
+        $str = [Regex]::Replace($str, "\n|\r", "")
+        $str = [Regex]::Replace($str, "\t", "; ")
+    }
+
+    Write-Host $str
+}
+
 function script:Write-Color-LS
     {
         param (
@@ -224,6 +333,10 @@ New-CommandWrapper -Name Out-Default `
         }
         $_ = $null
     }
+    elseif ($_ -is [System.Array]) {
+        Write-HostCustomized-Dispatcher -Target $_
+        $_ = $null
+    }
     elseif ($_ -eq $null)
     {
         # Disable the following for the default behavior
@@ -282,5 +395,8 @@ New-CommandWrapper -Name Out-Default `
     }
 } `
 -End {
+    # The following results in printing an empty line.
+    # If this script is called multiple times, the result will be multiple empty lines to accumulate.
+    # This is fine, since the script is called multiple times only during dev.
     write-host ""
 }
