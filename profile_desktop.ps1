@@ -171,7 +171,12 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
     if (-not (Get-Module -Name PSFzf -ErrorAction SilentlyContinue)) {
         # Module PSFzf exists and it is not loaded
-        Import-Module PSFzf -ArgumentList 'Ctrl+T','Ctrl+Alt+R','Alt+C','Alt+A'
+
+        if (Get-Command -Name fzf -ErrorAction SilentlyContinue) {
+            Import-Module PSFzf -ArgumentList 'Ctrl+T','Ctrl+Alt+R','Alt+C','Alt+A'
+        } else {
+            Write-Warning -Message "Consider installing fzf, e.g. cinst -y fzf"
+        }
     }
 }
 
