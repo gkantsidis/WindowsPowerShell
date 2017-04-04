@@ -10,6 +10,7 @@ $modules = (
     'cWindowsOS',
     'EZOut',
     'DeployImage',
+    'DockerMsftProvider',
     'Find-String',
     'GistProvider',
     'LibGit2',
@@ -21,6 +22,7 @@ $modules = (
     'PoshInternals',
     'psake',
     'PSConfig',
+    'PSFzf',
     'PSParallel',
     'PSScriptAnalyzer',
     'PSWindowsUpdate',
@@ -74,3 +76,7 @@ ProcessModule -module $modulesAsAdmin -load $load
 $load = ($Host.Name -eq "Windows PowerShell ISE Host") -and (-not $DoNotLoad)
 Write-Verbose -Message "Checking ISE modules"
 ProcessModule -module $modulesIse -load $load
+
+if (-not (Get-Command -Name fzf -ErrorAction SilentlyContinue)) {
+    Write-Verbose -Message "Cannot find fzf.exe in the path; please install, e.g. cinst -y fzf"
+}

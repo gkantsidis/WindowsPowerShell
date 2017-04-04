@@ -165,6 +165,17 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 "{0,-50} {1,10:F3} msec to load" -f "Command overrides",$Diff
 
 #
+# Command line fuzzy finder
+# 
+
+if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
+    if (-not (Get-Module -Name PSFzf -ErrorAction SilentlyContinue)) {
+        # Module PSFzf exists and it is not loaded
+        Import-Module PSFzf -ArgumentList 'Ctrl+T','Ctrl+Alt+R','Alt+C','Alt+A'
+    }
+}
+
+#
 # Local Modules
 # 
 
