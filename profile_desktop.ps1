@@ -189,6 +189,9 @@ $StartMS = Get-Date
 Set-StrictMode -Version latest
 
 Import-Module Editors
+if (Get-Module -Name Z -ListAvailable -ErrorAction SilentlyContinue) {
+    Import-Module Z
+}
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
