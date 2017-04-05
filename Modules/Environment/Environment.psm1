@@ -8,6 +8,7 @@ $RootOfPowershellDirectory = $PSScriptRoot
 . $PSScriptRoot/MsiHelper.ps1
 . $PSScriptRoot/FileSystem.ps1
 . $PSScriptRoot/DateTime.ps1
+. $PSScriptRoot/Scoop.ps1
 . $PSScriptRoot/Settings.ps1
 . $PSScriptRoot/SoftwareInfo.ps1
 . $PSScriptRoot/SystemInfo.ps1
