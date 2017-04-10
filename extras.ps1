@@ -19,6 +19,7 @@ $modules = (
     'nPSDesiredStateConfiguration',
     'OutlookConnector',
     'Pipeworks',
+    'Plaster',
     'PoshInternals',
     'psake',
     'PSConfig',
