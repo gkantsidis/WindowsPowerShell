@@ -213,6 +213,7 @@ function Show-Calendar {
         'is-IS' {$translate = @{Year = 'Ári';      Month = 'Mánuði';   Week = 'Viku'}}       # Icelandic
         'pl-PL' {$translate = @{Year = 'Rok';      Month = 'Miesiąc';  Week = 'Tydzień'}}    # Polish
         'cy-GB' {$translate = @{Year = 'Blwyddyn'; Month = 'Mis';      Week = 'Wythnos'}}    # Welsh (United Kingdom)
+        'el-GR' {$translate = @{Year = "$([char]0x03A7)$([char]0x03c1)$([char]0x03cc)$([char]0x03bd)$([char]0x03bf)$([char]0x03c2)";     Month = "$([char]0x039c)$([char]0x03ae)$([char]0x03bd)$([char]0x03b1)$([char]0x03c2)";    Week = "$([char]0x0395)$([char]0x03b2)$([char]0x03b4)$([char]0x03bf)$([char]0x03bc)$([char]0x03ac)$([char]0x03b4)$([char]0x03b1)"}}       # Greek
         DEFAULT {$translate = @{Year = 'Year';     Month = 'Month';    Week = 'Week'}}       # Invariant Culture (English)
     }
 
