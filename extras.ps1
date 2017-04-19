@@ -12,6 +12,7 @@ $modules = (
     'DeployImage',
     'DockerMsftProvider',
     'Find-String',
+    'FormatPx',
     'GistProvider',
     'LibGit2',
     'LINQ',
