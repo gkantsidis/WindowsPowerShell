@@ -64,11 +64,11 @@ function Show-Calendar {
         # Day to mark on the calendar.
         [Parameter()]
         [ValidateRange(1,31)]
-        [int32] $MarkDay,
+        [int32[]] $MarkDay,
 
         # Date to mark on the calendar.
         [Parameter()]
-        [datetime] $MarkDate,
+        [datetime[]] $MarkDate,
 
         # Set alignment of the dates in the output. Default value is 'Right'.
         [Parameter()]
@@ -275,11 +275,11 @@ function Show-Calendar {
                     if($Alignment -eq 'Left') {$this.Day.ToString() + '*'}
                     else {'*' + $this.Day.ToString()}
                 }
-                elseif ($MarkDay -eq $this.Day) {
+                elseif ($MarkDay -contains $this.Day) {
                     if($Alignment -eq 'Left') {$this.Day.ToString() + '!'}
                     else {'!' + $this.Day.ToString()}
                 }
-                elseif ($MarkDate.Date -eq $this.Date) {
+                elseif ($MarkDate.Date -contains $this.Date) {
                     if($Alignment -eq 'Left') {$this.Day.ToString() + '!'}
                     else {'!' + $this.Day.ToString()}
                 }
