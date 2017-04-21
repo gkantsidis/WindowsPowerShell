@@ -12,6 +12,7 @@ $modules = (
     'DeployImage',
     'Find-String',
     'GistProvider',
+    'InvokeBuild',
     'LibGit2',
     'LINQ',
     'Logman',
