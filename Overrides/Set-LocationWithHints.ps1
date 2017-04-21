@@ -192,4 +192,5 @@ function Set-LocationWithHints {
     }
 }
 
+function zz ($path) { Set-LocationWithHints -ExpandPath -Path $path }
 Set-Alias -Name cdz -Value Set-LocationWithHints

@@ -165,6 +165,22 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 "{0,-50} {1,10:F3} msec to load" -f "Command overrides",$Diff
 
 #
+# Command line fuzzy finder
+# 
+
+if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
+    if (-not (Get-Module -Name PSFzf -ErrorAction SilentlyContinue)) {
+        # Module PSFzf exists and it is not loaded
+
+        if (Get-Command -Name fzf -ErrorAction SilentlyContinue) {
+            Import-Module PSFzf -ArgumentList 'Ctrl+T','Ctrl+Alt+R','Alt+C','Alt+A'
+        } else {
+            Write-Warning -Message "Consider installing fzf, e.g. cinst -y fzf"
+        }
+    }
+}
+
+#
 # Local Modules
 # 
 
@@ -173,6 +189,9 @@ $StartMS = Get-Date
 Set-StrictMode -Version latest
 
 Import-Module Editors
+if (Get-Module -Name Z -ListAvailable -ErrorAction SilentlyContinue) {
+    Import-Module Z
+}
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
