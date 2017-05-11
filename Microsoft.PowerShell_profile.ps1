@@ -1,6 +1,16 @@
+$private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent 
+Push-Location $private:PowerShellProfileDirectory
+
 #
 # Initialization
 #
+
+$usermodules = Join-Path -Path $PSScriptRoot -ChildPath Modules
+if ($Env:PSModulePath -ne $null) {
+    if (-not $Env:PSModulePath.Contains($usermodules)) {
+        $Env:PSModulePath += ";$usermodules"
+    }
+}
 
 Import-Module Environment
 
@@ -18,7 +28,7 @@ $modules = (
     'posh-git',
     'TypePx',
     'VSSetup',
-    'ISEModuleBrowserAddon'
+    'xUtility'
 )
 
 Get-ModuleInstall -ModuleName $modules -ErrorAction SilentlyContinue
@@ -29,20 +39,20 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 "{0,-50} {1,10:F3} msec to load" -f "Checking for external modules",$Diff
 
 # The other modules are local (i.e. in the repo or in submodules):
-# - Posh-VsVars (not really a module)
+# - Editors
 # - Invoke-MSBuild
 # - Pester
 # - IsePester
 # - PowerShellArsenal
+# - Posh-VsVars (not really a module)
 
 #
 # Build-in modules and initialization
 #
-
 Import-Module -Name powershellGet -ErrorAction SilentlyContinue
 
 Import-Module -Name PSReadLine -ErrorAction SilentlyContinue
-if (Get-Module -Name PSReadLine -ListAvailable) {
+if (Get-Module -Name PSReadLine) {
 	. $PSScriptRoot\profile_readline.ps1
 } else {
 	Write-Warning -Message "Consider installing PSReadLine module"
@@ -71,12 +81,7 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 # Module: posh-git
 $StartMS = Get-Date
 
-# Import the posh-git module, first via installed posh-git module.
-# If the module isn't installed, then attempt to load it from the cloned posh-git Git repo.
-$localPoshGitModule = Join-Path -Path (Split-Path $MyInvocation.MyCommand.Path -Parent) -ChildPath "Modules" | `
-                      Join-Path -ChildPath "posh-git" | `
-                      Join-Path -ChildPath "src" | `
-                      Join-Path -ChildPath "posh-git.psd1"
+# Import the posh-git module.
 
 $poshGitModule = Get-Module posh-git -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
 if ($poshGitModule) {
@@ -84,13 +89,6 @@ if ($poshGitModule) {
 }
 else {
     Write-Warning "Consider installing posh-git module (as admin): Install-Module -Name posh-git -Force -AllowClobber"
-    
-    if (Test-Path -LiteralPath $localPoshGitModule) {
-        Import-Module $localPoshGitModule
-    }
-    else {
-        throw "Failed to import posh-git."
-    }
 }
                                                                                                                                               
 # Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.                                                     
@@ -104,7 +102,6 @@ Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
 
 if (Test-HasVisualStudio) {
     Import-Module -Name .\Modules\Posh-VsVars
-    Write-Warning -Message "You may want to call Set-VsVars to import Visual Studio settings"
 }
 
 $EndMS = Get-Date
@@ -117,16 +114,29 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 $StartMS = Get-Date
 
+# The following three are included as submodules
 Import-Module Invoke-MSBuild\Invoke-MSBuild
 Import-Module Pester
-Import-Module IsePester
+$isIse = Test-IsIse
+if ($isIse) {
+    Import-Module IsePester
+}
 Import-Module PowerShellArsenal
 
 if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -PathType Leaf) {
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1" -Force
 }
 
+# Not needed here, we have imported it above:
+# Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
+$cwcmd = Get-Command -Name New-CommandWrapper -ErrorAction SilentlyContinue
+if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
+    . .\customize-console-output.ps1
+}
+
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
+
+Import-Module $PSScriptRoot\Source\PSPKI\PSPKI
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
@@ -138,11 +148,40 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 $StartMS = Get-Date
 
-. $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
+try {
+    # test that the GetCommand takes 3 argument, if not it will throw an exception and we will not overload gci
+    $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Management\Get-ChildItem', [System.Management.Automation.CommandTypes]::Cmdlet, "") | Out-Null
+    . $PSScriptRoot\Overrides\Get-ChildItem.ps1    
+}
+catch {
+    # do nothing; keep standard gci
+}
+
+if ((Get-Module -Name xUtility -ListAvailable) -ne $null) {
+    . $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
+} else {
+    Write-Warning -Message "Consider installing xUtility (admin):  Install-Module -Name xUtility -Force -AllowClobber"
+}
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
 "{0,-50} {1,10:F3} msec to load" -f "Command overrides",$Diff
+
+#
+# Command line fuzzy finder
+# 
+
+if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
+    if (-not (Get-Module -Name PSFzf -ErrorAction SilentlyContinue)) {
+        # Module PSFzf exists and it is not loaded
+
+        if (Get-Command -Name fzf -ErrorAction SilentlyContinue) {
+            Import-Module PSFzf -ArgumentList 'Ctrl+T','Ctrl+Alt+R','Alt+C','Alt+A'
+        } else {
+            Write-Warning -Message "Consider installing fzf, e.g. cinst -y fzf"
+        }
+    }
+}
 
 #
 # Local Modules
@@ -153,6 +192,9 @@ $StartMS = Get-Date
 Set-StrictMode -Version latest
 
 Import-Module Editors
+if (Get-Module -Name Z -ListAvailable -ErrorAction SilentlyContinue) {
+    Import-Module Z
+}
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
@@ -161,3 +203,8 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 #
 # End of initialization
 # 
+
+Pop-Location
+
+Write-Verbose -Message "Settting prompt"
+. $PSScriptRoot\Prompts.ps1
