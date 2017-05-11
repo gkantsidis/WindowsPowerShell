@@ -117,10 +117,6 @@ $StartMS = Get-Date
 # The following three are included as submodules
 Import-Module Invoke-MSBuild\Invoke-MSBuild
 Import-Module Pester
-$isIse = Test-IsIse
-if ($isIse) {
-    Import-Module IsePester
-}
 Import-Module PowerShellArsenal
 
 if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -PathType Leaf) {
@@ -130,12 +126,11 @@ if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -Pat
 # Not needed here, we have imported it above:
 # Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
 $cwcmd = Get-Command -Name New-CommandWrapper -ErrorAction SilentlyContinue
-if ( ($cwcmd -ne $null) -and (-not $isIse) ) {
+if ($cwcmd -ne $null) {
     . .\customize-console-output.ps1
 }
 
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
-
 Import-Module $PSScriptRoot\Source\PSPKI\PSPKI
 
 $EndMS = Get-Date
