@@ -33,6 +33,7 @@ $modules = (
     'RoughDraft',
     'ScriptBrowser',
     'ScriptCop',
+    'SharePointPnPPowerShellOnline',
     'ShowUI',
     'SnippetPx',
     'TypePx',
