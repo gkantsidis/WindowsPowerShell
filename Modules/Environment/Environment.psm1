@@ -16,3 +16,4 @@ $RootOfPowershellDirectory = $PSScriptRoot
 . $PSScriptRoot/Windowing.ps1
 . $PSScriptRoot/Debuggers.ps1
 . $PSScriptRoot/Calendar.ps1
+. $PSScriptRoot/Get-PendingReboot.ps1
