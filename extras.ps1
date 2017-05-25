@@ -37,6 +37,7 @@ $modules = (
     'ShowUI',
     'SnippetPx',
     'TypePx',
+    'xDscDiagnostics',
     'xNetworking'
 )
 
