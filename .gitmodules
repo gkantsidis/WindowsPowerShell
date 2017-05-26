@@ -26,3 +26,6 @@
 [submodule "Modules/z"]
 	path = Modules/z
 	url = https://github.com/gkantsidis/z.git
+[submodule "Modules/PsVsts"]
+	path = Modules/PsVsts
+	url = https://github.com/mmanela/PsVsts.git
