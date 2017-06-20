@@ -29,3 +29,6 @@
 [submodule "Modules/PsVsts"]
 	path = Modules/PsVsts
 	url = https://github.com/mmanela/PsVsts.git
+[submodule "Modules/PowerShellEditorServices"]
+	path = Modules/PowerShellEditorServices
+	url = https://github.com/PowerShell/PowerShellEditorServices.git
