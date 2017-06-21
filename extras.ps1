@@ -42,7 +42,9 @@ $modules = (
 )
 
 $modulesIse = (
-    'IsePackV2'
+    'ISEModuleBrowserAddon',
+    'IsePackV2',
+    'ISEScriptAnalyzerAddOn'
 )
 
 $modulesAsAdmin = (
