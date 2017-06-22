@@ -45,7 +45,8 @@ $modules = (
 $modulesIse = (
     'ISEModuleBrowserAddon',
     'IsePackV2',
-    'ISEScriptAnalyzerAddOn'
+    'ISEScriptAnalyzerAddOn',
+	'PowerShellISEModule'
 )
 
 $modulesAsAdmin = (
