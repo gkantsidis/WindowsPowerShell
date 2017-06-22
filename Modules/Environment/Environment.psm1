@@ -21,12 +21,6 @@ $RootOfPowershellDirectory = $PSScriptRoot
 
 if ($psEditor) {
     Register-EditorCommand `
-        -Name "Environment.CompareDirectories" `
-        -DisplayName "Compares recursively two directories" `
-        -Function Compare-Directories `
-        -SuppressOutput
-
-    Register-EditorCommand `
         -Name "Environment.GetHardwareInfo" `
         -DisplayName "Get information about the hardware of the machine" `
         -ScriptBlock {
