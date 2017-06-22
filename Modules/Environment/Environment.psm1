@@ -18,14 +18,3 @@ $RootOfPowershellDirectory = $PSScriptRoot
 . $PSScriptRoot/Calendar.ps1
 . $PSScriptRoot/Get-PendingReboot.ps1
 . $PSScriptRoot/Security.ps1
-
-if ($psEditor) {
-    Register-EditorCommand `
-        -Name "Environment.GetHardwareInfo" `
-        -DisplayName "Get information about the hardware of the machine" `
-        -ScriptBlock {
-            param([Microsoft.PowerShell.EditorServices.Extensions.EditorContext]$context)
-            $hw = Get-HwInfo
-            Write-Output "$($hw.Name).$($hw.Domain): $($hw.Manufacturer) $($hw.Model)"
-        }
-}
