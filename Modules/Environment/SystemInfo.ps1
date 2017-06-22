@@ -35,3 +35,8 @@ function Get-HwInfo {
     }
     END {}
 }
+
+function Get-PathFromRegistry {
+        $Reg = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
+        (Get-ItemProperty -Path "$Reg" -Name PATH).Path
+}

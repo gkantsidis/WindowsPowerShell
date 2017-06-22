@@ -17,6 +17,7 @@ $modules = (
     'InvokeBuild',
     'LibGit2',
     'LINQ',
+    'Logging',
     'Logman',
     'nPSDesiredStateConfiguration',
     'OutlookConnector',
