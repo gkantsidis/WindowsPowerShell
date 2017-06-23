@@ -3,17 +3,25 @@
  #>
 
 $usermodules = Join-Path -Path $PSScriptRoot -ChildPath Modules
-if ($Env:PSModulePath -ne $null) {
-    if (-not $Env:PSModulePath.Contains($usermodules)) {
-        $Env:PSModulePath += ";$usermodules"
-    }
-
-    $PSEditorServicesPath = Join-Path -Path $PSScriptRoot -ChildPath "Modules" | `
+$vscmodules = Join-Path -Path $PSScriptRoot -ChildPath Modules-VSCode
+$PSEditorServicesPath = Join-Path -Path $PSScriptRoot -ChildPath "Modules-VSCode" | `
                         Join-Path -ChildPath "PowerShellEditorServices" |`
                         Join-Path -ChildPath "module"
-    if (-not $Env:PSModulePath.Contains($PSEditorServicesPath)) {
+
+if ($Env:PSModulePath -ne $null) {
+    $modules = $Env:PSModulePath.Split(';', [StringSplitOptions]::RemoveEmptyEntries)
+    if ($modules -notcontains $usermodules) {
+        $Env:PSModulePath += ";$usermodules"
+    }
+    if ($modules -notcontains $vscmodules) {
+        $Env:PSModulePath += ";$vscmodules"
+    }
+
+    if ($modules -notcontains $PSEditorServicesPath) {
         $Env:PSModulePath += ";$PSEditorServicesPath"
     }
+} else {
+    $Env:PSModulePath = "$usermodules;$PSEditorServicesPath;$vscmodules"
 }
 
 Import-Module -Name VSCodeExtensionsCG
