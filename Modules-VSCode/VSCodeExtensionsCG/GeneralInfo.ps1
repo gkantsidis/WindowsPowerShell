@@ -12,7 +12,7 @@ function Get-SourceInformation {
         [Microsoft.PowerShell.EditorServices.Extensions.EditorContext]$context
     )
 
-    $path = Split-Path -Parent -Path $content.CurrentFile
+    $path = Split-Path -Parent -Path $context.CurrentFile
     Push-Location $path
     $git = Get-GitDirectory
     Pop-Location
