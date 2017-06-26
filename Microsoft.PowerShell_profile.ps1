@@ -1,4 +1,4 @@
-$private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent 
+$private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 Push-Location $private:PowerShellProfileDirectory
 
 #
@@ -53,9 +53,9 @@ Import-Module -Name powershellGet -ErrorAction SilentlyContinue
 
 Import-Module -Name PSReadLine -ErrorAction SilentlyContinue
 if (Get-Module -Name PSReadLine) {
-	. $PSScriptRoot\profile_readline.ps1
+    . $PSScriptRoot\profile_readline.ps1
 } else {
-	Write-Warning -Message "Consider installing PSReadLine module"
+    Write-Warning -Message "Consider installing PSReadLine module"
 }
 
 #
@@ -76,7 +76,7 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 #
 # Third party modules with special initialization
-# 
+#
 
 # Module: posh-git
 $StartMS = Get-Date
@@ -90,12 +90,12 @@ if ($poshGitModule) {
 else {
     Write-Warning "Consider installing posh-git module (as admin): Install-Module -Name posh-git -Force -AllowClobber"
 }
-                                                                                                                                              
-# Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.                                                     
-# Example:                                                                                                                                    
-#     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"                                                                       
-                                                                                                                                              
-Start-SshAgent -Quiet                                                                                                                         
+
+# Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.
+# Example:
+#     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"
+
+Start-SshAgent -Quiet
 
 # Other modules
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
@@ -146,7 +146,7 @@ $StartMS = Get-Date
 try {
     # test that the GetCommand takes 3 argument, if not it will throw an exception and we will not overload gci
     $ExecutionContext.InvokeCommand.GetCommand('Microsoft.PowerShell.Management\Get-ChildItem', [System.Management.Automation.CommandTypes]::Cmdlet, "") | Out-Null
-    . $PSScriptRoot\Overrides\Get-ChildItem.ps1    
+    . $PSScriptRoot\Overrides\Get-ChildItem.ps1
 }
 catch {
     # do nothing; keep standard gci
@@ -164,7 +164,7 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 #
 # Command line fuzzy finder
-# 
+#
 
 if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
     if (-not (Get-Module -Name PSFzf -ErrorAction SilentlyContinue)) {
@@ -180,7 +180,7 @@ if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
 
 #
 # Local Modules
-# 
+#
 
 $StartMS = Get-Date
 
@@ -197,7 +197,7 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 #
 # End of initialization
-# 
+#
 
 Pop-Location
 
