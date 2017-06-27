@@ -7,7 +7,8 @@ Push-Location $private:PowerShellProfileDirectory
 
 $usermodules = Join-Path -Path $PSScriptRoot -ChildPath Modules
 if ($Env:PSModulePath -ne $null) {
-    if (-not $Env:PSModulePath.Contains($usermodules)) {
+    $modulePaths = $Env:PSModulePath.Split(';', [StringSplitOptions]::RemoveEmptyEntries)
+    if ($modulePaths -notcontains $usermodules) {
         $Env:PSModulePath += ";$usermodules"
     }
 }
