@@ -10,7 +10,7 @@ $RootOfPowershellDirectory = $PSScriptRoot
 . $PSScriptRoot/DateTime.ps1          # Works ok in Unix
 . $PSScriptRoot/Scoop.ps1
 . $PSScriptRoot/Settings.ps1
-. $PSScriptRoot/SoftwareInfo.ps1
+. $PSScriptRoot/SoftwareInfo.ps1      # Works ok in Unix; does not do anything interesting though
 . $PSScriptRoot/SystemInfo.ps1        # This requires Windows
 . $PSScriptRoot/TextFile.ps1
 . $PSScriptRoot/Windowing.ps1         # This requires Windows

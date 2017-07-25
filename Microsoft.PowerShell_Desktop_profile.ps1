@@ -49,24 +49,21 @@ if (Get-Module -Name PSReadLine) {
 # Third party installable modules
 #
 
-$StartMS = Get-Date
+Start-Timing
 if (-not (Get-Module -Name pscx -ListAvailable)) {
     Write-Warning -Message "Consider installing pscx"
 }
 if (-not (Get-Module -Name PowerShellCookbook -ListAvailable)) {
     Write-Warning -Message "Consider installing PowerShellCookbook"
 }
-$EndMS = Get-Date
-$Diff = ($EndMS - $StartMS).TotalMilliseconds
-
-"{0,-50} {1,10:F3} msec to load" -f "Third party installable modules",$Diff
+Stop-Timing -Description "Third party installable modules"
 
 #
 # Third party modules with special initialization
 #
 
 # Module: posh-git
-$StartMS = Get-Date
+Start-Timing
 
 # Import the posh-git module.
 
@@ -91,15 +88,13 @@ if (Test-HasVisualStudio) {
     Import-Module -Name .\Modules\Posh-VsVars
 }
 
-$EndMS = Get-Date
-$Diff = ($EndMS - $StartMS).TotalMilliseconds
-"{0,-50} {1,10:F3} msec to load" -f "posh-git took",$Diff
+Stop-Timing -Description "posh-git took"
 
 #
 # Third party modules that do not require special initialization
 #
 
-$StartMS = Get-Date
+Start-Timing
 
 # The following three are included as submodules
 Import-Module Invoke-MSBuild\Invoke-MSBuild
@@ -120,15 +115,13 @@ if ($cwcmd -ne $null) {
 Import-Module -Name TypePx -ErrorAction SilentlyContinue
 Import-Module $PSScriptRoot\Source\PSPKI\PSPKI
 
-$EndMS = Get-Date
-$Diff = ($EndMS - $StartMS).TotalMilliseconds
-"{0,-50} {1,10:F3} msec to load" -f "Third party modules took",$Diff
+Stop-Timing -Description "Third party modules took"
 
 #
 # Command overrides
 #
 
-$StartMS = Get-Date
+Start-Timing
 
 try {
     # test that the GetCommand takes 3 argument, if not it will throw an exception and we will not overload gci
@@ -147,7 +140,7 @@ if ((Get-Module -Name xUtility -ListAvailable) -ne $null) {
 
 $EndMS = Get-Date
 $Diff = ($EndMS - $StartMS).TotalMilliseconds
-"{0,-50} {1,10:F3} msec to load" -f "Command overrides",$Diff
+Stop-Timing -Description "Command overrides"
 
 #
 # Command line fuzzy finder
@@ -169,16 +162,14 @@ if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
 # Local Modules
 #
 
-$StartMS = Get-Date
+Start-Timing
 
 Import-Module Editors
 if (Get-Module -Name Z -ListAvailable -ErrorAction SilentlyContinue) {
     Import-Module Z
 }
 
-$EndMS = Get-Date
-$Diff = ($EndMS - $StartMS).TotalMilliseconds
-"{0,-50} {1,10:F3} msec to load" -f "Local Modules",$Diff
+Stop-Timing -Description "Local Modules"
 
 #
 # End of initialization
