@@ -2,21 +2,13 @@
 # Initialization
 #
 
-$usermodules = Join-Path -Path $PSScriptRoot -ChildPath Modules
-if ($Env:PSModulePath -ne $null) {
-    $modulePaths = $Env:PSModulePath.Split(';', [StringSplitOptions]::RemoveEmptyEntries)
-    if ($modulePaths -notcontains $usermodules) {
-        $Env:PSModulePath += ";$usermodules"
-    }
-}
-
 Import-Module Environment
 
 #
 # Checking for external modules
 # These are the external modules that we would like to have installed in the system
 #
-$StartMS = Get-Date
+Start-Timing
 
 $modules = (
     'PowerShellGet',
@@ -31,10 +23,7 @@ $modules = (
 
 Get-ModuleInstall -ModuleName $modules -ErrorAction SilentlyContinue
 
-$EndMS = Get-Date
-$Diff = ($EndMS - $StartMS).TotalMilliseconds
-
-"{0,-50} {1,10:F3} msec to load" -f "Checking for external modules",$Diff
+Stop-Timing -Description "Checking for external modules"
 
 # The other modules are local (i.e. in the repo or in submodules):
 # - Editors
@@ -182,8 +171,6 @@ if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
 
 $StartMS = Get-Date
 
-Set-StrictMode -Version latest
-
 Import-Module Editors
 if (Get-Module -Name Z -ListAvailable -ErrorAction SilentlyContinue) {
     Import-Module Z
@@ -196,6 +183,3 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 #
 # End of initialization
 #
-
-Write-Verbose -Message "Settting prompt"
-. $PSScriptRoot\Prompts.ps1
