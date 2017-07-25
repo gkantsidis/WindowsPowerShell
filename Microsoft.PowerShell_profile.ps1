@@ -35,6 +35,7 @@ function Stop-Timing {
 
 $editionProfile = "Microsoft.PowerShell_{0}_profile.ps1" -f $PSEdition
 $editionProfilePath = Join-Path -Path $PSScriptRoot -ChildPath $editionProfile
+Write-Host "Loading profile for edition $PSEdition"
 
 if (Test-Path -Path $editionProfilePath) {
     . $editionProfilePath
