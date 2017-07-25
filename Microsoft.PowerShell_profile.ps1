@@ -63,7 +63,7 @@ if (Test-Path -Path $platformProfilePath) {
     . $platformProfilePath
 }
 
-Remove-Item -Path Variable:platform
+
 Remove-Item -Path Variable:platformProfile
 Remove-Item -Path Variable:platformProfilePath
 
@@ -74,4 +74,10 @@ Remove-Item -Path Variable:platformProfilePath
 Remove-Item -Path Variable:StartMS -ErrorAction SilentlyContinue
 Set-StrictMode -Version latest
 
-. $PSScriptRoot\Prompts.ps1
+if ($platform -eq "Win32NT") {
+    # This runs in all cases, but it messes up the console provider in bash in Windows
+    # hence we use it only in windows --- we need something equivalent for Unix.
+    . $PSScriptRoot\Prompts.ps1
+}
+
+Remove-Item -Path Variable:platform
