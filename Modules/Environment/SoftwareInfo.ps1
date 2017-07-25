@@ -4,7 +4,7 @@
 }
 
 function Test-HasChocolatey {
-    $choco = Get-Command -Name choco -ErrorAction SilentyContinue
+    $choco = Get-Command -Name choco -ErrorAction SilentlyContinue
     -not ($null -eq $choco)
 }
 
@@ -12,7 +12,7 @@ function Test-HasEmacs {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "Test-HasEmacs")]
     param()
 
-    $emacs = Get-Command -Name emacsclient -ErrorAction SilentyContinue
+    $emacs = Get-Command -Name emacsclient -ErrorAction SilentlyContinue
     -not ($null -eq $emacs)
 }
 

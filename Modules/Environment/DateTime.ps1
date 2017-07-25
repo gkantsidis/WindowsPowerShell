@@ -7,23 +7,23 @@
 
 .AUTHOR Christos
 
-.COMPANYNAME 
+.COMPANYNAME
 
-.COPYRIGHT 
+.COPYRIGHT
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
@@ -32,9 +32,9 @@
 
 [datetime] $script:unix_epoch_origin = '1970-01-01 00:00:00'
 
-<# 
+<#
 
-.DESCRIPTION 
+.DESCRIPTION
  Convert from Unix timestamps
 
 #>
@@ -52,8 +52,8 @@ function ConvertTo-UnixDate {
     [CmdletBinding()]
     Param(
         [datetime]
-        $Timestamp
+        $Timestamp = (Get-Date)
     )
-    
+
     return ($Timestamp.Subtract($script:unix_epoch_origin).TotalSeconds)
 }
