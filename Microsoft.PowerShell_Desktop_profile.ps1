@@ -1,6 +1,3 @@
-$private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-Push-Location $private:PowerShellProfileDirectory
-
 #
 # Initialization
 #
@@ -200,12 +197,5 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 # End of initialization
 #
 
-Pop-Location
-
 Write-Verbose -Message "Settting prompt"
 . $PSScriptRoot\Prompts.ps1
-# Chocolatey profile
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-  Import-Module "$ChocolateyProfile"
-}
