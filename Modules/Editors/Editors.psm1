@@ -233,7 +233,7 @@ Set-Alias -Name e -Value Get-FileInEditor
 
 <#
 .SYNOPSIS
-    Opens a file with an appropriate editor. 
+    Opens a file with an appropriate editor.
     Unlike e, it does not wait for the editor to return.
 #>
 function en {
@@ -241,14 +241,3 @@ function en {
     param($Filename = $Editors.Session.LastFile)
     Get-FileInEditor -NoWait -Filename $Filename
 }
-
-#
-# Exports
-#
-
-Export-ModuleMember -Function Get-FileInEditor
-Export-ModuleMember -Function Get-FileEditHistory
-Export-ModuleMember -Function Stop-Emacs
-Export-ModuleMember -Function en
-Export-ModuleMember -Variable Editors
-Export-ModuleMember -Alias e

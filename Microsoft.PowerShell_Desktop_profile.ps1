@@ -16,6 +16,7 @@ $modulesToCheck = (
     'pscx',
     'PowerShellCookbook',
     'posh-git',
+    'SnippetPx',
     'TypePx',
     'VSSetup',
     'xUtility',
@@ -23,9 +24,14 @@ $modulesToCheck = (
     'Z'
 )
 
-#if ((Get-Random -Maximum 100) -lt 10) {
+# Measure performance with:
+# $modulesToCheck |% {  $t = Measure-Command { Import-Module $_ }; "{0} : {1}" -f $_,$t.Milliseconds }
+
+if ((Get-Random -Maximum 100) -lt 5) {
     Get-ModuleInstall -ModuleName $modulesToCheck -ErrorAction SilentlyContinue
-#}
+} else {
+    Import-Module -Name $modulesToCheck -ErrorAction SilentlyContinue
+}
 
 Stop-Timing -Description "Checking for external modules"
 

@@ -32,7 +32,7 @@ function script:InstallModule {
     } elseif (Get-Command -Name Install-Module -Module PsGet -ErrorAction SilentlyContinue) {
         PsGet\Install-Module -ModuleName $Name -Force
     } elseif (Get-Command -Name Install-Package -Module PackageManagement -ErrorAction SilentlyContinue) {
-        PackageManagement\Install-Package -Name $Name -Force        
+        PackageManagement\Install-Package -Name $Name -Force
     } elseif (Get-Command -Name Install-Module -ErrorAction SilentlyContinue) {
         Install-Module $Name
     } else {
@@ -89,7 +89,7 @@ function Get-ModuleInstall {
 
             if ($isAvailable -and (-not $isLoaded)) {
                 Write-Verbose -Message "Module $module is available but not loaded; trying to load"
-                LoadModule -Name $module 
+                LoadModule -Name $module
             }
             elseif (-not $isAvailable) {
                 $isInRepo = Find-Package -Name $module -Source PSGallery
@@ -99,7 +99,7 @@ function Get-ModuleInstall {
                     # The module is available, and the script is running in admin mode: try to install
                     Write-Verbose -Message "Trying to install package $module"
                     InstallModule -Name $module
-                    LoadModule -Name $module              
+                    LoadModule -Name $module
                 } else {
                     # The module is available, but we are not in elevated mode
                     Write-Warning -Message "Please install module $module in elevated mode, e.g. Install-Module $module, or run again elevated"
@@ -107,7 +107,7 @@ function Get-ModuleInstall {
             } else {
                 # It is available and loaded; nothing to do.
             }
-            
+
             [PSModuleInfo[]]$current = Get-Module -Name $module
             $isLoaded = $current -ne $null
 
@@ -138,7 +138,7 @@ function Get-ModuleInstall {
                     if ( ($null -ne $available) -and ($current.Version -ne $available.Version) ) {
                         $currentVersion = $current.Version
                         $availableVersion = $available.Version
-                    
+
                         Write-Warning -Message "Consider upgrading package $module (current: $currentVersion, available: $availableVersion) ..."
                     } else {
                         # Installed version is updated
