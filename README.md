@@ -1,4 +1,5 @@
-# WindowsPowerShell
+
+## WindowsPowerShell
 This contains a customized Windows Powershell Profile
 
 ## Setup
@@ -38,6 +39,8 @@ gets installed; otherwise, it should not be a problem.
 The startup will also give warnings for outdated modules. Update them and the warnings will go away.
 
 If you experience any other issue during startup, please create an [issue](https://github.com/gkantsidis/WindowsPowerShell/issues).
+Do look in the [closed issues](https://github.com/gkantsidis/WindowsPowerShell/issues?q=is%3Aissue+is%3Aclosed) section
+for answers to problems that have been solved.
 
 ## Powershell ISE
 There is a separate customization for ISE. Some modules do not work well with ISE, and
@@ -46,6 +49,13 @@ they are not invoked.
 # Per-machine customizations
 Settings that are local to a machine, and do not need to be checked in should to to `profile_local.ps1`.
 If this file is present, then it will be executed at the end of initialization.
+
+# PowerShell 6.0 (with .NET Core) and PowerShell in Linux
+
+I will try to make sure that the profile works also with the PS 6.0 (which uses .NET Core instead of .NET Framework), and 
+that it also works in Linux. This is rather challenging, since I am pulling modules and code from various places and it is
+difficult to check all combinations. Please report an [issue](https://github.com/gkantsidis/WindowsPowerShell/issues) if
+you find any problems.
 
 # Other information
 See the [wiki](https://github.com/gkantsidis/WindowsPowerShell/wiki) for information
