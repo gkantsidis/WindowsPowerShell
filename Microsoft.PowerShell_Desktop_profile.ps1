@@ -10,7 +10,7 @@ Import-Module Environment
 #
 Start-Timing
 
-$modules = (
+$modulesToCheck = (
     'PowerShellGet',
     'PSReadLine',
     'pscx',
@@ -18,12 +18,30 @@ $modules = (
     'posh-git',
     'TypePx',
     'VSSetup',
-    'xUtility'
+    'xUtility',
+    'Editors',
+    'Z'
 )
 
-Get-ModuleInstall -ModuleName $modules -ErrorAction SilentlyContinue
+#if ((Get-Random -Maximum 100) -lt 10) {
+    Get-ModuleInstall -ModuleName $modulesToCheck -ErrorAction SilentlyContinue
+#}
 
 Stop-Timing -Description "Checking for external modules"
+
+Start-Timing
+
+$extraModulesToImport = (
+    "Invoke-MSBuild\Invoke-MSBuild",
+    "Pester",
+    "PowerShellArsenal",
+    "TypePx",
+    "$PSScriptRoot\Source\PSPKI\PSPKI"
+)
+$modulesToImport = $modulesToCheck + $extraModulesToImport
+Import-Module -Name $modulesToImport -ErrorAction SilentlyContinue
+
+Stop-Timing -Description "Importing modules"
 
 # The other modules are local (i.e. in the repo or in submodules):
 # - Editors
@@ -36,9 +54,6 @@ Stop-Timing -Description "Checking for external modules"
 #
 # Build-in modules and initialization
 #
-Import-Module -Name powershellGet -ErrorAction SilentlyContinue
-
-Import-Module -Name PSReadLine -ErrorAction SilentlyContinue
 if (Get-Module -Name PSReadLine) {
     . $PSScriptRoot\profile_readline.ps1
 } else {
@@ -67,11 +82,8 @@ Start-Timing
 
 # Import the posh-git module.
 
-$poshGitModule = Get-Module posh-git -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
-if ($poshGitModule) {
-    $poshGitModule | Import-Module
-}
-else {
+$poshGitModule = Get-Module posh-git -ListAvailable
+if (-not $poshGitModule) {
     Write-Warning "Consider installing posh-git module (as admin): Install-Module -Name posh-git -Force -AllowClobber"
 }
 
@@ -97,9 +109,6 @@ Stop-Timing -Description "posh-git took"
 Start-Timing
 
 # The following three are included as submodules
-Import-Module Invoke-MSBuild\Invoke-MSBuild
-Import-Module Pester
-Import-Module PowerShellArsenal
 
 if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -PathType Leaf) {
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1" -Force
@@ -112,8 +121,7 @@ if ($cwcmd -ne $null) {
     . .\customize-console-output.ps1
 }
 
-Import-Module -Name TypePx -ErrorAction SilentlyContinue
-Import-Module $PSScriptRoot\Source\PSPKI\PSPKI
+
 
 Stop-Timing -Description "Third party modules took"
 
@@ -138,8 +146,6 @@ if ((Get-Module -Name xUtility -ListAvailable) -ne $null) {
     Write-Warning -Message "Consider installing xUtility (admin):  Install-Module -Name xUtility -Force -AllowClobber"
 }
 
-$EndMS = Get-Date
-$Diff = ($EndMS - $StartMS).TotalMilliseconds
 Stop-Timing -Description "Command overrides"
 
 #
@@ -157,19 +163,6 @@ if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
         }
     }
 }
-
-#
-# Local Modules
-#
-
-Start-Timing
-
-Import-Module Editors
-if (Get-Module -Name Z -ListAvailable -ErrorAction SilentlyContinue) {
-    Import-Module Z
-}
-
-Stop-Timing -Description "Local Modules"
 
 #
 # End of initialization
