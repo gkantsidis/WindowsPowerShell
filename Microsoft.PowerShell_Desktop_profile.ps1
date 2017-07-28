@@ -1,4 +1,4 @@
-#
+﻿#
 # Initialization
 #
 
@@ -21,7 +21,7 @@ $modulesToCheck = (
     'VSSetup',
     'xUtility',
     'Editors',
-    'Z'
+    'z'
 )
 
 # Measure performance with:
