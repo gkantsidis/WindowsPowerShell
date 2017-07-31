@@ -38,18 +38,6 @@ function Get-GitLog { git log --oneline --all --graph --decorate $args }
 Set-alias gitlog Get-GitLog
 
 # Shortcuts
-if (Get-ChildItem -Path Env:HOME -ErrorAction SilentlyContinue) {
-    $MyHome = $Env:HOME
-} else {
-    $MyHome = $Env:HOMEDRIVE + $Env:HOMEPATH
-}
 
-New-PSDrive -Name me -PSProvider FileSystem -Root $MyHome
-
-if (Test-Path -Path $MyHome\Documents\WindowsPowerShell) {
-    # Normal path
-    New-PSDrive -Name ps -PSProvider FileSystem -Root $MyHome\Documents\WindowsPowerShell
-} else {
-    # If the user changes the location of the Documents folder, then
-    New-PSDrive -Name ps -PSProvider FileSystem -Root $PSScriptRoot
-}
+New-PSDrive -Name me -PSProvider FileSystem -Root ([Environment]::GetFolderPath("User"))
+New-PSDrive -Name ps -PSProvider FileSystem -Root $PSScriptRoot
