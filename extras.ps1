@@ -26,6 +26,7 @@ $modules = (
     'PoshInternals',
     'psake',
     'PSConfig',
+    'PSDepend',
     'PSFzf',
     'PSParallel',
     'PSScriptAnalyzer',
