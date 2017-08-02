@@ -36,16 +36,19 @@ function Get-WebProxy {
 
     $configurationPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
     $internetSettings = Get-ItemProperty -Path $configurationPath
-    $proxy = $internetSettings.ProxyServer
+    $proxyConfiguration = $internetSettings.ProxyServer
 
-    if([string]::IsNullOrWhiteSpace($proxy)) {
+    if([string]::IsNullOrWhiteSpace($proxyConfiguration)) {
         Write-Verbose -Message "Proxy is not configured"
         return
-    } else {
+    }
+
+    [string[]]$proxies = $proxyConfiguration.Split(';')
+    foreach($proxy in $proxies) {
         $tokens = $proxy.Split(@("=",":"))
         if ($tokens.Length -ne 3) {
-            Write-Error -Message "Cannot parse string: $proxy"
-            return
+            throw "Cannot parse string: $proxy"
+            continue
         }
         else {
             $protocol = $tokens[0]
@@ -60,7 +63,7 @@ function Get-WebProxy {
                 $enabled = $true
             }
 
-            return [WebProxySettings]::new($protocol, $server, $port, $enabled)
+            [WebProxySettings]::new($protocol, $server, $port, $enabled)
         }
     }
 }
