@@ -6,10 +6,15 @@ param()
 # Stores all paths examined so far
 $exist = New-Object -TypeName 'System.Collections.Generic.HashSet[string]'
 
+[string]$systemPaths = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+[string]$userPaths = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+$sizeOfSystemPath = $systemPaths.Length
+$sizeOfUserPath = $userPaths.Length
+
+# TODO: Make a copy of those paths in local files
+
 # Process machine paths
 [string[]]$paths = @()
-[string]$systemPaths = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
-$sizeOfSystemPath = $systemPaths.Length
 if (-not [string]::IsNullOrWhiteSpace($systemPaths)) {
     [string[]]$systemPaths = $systemPaths.Split(';')
 } else {
@@ -54,8 +59,6 @@ if ($dirty) {
 # TODO: Same code as above, need to refactor
 
 [string[]]$paths = @()
-[string]$userPaths = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-$sizeOfUserPath = $userPaths.Length
 if (-not [string]::IsNullOrWhiteSpace($userPaths)) {
     [string[]]$userPaths = $userPaths.Split(';')
 } else {
