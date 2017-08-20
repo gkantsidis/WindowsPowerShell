@@ -14,6 +14,7 @@ $modules = (
     'Find-String',
     'FormatPx',
     'GistProvider',
+    'GuiCompletion',
     'InvokeBuild',
     'LibGit2',
     'LINQ',

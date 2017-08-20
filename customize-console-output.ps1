@@ -10,12 +10,12 @@ function script:Get-RelativePath {
         [ValidateNotNullOrEmpty()]
         [string]
         $Base
-    )   
-        
+    )
+
     $Target = $Target.Trim().TrimEnd($separator)
-    $Base = $Base.Trim().TrimEnd($separator)  
+    $Base = $Base.Trim().TrimEnd($separator)
     $orig_target = $Target
-      
+
     if ($Target.StartsWith("\\")) {
         $index = $Target.IndexOf([System.IO.Path]::DirectorySeparatorChar, 2)
         $host_target = $Target.Substring(2,  $index - 2)
@@ -63,7 +63,7 @@ function script:Get-RelativePath {
             $relative += ([System.IO.Path]::Combine($extra))
         }
 
-        $relative = $relative.TrimEnd([System.IO.Path]::DirectorySeparatorChar)        
+        $relative = $relative.TrimEnd([System.IO.Path]::DirectorySeparatorChar)
         if ($relative.Length -lt $orig_target.Length) {
             $relative
         } else {
@@ -110,13 +110,13 @@ function script:Write-HostCustomized-Enumerator
 
         [ValidateNotNull()]
         [System.Text.StringBuilder]
-        $SB        
+        $SB
     )
 
     if ($null -eq $Target) {
         return
     }
-    
+
     $ntabs = $Tabs + 1
     $SB.AppendFormat("{0}[", ("`t" * $Tabs)) | Out-Null
     $SB.AppendLine() | Out-Null
@@ -203,7 +203,7 @@ function script:Write-Color-LS
                         $length = $length / 1000
                         $length = $length.ToString("F2") + "G"
                     } else {
-                        $length = $length.ToString("F2") + "M"    
+                        $length = $length.ToString("F2") + "M"
                     }
                 } else {
                     $length = $length.ToString("F2") + "K"
@@ -259,22 +259,22 @@ New-CommandWrapper -Name Out-Default `
     $source_files = New-Object System.Text.RegularExpressions.Regex(
         '\.(java|c|cpp|cs|fs|fsi|fsx|ml|mli)$', $regex_opts)
     $solution_files = New-Object System.Text.RegularExpressions.Regex(
-        '\.(sln|csproj|sqlproj|proj|targets)$', $regex_opts) 
+        '\.(sln|csproj|sqlproj|proj|targets)$', $regex_opts)
 
     if(($_ -is [System.IO.DirectoryInfo]) -or ($_ -is [System.IO.FileInfo]))
     {
-        if(-not ($notfirst)) 
+        if(-not ($notfirst))
         {
            Write-Host
            Write-Host "    Directory: " -noNewLine
-           Write-Host " $(Get-Location)`n" -foregroundcolor "Magenta"           
+           Write-Host " $(Get-Location)`n" -foregroundcolor "Magenta"
            Write-Host "Mode                LastWriteTime     Length Name"
            Write-Host "----                -------------     ------ ----"
            $notfirst=$true
         }
 
         $rootDirectory = $(Get-Location)
-        if ($_ -is [System.IO.DirectoryInfo]) 
+        if ($_ -is [System.IO.DirectoryInfo])
         {
             Write-Color-LS "Magenta" $_ $rootDirectory
         }
@@ -293,7 +293,7 @@ New-CommandWrapper -Name Out-Default `
         elseif ($doc_files.IsMatch($_.Name))
         {
             Write-Color-LS "Yellow" $_ $rootDirectory
-        }        
+        }
         elseif ($source_files.IsMatch($_.Name))
         {
             Write-Color-LS "Cyan" $_ $rootDirectory
@@ -301,7 +301,7 @@ New-CommandWrapper -Name Out-Default `
         elseif ($solution_files.IsMatch($_.Name))
         {
             Write-Color-LS "DarkCyan" $_ $rootDirectory
-        }        
+        }
         else
         {
             Write-Color-LS "White" $_ $rootDirectory
@@ -331,7 +331,7 @@ New-CommandWrapper -Name Out-Default `
         $entries | ForEach-Object -Process {
             $key = $_.Key
             $fn = $_.Value
-            
+
             $value = Get-Command -Name $key -Module $fn.ModuleName -Syntax -ErrorAction SilentlyContinue
             if ($value -eq $null)
             {
@@ -339,7 +339,7 @@ New-CommandWrapper -Name Out-Default `
                 Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor "DarkGreen"
             } elseif ($fn.CommandType -eq [System.Management.Automation.CommandTypes]::Alias) {
                 Write-Host ("{0}" -f $fn.DisplayName) -ForegroundColor "Green"
-            } else {                
+            } else {
                 Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor "DarkGreen"
             }
         }
@@ -353,7 +353,7 @@ New-CommandWrapper -Name Out-Default `
     {
         # Disable the following for the default behavior
         # Write-Host "<null>" -ForegroundColor Red
-    }    
+    }
     elseif ($_.GetType().ImplementedInterfaces.Contains([System.Collections.IDictionary]))
     {
         Write-Host "Key                        " -NoNewLine -ForegroundColor "Magenta"
@@ -371,7 +371,7 @@ New-CommandWrapper -Name Out-Default `
     }
     elseif (("System.Security.Cryptography.X509Certificates.X509CertificateContextProperty" -as [type]) -and ($_ -is [System.Security.Cryptography.X509Certificates.X509CertificateContextProperty]))
     {
-        if(-not ($notfirst)) 
+        if(-not ($notfirst))
         {
            Write-Host
            Write-Host ("{0,-50} {1,-17} {2}" -f "Certificate","Property","Value")
@@ -381,7 +381,7 @@ New-CommandWrapper -Name Out-Default `
 
         $certproperty = [System.Security.Cryptography.X509Certificates.X509CertificateContextProperty]$_
         $certificate = $certproperty.Certificate.Subject.ToString()
-        $property = $certproperty.PropertyName        
+        $property = $certproperty.PropertyName
         $value = $certproperty.PropertyValue
 
         if ($certificate.Length -gt 45) {
@@ -396,12 +396,13 @@ New-CommandWrapper -Name Out-Default `
         } else {
             $valuestr = ""
         }
-        
+
         Write-Host ("{0,-50} [{1,-15}] {2}" -f $certificate,$property,$valuestr)
         $_ = $null
     }
-    else 
+    else
     {
+        # Write-Host $_.GetType()
         # Write-Host $_.ToString()
         # $_ = $null
     }

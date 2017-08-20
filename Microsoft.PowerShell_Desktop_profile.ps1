@@ -13,6 +13,7 @@ Start-Timing
 $modulesToCheck = (
     'PowerShellGet',
     'PSReadLine',
+    'GuiCompletion',
     'pscx',
     'PowerShellCookbook',
     'posh-git',
@@ -64,6 +65,12 @@ if (Get-Module -Name PSReadLine) {
     . $PSScriptRoot\profile_readline.ps1
 } else {
     Write-Warning -Message "Consider installing PSReadLine module"
+}
+
+if (Get-Module -Name GuiCompletion) {
+    Install-GuiCompletion -Key Tab
+    # The alternative is to use the default ctl-space
+    # Install-GuiCompletion
 }
 
 #
@@ -195,8 +202,8 @@ if ($rgcommand) {
         $count = @($input).Count
         $input.Reset()
 
-        if ($count) { $input | rg.exe --hidden $args }
-        else { rg.exe --hidden $args }
+        if ($count) { $input | rg.exe --colors 'path:bg:green' --colors 'match:style:intense' --hidden $args }
+        else { rg.exe --colors 'path:bg:green' --colors 'match:style:intense' --hidden $args }
     }
 }
 
