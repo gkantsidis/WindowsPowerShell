@@ -19,3 +19,4 @@ $RootOfPowershellDirectory = $PSScriptRoot
 . $PSScriptRoot/Get-PendingReboot.ps1 # This requires Windows
 . $PSScriptRoot/Security.ps1
 . $PSScriptRoot/WebHost.ps1
+. $PSScriptRoot/Console.ps1
