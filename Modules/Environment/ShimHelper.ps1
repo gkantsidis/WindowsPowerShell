@@ -38,10 +38,10 @@ function Get-ShimProperties {
 
     $command = Get-Command -Name $ProgramName
     $commandItem = Get-Item -Path $command.Path
-    if ($commandItem.Length -gt 40000) {
-        Write-Warning -Message "Program '$ProgramName' does not appear to be a shim"
-        return
-    }
+    # if ($commandItem.Length -gt 40000) {
+    #     Write-Warning -Message "Program '$ProgramName' does not appear to be a shim"
+    #     return
+    # }
 
     Write-Verbose -Message "Executing program '$ProgramName' with argument 'shimgen-help'"
     Invoke-Command -ScriptBlock { . $ProgramName shimgen-help -ErrorAction SilentlyContinue } -ErrorVariable shimerror -OutVariable result -ErrorAction SilentlyContinue | Out-Null
