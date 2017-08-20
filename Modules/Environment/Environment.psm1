@@ -4,6 +4,7 @@
 
 $RootOfPowershellDirectory = $PSScriptRoot
 
+. $PSScriptRoot/ShimHelper.ps1
 . $PSScriptRoot/Modules.ps1
 . $PSScriptRoot/MsiHelper.ps1
 . $PSScriptRoot/Filesystem.ps1

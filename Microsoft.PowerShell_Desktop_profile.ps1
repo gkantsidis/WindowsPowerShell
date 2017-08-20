@@ -171,5 +171,37 @@ if (Get-Module -Name PSFzf -ListAvailable -ErrorAction SilentlyContinue) {
 }
 
 #
+# Setup ripgrep (rg) if available
+#
+
+Start-Timing
+
+$rgcommand = Get-Command -Name rg -ErrorAction SilentlyContinue
+if ($rgcommand) {
+    $rgreal = Get-ShimProperties -ProgramName rg
+    if ($rgreal -eq $null) {
+        $rgpath = $rgcommand.Path
+    } else {
+        $rgpath = $rgreal.Path
+    }
+
+    $rgdir = Split-Path -Path $rgPath -Parent
+    $rgconf = Join-Path -Path $rgdir -ChildPath _rg.ps1
+    if (Test-Path -Path $rgconf -PathType Leaf) {
+        . "$rgconf"
+    }
+
+    Set-Item -Path function:grep -Value {
+        $count = @($input).Count
+        $input.Reset()
+
+        if ($count) { $input | rg.exe --hidden $args }
+        else { rg.exe --hidden $args }
+    }
+}
+
+Stop-Timing -Description "Stop timing: setting up ripgrep (rg)"
+
+#
 # End of initialization
 #
