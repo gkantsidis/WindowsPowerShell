@@ -32,3 +32,6 @@
 [submodule "Modules/PowerShellEditorServices"]
 	path = Modules-VSCode/PowerShellEditorServices
 	url = https://github.com/PowerShell/PowerShellEditorServices.git
+[submodule "Source/PSReflect-Functions"]
+	path = Source/PSReflect-Functions
+	url = https://github.com/gkantsidis/PSReflect-Functions.git
