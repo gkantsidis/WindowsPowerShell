@@ -110,9 +110,10 @@ if (-not $poshGitModule) {
 # Other modules
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
 $VSSetupModule = Get-Module -Name VSSetup
-if (Test-HasVisualStudio -and ($VSSetupModule -ne $null)) {
+if ((Test-HasVisualStudio) -and ($VSSetupModule -ne $null)) {
     Import-Module -Name .\Modules\Posh-VsVars
 }
+Remove-Item -Path Variable:VSSetupModule
 
 Stop-Timing -Description "posh-git took"
 
