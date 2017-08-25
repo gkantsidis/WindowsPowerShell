@@ -332,15 +332,20 @@ New-CommandWrapper -Name Out-Default `
             $key = $_.Key
             $fn = $_.Value
 
-            $value = Get-Command -Name $key -Module $fn.ModuleName -Syntax -ErrorAction SilentlyContinue
+            try {
+                $value = Get-Command -Name $key -Module $fn.ModuleName -Syntax -ErrorAction SilentlyContinue
+            } catch [System.Management.Automation.PSArgumentOutOfRangeException] {
+                $value = $null
+                Write-Host "[Cannot parse '$($key.ToString())' of '$($fn.ModuleName)' --- check command definition] " -ForegroundColor Red -NoNewline
+            }
             if ($value -eq $null)
             {
                 $value = $_.Value.ToString()
-                Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor "DarkGreen"
+                Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor Yellow
             } elseif ($fn.CommandType -eq [System.Management.Automation.CommandTypes]::Alias) {
-                Write-Host ("{0}" -f $fn.DisplayName) -ForegroundColor "Green"
+                Write-Host ("{0}" -f $fn.DisplayName) -ForegroundColor DarkYellow
             } else {
-                Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor "DarkGreen"
+                Write-Host ("{0}" -f $value.Trim().Replace("`n`r", "")) -ForegroundColor Yellow
             }
         }
         $_ = $null
