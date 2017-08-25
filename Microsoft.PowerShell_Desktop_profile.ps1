@@ -98,18 +98,19 @@ Start-Timing
 $poshGitModule = Get-Module posh-git -ListAvailable
 if (-not $poshGitModule) {
     Write-Warning "Consider installing posh-git module (as admin): Install-Module -Name posh-git -Force -AllowClobber"
+} else {
+
+    # Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.
+    # Example:
+    #     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"
+
+    Start-SshAgent -Quiet
 }
-
-# Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.
-# Example:
-#     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"
-
-Start-SshAgent -Quiet
 
 # Other modules
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
-
-if (Test-HasVisualStudio) {
+$VSSetupModule = Get-Module -Name VSSetup
+if (Test-HasVisualStudio -and ($VSSetupModule -ne $null)) {
     Import-Module -Name .\Modules\Posh-VsVars
 }
 
