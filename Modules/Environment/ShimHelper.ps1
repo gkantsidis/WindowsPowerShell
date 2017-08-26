@@ -23,6 +23,8 @@ Get the properties of program es.exe:
 .NOTES
 Running this function with executables that are not known to be shims
 may be dangerous.
+
+This command is also replicated in the PowerShellArsenal module.
 #>
 function Get-ShimProperties {
     [CmdletBinding()]
