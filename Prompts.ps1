@@ -46,7 +46,11 @@
             $adjusted = $true
         }
         if ($adjusted) {
+            $oldPath = $path
             $path = "..." + $path.Substring($lastIndex)
+            if ($path.Length -ge $oldPath.Length) {
+                $path = $oldPath
+            }
         }
         $p = $drive + ":" + $path + " λ"
         Write-Host $p -NoNewLine -ForegroundColor "DarkGray"
@@ -59,7 +63,7 @@ function global:Set-GitPrompt {
         [switch]
         $DoNotRemoveAlias
     )
-    
+
     # Some modules (e.g. xUtility) create this alias to modify the prompt
     if(-not $DoNotRemoveAlias) {
         Remove-Item Alias:\Prompt -ErrorAction SilentlyContinue
