@@ -74,6 +74,9 @@ FunctionsToExport = @(
     'Enable-DotNetLoadingDebugging',
     'Disable-DotNetLoadingDebugging',
     'Get-Bootup',
+    'Get-ChildItemByPage',
+    'Get-ChildItemWithHidden',
+    'Get-ChildItemWithOwner',
     'Get-FileHead',
     'Get-HwInfo',
     'Get-InstalledApplications',
@@ -111,6 +114,8 @@ VariablesToExport = '*'
 AliasesToExport = @(
     'cal',
     'color',
+    'dir/p',
+    'dir/q',
     'head'
 )
 

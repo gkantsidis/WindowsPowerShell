@@ -21,3 +21,4 @@ $RootOfPowershellDirectory = $PSScriptRoot
 . $PSScriptRoot/Security.ps1
 . $PSScriptRoot/WebHost.ps1
 . $PSScriptRoot/Console.ps1
+. $PSScriptRoot/Directories.ps1
