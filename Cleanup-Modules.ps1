@@ -7,40 +7,40 @@
 
 .AUTHOR Christos Gkantsidis
 
-.COMPANYNAME 
+.COMPANYNAME
 
-.COPYRIGHT 
+.COPYRIGHT
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
 
 #>
 
-<# 
+<#
 
-.DESCRIPTION 
- Cleanups the installed packages 
+.DESCRIPTION
+ Cleanups the installed modules
 
 #>
-[CmdletBinding(SupportsShouldProcess=$true)] 
+[CmdletBinding(SupportsShouldProcess=$true)]
 Param()
 
 function UninstallModule {
-    [CmdletBinding(SupportsShouldProcess=$true)] 
+    [CmdletBinding(SupportsShouldProcess=$true)]
     Param(
         [string]
         $Name,
@@ -48,7 +48,7 @@ function UninstallModule {
         $Version
     )
 
-    Write-Verbose -Message "Uninstalling $name of $Version"   
+    Write-Verbose -Message "Uninstalling $name of $Version"
     Uninstall-Module -Name $name -RequiredVersion $Version -ErrorAction SilentlyContinue
     $oldversion = Get-Module $Name -ListAvailable | Where-Object -Property Version -EQ -Value $Version
     if ($oldversion) {
@@ -61,9 +61,9 @@ function UninstallModule {
     }
 }
 
-$packages = Get-Module -ListAvailable
+$modules = Get-Module -ListAvailable
 
-$packages | ForEach-Object -Begin {
+$modules | ForEach-Object -Begin {
     $prevName = $null
     $newestVersion = $null
     $prevType = $null
@@ -92,5 +92,3 @@ $packages | ForEach-Object -Begin {
         Write-Error -Message "The module $name appears to have two installations for the same version $version"
     }
 }
-
-
