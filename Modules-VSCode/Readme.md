@@ -23,3 +23,6 @@ changes to the file `PowerShellEditorServices.build.ps1`:
 ```
 
 This is a more robust way to check the version.
+
+One way to keep track of the change without changing the master is to make the change
+in a branch (e.g. `flexible-dotnet`).
