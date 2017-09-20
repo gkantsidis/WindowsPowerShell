@@ -183,63 +183,102 @@ function script:Write-HostCustomized-Dispatcher
 }
 
 function script:Write-Color-LS
-    {
-        param (
-            [string]$color = "white",
-            $file,
+{
+    param (
+        [string]$color = "white",
+        $file,
+        $rootDirectory
+    )
 
-            $rootDirectory
-        )
+    #
+    # Get a nice representation for the length of the object
+    #
 
-        $length = ""
+    $length = ""
+    $hasLength = $false
+    if ($file -is [System.IO.DirectoryInfo]) {
+        $hasLength = $false
+    } elseif ($file -is [System.IO.FileInfo]) {
         $hasLength = Get-Member -InputObject $file -Name Length -MemberType Properties
-        if ($hasLength) {
-            $length = $file.Length
+        if ($hasLength) { $length = $file.Length }
+    } elseif ($file -is [System.Management.Automation.Internal.AlternateStreamData]) {
+        $hasLength = $true
+        $length = $file.Length
+    }
+
+    if ($hasLength) {
+        if ($length -ge 1000) {
+            $length = $length / 1000
             if ($length -ge 1000) {
-                $length = $length / 1000
+                $length = $length  / 1000
                 if ($length -ge 1000) {
-                    $length = $length  / 1000
-                    if ($length -ge 1000) {
-                        $length = $length / 1000
-                        $length = $length.ToString("F2") + "G"
-                    } else {
-                        $length = $length.ToString("F2") + "M"
-                    }
+                    $length = $length / 1000
+                    $length = $length.ToString("F2") + "G"
                 } else {
-                    $length = $length.ToString("F2") + "K"
+                    $length = $length.ToString("F2") + "M"
                 }
             } else {
-                # do nothing; length is in bytes
+                $length = $length.ToString("F2") + "K"
             }
-        }
-
-        $related = ""
-        if ($file -is [System.IO.DirectoryInfo]) {
-            if ($null -ne $file.Parent) {
-                $related = Get-RelativePath -Target $file.Parent.FullName -Base $rootDirectory.ProviderPath
-            } else {
-                $related = ""
-            }
-
-        } elseif ($file -is [System.IO.FileInfo]) {
-            $related = Get-RelativePath -Target $file.Directory.FullName -Base $rootDirectory.ProviderPath
-        }
-        if ($related.StartsWith("\")) {
-            $related = $related.Substring(1)
-        }
-
-        if ([System.String]::IsNullOrEmpty($related)) {
-            Write-host ("{0,-7} {1,25} {2,10} {3}" -f $file.mode, ([String]::Format("{0,10}  {1,8}", $file.LastWriteTime.ToString("d"), $file.LastWriteTime.ToString("t"))), $length, $file.name) -foregroundcolor $color
         } else {
-            Write-host ("{0,-7} {1,25} {2,10} {3}" -f $file.mode, ([String]::Format("{0,10}  {1,8}", $file.LastWriteTime.ToString("d"), $file.LastWriteTime.ToString("t"))), $length, $file.name) -foregroundcolor $color -NoNewline
-            if (-not [System.String]::IsNullOrWhiteSpace($related)) {
-                Write-Host (" [{0}]" -f $related) -ForegroundColor Gray
-            } else {
-                # We need that to print a new line
-                Write-Host ""
-            }
+            # do nothing; length is in bytes
         }
     }
+
+    #
+    # Find the relative path of the object
+    #
+
+    $related = ""
+    if ($file -is [System.IO.DirectoryInfo]) {
+        if ($null -ne $file.Parent) {
+            $related = Get-RelativePath -Target $file.Parent.FullName -Base $rootDirectory.ProviderPath
+        } else {
+            $related = ""
+        }
+    } elseif ($file -is [System.IO.FileInfo]) {
+        $related = Get-RelativePath -Target $file.Directory.FullName -Base $rootDirectory.ProviderPath
+    } elseif ($file -is [System.Management.Automation.Internal.AlternateStreamData]) {
+        $realFile = Get-Item -Path $file.FileName
+        $related = Get-RelativePath -Target $realFile.Directory.FullName -Base $rootDirectory.ProviderPath
+    }
+
+    if ($related.StartsWith("\")) {
+        $related = $related.Substring(1)
+    }
+
+    #
+    # Get a nice name
+    #
+    if ($file -is [System.IO.DirectoryInfo]) {
+        $properName = $file.name
+        $mode = $file.mode
+        $lastWriteTimeDate = $file.LastWriteTime.ToString("d")
+        $lastWriteTimeTime = $file.LastWriteTime.ToString("t")
+    } elseif ($file -is [System.IO.FileInfo]) {
+        $properName = $file.name
+        $mode = $file.mode
+        $lastWriteTimeDate = $file.LastWriteTime.ToString("d")
+        $lastWriteTimeTime = $file.LastWriteTime.ToString("t")
+    } elseif ($file -is [System.Management.Automation.Internal.AlternateStreamData]) {
+        $properName = $file.PSChildName
+        $mode = ""
+        $lastWriteTimeDate = ""
+        $lastWriteTimeTime = ""
+    }
+
+    if ([System.String]::IsNullOrEmpty($related)) {
+        Write-Host ("{0,-7} {1,25} {2,10} {3}" -f $mode, ([String]::Format("{0,10}  {1,8}", $lastWriteTimeDate, $lastWriteTimeTime)), $length, $properName) -foregroundcolor $color
+    } else {
+        Write-Host ("{0,-7} {1,25} {2,10} {3}" -f $mode, ([String]::Format("{0,10}  {1,8}", $lastWriteTimeDate, $lastWriteTimeTime)), $length, $properName) -foregroundcolor $color -NoNewline
+        if (-not [System.String]::IsNullOrWhiteSpace($related)) {
+            Write-Host (" [{0}]" -f $related) -ForegroundColor Gray
+        } else {
+            # We need that to print a new line
+            Write-Host ""
+        }
+    }
+}
 
 New-CommandWrapper -Name Out-Default `
 -Begin {
@@ -261,7 +300,7 @@ New-CommandWrapper -Name Out-Default `
     $solution_files = New-Object System.Text.RegularExpressions.Regex(
         '\.(sln|csproj|sqlproj|proj|targets)$', $regex_opts)
 
-    if(($_ -is [System.IO.DirectoryInfo]) -or ($_ -is [System.IO.FileInfo]))
+    if(($_ -is [System.IO.DirectoryInfo]) -or ($_ -is [System.IO.FileInfo]) -or ($_ -is [System.Management.Automation.Internal.AlternateStreamData]))
     {
         if(-not ($notfirst))
         {

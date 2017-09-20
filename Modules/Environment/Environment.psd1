@@ -76,6 +76,7 @@ FunctionsToExport = @(
     'Get-Bootup',
     'Get-ChildItemByPage',
     'Get-ChildItemWithHidden',
+    'Get-ChildItemWithStreams',
     'Get-ChildItemWithOwner',
     'Get-FileHead',
     'Get-HwInfo',
@@ -114,6 +115,7 @@ VariablesToExport = '*'
 AliasesToExport = @(
     'cal',
     'color',
+    'dir/a',
     'dir/p',
     'dir/q',
     'head'
