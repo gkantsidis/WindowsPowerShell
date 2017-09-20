@@ -179,7 +179,7 @@ function Update-Modules {
             if ($comparison -eq 1) {
                 Write-Warning -Message "Module $module has more recent local version (Installed: $($installed.Version), Current: $($current.Version))"
             } elseif ($comparison -eq 0) {
-                Write-Verbose -Message "Module $module is up to date"
+                Write-Debug -Message "Module $module is up to date"
             } else {
                 Write-Verbose -Message "Module $module needs updating (Installed: $($installed.Version), Current: $($current.Version))"
                 $module
@@ -191,7 +191,7 @@ function Update-Modules {
         }
     }
 
-    Write-Verbose -Message "Need to update $($update.Count) modules"
+    Write-Verbose -Message "Need to update $($update.Count) modules: $update"
 
     for ($i = 0; $i -lt $update.Count; $i += $Concurrent) {
         $end = $i + $Concurrent - 1
