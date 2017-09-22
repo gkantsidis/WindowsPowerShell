@@ -1,0 +1,4 @@
+bumpversion
+watchdog
+Sphinx
+cryptography

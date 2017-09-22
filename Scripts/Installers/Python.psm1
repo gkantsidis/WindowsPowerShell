@@ -22,7 +22,7 @@
 
 [string[]]$virtual_environment_modules = Get-Content -LiteralPath (
     Join-Path -Path $PSScriptRoot -ChildPath "python-virtual-envs.txt")
-     
+
 [string[]]$code_quality_modules = Get-Content -LiteralPath (
     Join-Path -Path $PSScriptRoot -ChildPath "python-code-quality.txt")
 
@@ -64,7 +64,7 @@ function InstallPip {
             if (Test-Verbose) {
                 pip install --verbose $Modules
             } else {
-                pip install $Modules   
+                pip install $Modules
             }
         }
     }
@@ -82,7 +82,7 @@ function Test-Python ([string]$python = $null, [string]$pip = $null) {
     if ([String]::IsNullOrWhiteSpace($pip)) {
         $python_root = Split-Path -Parent $pythonExe.Path
         $pip = Join-Path -Path $python_root -ChildPath "Scripts" | `
-               Join-Path -ChildPath "pip.exe"         
+               Join-Path -ChildPath "pip.exe"
     }
 
     $pipExe = Get-Command -Name $pip -ErrorAction SilentlyContinue
@@ -96,22 +96,22 @@ function Install-PythonBase {
     <#
     .SYNOPSIS
     Installs a basic python environment.
-    
+
     .DESCRIPTION
     Install python, if not already installed, and make sure
     that the modules required for managing virtual environment,
     as well as other interesting modules (e.g. pep8 and others
     for checking code quality) are installed.
-    
+
     .PARAMETER VersionMajor
     Minimum major version of python expected
-    
+
     .PARAMETER VersionMinor
     Minimum minor version of python expected
-    
+
     .EXAMPLE
     PS> Install-PythonBase
-    
+
     .NOTES
     TODO: Change system path.
     #>
@@ -129,8 +129,8 @@ function Install-PythonBase {
         # Python does not exist
 
         if ($PSCmdlet.ShouldProcess("Python", "Install")) {
-            if (Test-AdminRights) {            
-                cinst -y python                
+            if (Test-AdminRights) {
+                cinst -y python
             } else {
                 Start-Process cinst -Verb runas -ArgumentList "-y","python" -Wait
             }
@@ -168,38 +168,47 @@ function New-PythonVirtualEnvironment {
     <#
     .SYNOPSIS
     Initializes a python virtual environment
-    
+
     .DESCRIPTION
     Initializes a python virtual environment. This is a wrapper
     around the virtualenv and virtualenvwrapper-win modules.
     It also installs a few basic packages.
-    
+
     .PARAMETER Name
     Name of the virtual environment.
-    
+
     .PARAMETER Local
     If present the environment will be local to current directory.
     Otherwise, it is a user-specific environment.
-    
+
     .PARAMETER Conda
     If present, it installs the conda environment.
-    
+
     .PARAMETER NoExtraModules
     If present, no other modules will be installed in new enviroment.
 
     .PARAMETER DoNotSwitchEnvironment
     After installation, deactivate the newly created virtual environment.
-    
+
+    .PARAMETER DataScience
+    Install data science related modules; this forces the use of Conda.
+
+    .PARAMETER Testing
+    Install extra tools to help testing
+
+    .PARAMETER Misc
+    Install some additional packages
+
     .PARAMETER Python
     Path to python executable that will be the base for the installation.
     Observe, that if "-Conda" is specified, then this binary may be replaced.
-    
+
     .EXAMPLE
     PS> New-PythonVirtualEnvironment -Name minimal
 
     .EXAMPLE
     PS> New-PythonVirtualEnvironment -Name .python -Local
-    
+
     .NOTES
     TODO: Pass extra parameters
     #>
@@ -210,10 +219,14 @@ function New-PythonVirtualEnvironment {
         [ValidateNotNullOrEmpty()]
         [string]$Name,
 
-        [switch]$Local,        
+        [switch]$Local,
         [switch]$Conda,
         [switch]$NoExtraModules,
         [switch]$DoNotSwitchEnvironment,
+
+        [switch]$DataScience,
+        [switch]$Testing,
+        [switch]$Misc,
 
         [string]$Python = $null
     )
@@ -234,7 +247,7 @@ function New-PythonVirtualEnvironment {
         return
     }
 
-    [string[]]$arguments = @()    
+    [string[]]$arguments = @()
     if (-not [String]::IsNullOrWhiteSpace($Python)) {
         $arguments += ("--python={0}" -f $Python)
     }
@@ -265,8 +278,49 @@ function New-PythonVirtualEnvironment {
         pip @pip_arguments_here
     }
 
+    if ($DataScience) {
+        $Conda = $true
+    }
+
     if ($Conda) {
         # Install Conda distribution
+        Write-Verbose -Message "Installing conda"
+        pip install auxlib ruamel_yaml requests pycosat
+        pip install pip-review zc.buildout pip-upgrader
+        pip install conda==4.2.7
+        conda install -y anaconda
+        conda update -y conda
+        conda install -y conda-build
+        conda install -y zlib libpng qt pywin32
+    }
+
+    if ($DataScience) {
+        conda install -y matplotlib numpy numpydoc scipy
+    }
+
+    [string[]]$extra_packages = @()
+
+    if ($Testing) {
+        [string[]]$package_set = Get-Content -LiteralPath (
+            Join-Path -Path $PSScriptRoot -ChildPath "python-testing-packages.txt")
+        $extra_packages += $package_set
+    }
+    if ($Misc) {
+        [string[]]$package_set = Get-Content -LiteralPath (
+            Join-Path -Path $PSScriptRoot -ChildPath "python-misc-packages.txt")
+        $extra_packages += $package_set
+    }
+
+    if ($extra_packages.Length -gt 0) {
+        [string[]]$extra_packages = $extra_packages | Sort-Object -Unique
+    }
+
+    if ($Conda) {
+        $conda_arguments = @("install", "-y") + $extra_packages
+        & conda @conda_arguments
+    } else {
+        $pip_arguments = @("install") + $extra_packages
+        & pip @pip_arguments
     }
 
     if($DoNotSwitchEnvironment) {
