@@ -119,11 +119,13 @@ function Install-PythonBase {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
         [int]$VersionMajor = 3,
-        [int]$VersionMinor = 6
+        [int]$VersionMinor = 6,
+
+        [ValidateNotNullOrEmpty()]
+        [string]$StableLocation = (Join-Path -Path $Env:SystemDrive -ChildPath tools | Join-Path -ChildPath Stable | Join-Path -ChildPath python)
     )
 
-    $python = Get-Command -Name python -ErrorAction SilentlyContinue
-    if (-not $python) {
+    if (-not (Test-Python)) {
         # Python does not exist
 
         if ($PSCmdlet.ShouldProcess("Python", "Install")) {
@@ -142,12 +144,24 @@ function Install-PythonBase {
     }
 
     $requiredVersion = [Version]::new($VersionMajor, $VersionMinor)
+    $python = Get-Command -Name python
     if ($python.Version.CompareTo($requiredVersion) -eq -1) {
         Write-Warning -Message "Python's existing version older than $requiredVersion; consider upgrading"
     }
 
     InstallPip -Modules $virtual_environment_modules -Description "Install modules to help with virtual environments"
     InstallPip -Modules $code_quality_modules -Description "Install code quality modules"
+
+    if (-not (Test-Path -Path $StableLocation)) {
+        Write-Verbose -Message "Creating stable link"
+        $pythonDirectory = Split-Path -Parent $python.Path
+        if ($pythonDirectory.EndsWith("Scripts", [System.StringComparison]::InvariantCultureIgnoreCase)) {
+            $pythonDirectory = Split-Path -Parent $pythonDirectory
+        }
+        New-Item -ItemType Junction -Path $StableLocation -Value $pythonDirectory
+
+        Write-Host -ForegroundColor Yellow -Object "Redirect PATH to point to $StableLocation instead of $pythonDirectory"
+    }
 }
 
 function New-PythonVirtualEnvironment {
