@@ -26,3 +26,10 @@ This is a more robust way to check the version.
 
 One way to keep track of the change without changing the master is to make the change
 in a branch (e.g. `flexible-dotnet`).
+
+Sometimes it helps to build the following projects manually:
+
+```[cmd]
+dotnet build .\src\PowerShellEditorServices.Host\PowerShellEditorServices.Host.csproj
+dotnet build .\src\PowerShellEditorServices.VSCode\PowerShellEditorServices.VSCode.csproj
+```
