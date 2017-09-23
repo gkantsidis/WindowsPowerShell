@@ -10,7 +10,7 @@ changes to the file `PowerShellEditorServices.build.ps1`:
 ```[PowerShell]
 +    $dotnetversion = & $dotnetExePath --version
 +    if ($dotnetversion.Contains("-")) {
-+        $dotnetversion = $dotnetversion.Substring(0, $version.IndexOf("-"))
++        $dotnetversion = $dotnetversion.Substring(0, $dotnetversion.IndexOf("-"))
 +    }
 +
 +    $requiredVersion = [Version]::Parse($requiredSdkVersion)
