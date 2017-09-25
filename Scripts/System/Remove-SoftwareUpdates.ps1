@@ -10,6 +10,8 @@
 
 [CmdletBinding(SupportsShouldProcess=$true)]
 param(
+    [switch]$RemoveFiles,
+    [switch]$AutomaticRestart
 )
 
 $services = @(
@@ -65,65 +67,54 @@ $extra_services = @(
 $now = Get-Date
 $now_string = $now.ToString("yyyMMdd_hhmm")
 
-foreach ($service in $services) {
-    Write-Verbose -Message "Stopping service: $service"
-    if ($PSCmdlet.ShouldProcess("Service: $service", "Stopping service")) {
-        net stop $service
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error -Message "Cannot stop service: $service"
-            # return
-        }
-    }
-}
+# Step 2 from Microsoft Guide
+Stop-Service -Name $services -Force
 
+# Step 3 from Microsoft Guide
 $qmgr_path = Join-Path -Path $Env:ALLUSERSPROFILE -ChildPath "Application Data" | `
-             Join-Path -ChildPath Microsoft | `
-             Join-Path -ChildPath Network | `
-             Join-Path -ChildPath Downloader
+            Join-Path -ChildPath Microsoft | `
+            Join-Path -ChildPath Network | `
+            Join-Path -ChildPath Downloader
 if (Test-Path -Path $qmgr_path -PathType Container) {
     Remove-Item -Path $qmgr_path -Filter qmgr*.dat
 }
 
-if ($PSCmdlet.ShouldProcess("Bits service", "reset")) {
-    sc.exe sdset bits "D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)"
-    sc.exe sdset wuauserv "D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)"
+# Step 4 from Microsoft Guide --- optional
+if ($RemoveFiles) {
+    foreach ($folder in $folders) {
+        $location = Join-Path -Path $folder.Location -ChildPath $folder.Path
+        $newname = "{0}-{1}" -f $folder.Path,$now_string
+
+        Write-Verbose -Message "Renaming $location to $newname"
+        Rename-Item -Path $location -NewName $newname
+    }
+
+    if ($PSCmdlet.ShouldProcess("Bits service", "reset")) {
+        sc.exe sdset bits "D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)"
+        sc.exe sdset wuauserv "D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)"
+    }
 }
 
-foreach ($folder in $folders) {
-    $location = Join-Path -Path $folder.Location -ChildPath $folder.Path
-    $newname = "{0}-{1}" -f $folder.Path,$now_string
-
-    Write-Verbose -Message "Renaming $location to $newname"
-    Rename-Item -Path $location -NewName $newname
-}
-
-Push-Location $Env:windir
+# Steps 5&6 from Microsoft Guide
+Push-Location (Join-Path -Path $Env:windir -ChildPath "system32")
 foreach ($svc in $extra_services) {
     if ($PSCmdlet.ShouldProcess("Service: $svc", "registering")) {
         if (Test-Path -Path $svc) {
-            regsvr32.exe $svc
+            regsvr32.exe /s $svc
         } else {
-            Write-Error -Message "Cannot find $svc"
+            Write-Warning -Message "Cannot find $svc"
         }
     }
 }
 Pop-Location
 
+# Steps 7&8 from Microsoft Guide
 if ($PSCmdlet.ShouldProcess("Winsock", "reset")) {
     netsh winsock reset
     netsh winhttp reset proxy
 }
 
-foreach ($service in $services) {
-    Write-Verbose -Message "Starting service: $service"
-    if ($PSCmdlet.ShouldProcess("Service: $service", "Starting service")) {
-        net start $service
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error -Message "Cannot start service: $service"
-            # return
-        }
-    }
-}
+Start-Service -Name $services
 
 foreach ($folder in $folders) {
     $newname = "{0}-{1}" -f $folder.Path,$now_string
@@ -135,4 +126,10 @@ foreach ($folder in $folders) {
     }
 }
 
-Write-Warning -Message "You need to reboot your machine now"
+if ($PSCmdlet.ShouldProcess("Machine: $($Env:COMPUTERNAME)", "reboot")) {
+    Write-Warning -Message "You need to reboot your machine now"
+}
+
+if ($AutomaticRestart) {
+    Restart-Computer
+}
