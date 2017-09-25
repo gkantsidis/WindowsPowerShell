@@ -134,3 +134,5 @@ foreach ($folder in $folders) {
         Remove-Item -Path $location -Recurse -Force
     }
 }
+
+Write-Warning -Message "You need to reboot your machine now"
