@@ -44,7 +44,7 @@ function UninstallModule {
         $Version
     )
 
-    Write-Verbose -Message "Uninstalling $name of $Version"
+    Write-Debug -Message "Uninstalling $name of $Version"
     Uninstall-Module -Name $name -RequiredVersion $Version -ErrorAction SilentlyContinue
     $oldversion = Get-Module $Name -ListAvailable | Where-Object -Property Version -EQ -Value $Version
     if ($oldversion) {
@@ -74,7 +74,8 @@ function Remove-OldModules {
     [CmdletBinding(SupportsShouldProcess=$true)]
     Param()
 
-    $modules = Get-Module -ListAvailable
+    $modules = Get-Module -ListAvailable | Sort-Object -Property Name,Version -Descending
+    # Assumption: the modules are grouped by name, and the newest version comes first.
 
     $modules | ForEach-Object -Begin {
         $prevName = $null
@@ -97,7 +98,7 @@ function Remove-OldModules {
         } elseif ($newestVersion -lt $version) {
             Write-Verbose "Detected old version of module $name : old=$newestVersion, current=$version; Removing $newestVersion ..."
             UninstallModule -Name $name -Version $newestVersion
-            $newestVersion = $verson
+            $newestVersion = $version
         } elseif ($version -lt $newestVersion) {
             Write-Verbose "Detected old version of module $name : old=$version, current=$newestVersion; Removing $version ..."
             UninstallModule -Name $name -Version $version

@@ -45,7 +45,8 @@ $modules = (
     'TypePx',
     'VSSetup',
     'xDscDiagnostics',
-    'xNetworking'
+    'xNetworking',
+    'z'
 )
 
 $modulesIse = (
