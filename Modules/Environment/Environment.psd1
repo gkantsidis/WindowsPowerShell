@@ -95,6 +95,7 @@ FunctionsToExport = @(
     'Get-WinlogonHistory',
     'Install-Scoop',
     'Reset-ForegroundColor',
+    'Restart-Process',
     'Save-EnvironmentSettings',
     'Set-SystemDebugger',
     'Show-Calendar',
@@ -102,7 +103,8 @@ FunctionsToExport = @(
     'Test-HasEmacs',
     'Test-IsIse',
     'Test-HasNotepadPlusPlus',
-    'Test-HasVisualStudio'
+    'Test-HasVisualStudio',
+    'bg'
 )
 
 # Cmdlets to export from this module
