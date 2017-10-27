@@ -1,4 +1,4 @@
-#Requires -Modules Environment,xUtility
+﻿#Requires -Modules Environment,xUtility
 
 [CmdletBinding()]
 param(
@@ -22,6 +22,7 @@ $modules = (
     'Logman',
     'nPSDesiredStateConfiguration',
     'OutlookConnector',
+    'Pester',
     'Pipeworks',
     'Plaster',
     'PoshInternals',
