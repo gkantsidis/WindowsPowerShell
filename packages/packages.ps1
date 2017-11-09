@@ -71,7 +71,7 @@ if (-not (Get-Module log4net)) {
     Import-Module .\log4net.dll
     Pop-Location
 } else {
-    Write-Message -Message "Module already loaded"
+    Write-Verbose -Message "Module already loaded"
 }
 
 #nuget install log4net -Version 1.2.13.0 -OutputDirectory $Directory
