@@ -41,3 +41,16 @@ Set-alias gitlog Get-GitLog
 
 New-PSDrive -Name me -PSProvider FileSystem -Root ([Environment]::GetFolderPath("User"))
 New-PSDrive -Name ps -PSProvider FileSystem -Root $PSScriptRoot
+
+# Dynamic module loader
+$dynamic_module_loader = Join-Path -Path $PSScriptRoot -ChildPath packages | Join-Path -ChildPath DynamicPackageLoader.psm1
+if (Test-Path -Path $dynamic_module_loader -PathType Leaf) {
+    $loader = Get-Item -Path $dynamic_module_loader
+    Push-Location -Path $loader.DirectoryName
+    Try {
+        Import-Module -Name ./DynamicPackageLoader -Prefix DynamicLoader
+    } Finally {
+        Pop-Location
+    }
+    Write-Warning -Message "If you see errors relating to missing module log4net when using autocomplete use:`n          Register-DynamicLoaderExtraPackages"
+}
