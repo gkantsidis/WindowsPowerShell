@@ -6,6 +6,36 @@ $packages = $PSScriptRoot
 
 $registered = $false
 
+function DownloadModule($module) {
+    $name = $module.Name
+    Write-Debug -Message "Downloading $name"
+    $get = $module.Download
+    $method = $get.Method.ToUpperInvariant()
+    switch ($method) {
+        "Web" {
+            $url = $get.URL
+            Write-Warning -Message "Please be patient: downloading and installing $name from $url"
+
+            $filename = [System.IO.FileInfo]::new([System.IO.Path]::GetTempFileName())
+            $filename = Join-Path -Path $filename.DirectoryName -ChildPath ($filename.BaseName + ".zip")
+            Try {
+                Invoke-WebRequest -Uri $url -OutFile $filename
+                Expand-Zip -ZipPath $filename -OutputPath $script:packages
+            }
+            Finally {
+                if (Test-Path -Path $filename) {
+                    Remove-Item -Path $filename -Force
+                }
+            }
+        }
+
+        default {
+            Write-Warning -Message "Do not implement method $($get.Method)"
+            return
+        }
+    }
+}
+
 function LoadModule($module) {
     $name = $module.Name
     Write-Debug -Message "Loading local module $name"
@@ -13,13 +43,18 @@ function LoadModule($module) {
     $directory = Join-Path -Path $script:packages -ChildPath $module.Directory
     if (-not (Test-Path -Path $directory -PathType Container)) {
         # Directory does not exist; will need to download
-        Write-Debug -Message "Downloading $name"
+        DownloadModule($module)
+
+        if (-not (Test-Path -Path $directory -PathType Container)) {
+            Write-Warning -Message "Could not download $name"
+            return
+        }
     } else {
         Write-Debug -Message "Package $name is available locally"
     }
 
     [string[]]$binary = $module.Binary | Where-Object {
-        ($_.Edition -eq $PSEdition)
+        ($_.Edition -eq $PSEdition) -and ($_.Platform -eq [Environment]::OSVersion.Platform)
     } | Select-Object -ExpandProperty "File"
 
     if (($binary -eq $null) -or (($binary.Length -eq 1) -and [string]::IsNullOrWhiteSpace($binary[0]))) {
