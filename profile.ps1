@@ -1,4 +1,4 @@
-# Make sure that %HOMEDRIVE%%HOMEPATH%\Documents\WindowsPowerShell or destination directory is in PSModulePath
+﻿# Make sure that %HOMEDRIVE%%HOMEPATH%\Documents\WindowsPowerShell or destination directory is in PSModulePath
 
 $private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 Push-Location $private:PowerShellProfileDirectory
@@ -52,5 +52,5 @@ if (Test-Path -Path $dynamic_module_loader -PathType Leaf) {
     } Finally {
         Pop-Location
     }
-    Write-Warning -Message "If you see errors relating to missing module log4net when using autocomplete use:`n          Register-DynamicLoaderExtraPackages"
+    Write-Warning -Message "If you see errors related to module log4net use:`n          Register-DynamicLoaderExtraPackages"
 }
