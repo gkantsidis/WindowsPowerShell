@@ -78,6 +78,7 @@ FunctionsToExport = @(
     'Get-ChildItemWithHidden',
     'Get-ChildItemWithStreams',
     'Get-ChildItemWithOwner',
+    'Get-ExecutableType',
     'Get-FileHead',
     'Get-HwInfo',
     'Get-InstalledApplications',
