@@ -1,0 +1,20 @@
+{
+    "Modules":[
+        {
+            "Name":"log4net",
+            "Download":{
+                "Method":"Web",
+                "URL":"http://archive.apache.org/dist/logging/log4net/binaries/log4net-1.2.15-bin-newkey.zip"
+            },
+            "Directory":"log4net-1.2.15",
+            "DynamicLoading":true,
+            "Binary":[
+                {
+                    "Edition":"Desktop",
+                    "Platform":"Win32NT",
+                    "File":"bin/net/4.5/release/log4net.dll"
+                }
+            ]
+        }
+    ]
+}
