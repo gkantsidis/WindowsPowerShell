@@ -31,6 +31,8 @@
 
 $python_user_envs = Join-Path -Path $Env:USERPROFILE -ChildPath "Envs"
 
+$default_pip = "pip3.exe"
+
 #
 # Helper scripts
 #
@@ -59,12 +61,12 @@ function InstallPip {
 
     if ($PSCmdlet.ShouldProcess("Python", $Description)) {
         if (-not (Test-AdminRights)) {
-            Start-Process pip -Verb runas -ArgumentList $install_arguments -Wait
+            Start-Process pip3 -Verb runas -ArgumentList $install_arguments -Wait
         } else {
             if (Test-Verbose) {
-                pip install --verbose $Modules
+                & $default_pip install --verbose $Modules
             } else {
-                pip install $Modules
+                & $default_pip install $Modules
             }
         }
     }
@@ -82,7 +84,7 @@ function Test-Python ([string]$python = $null, [string]$pip = $null) {
     if ([String]::IsNullOrWhiteSpace($pip)) {
         $python_root = Split-Path -Parent $pythonExe.Path
         $pip = Join-Path -Path $python_root -ChildPath "Scripts" | `
-               Join-Path -ChildPath "pip.exe"
+               Join-Path -ChildPath $default_pip
     }
 
     $pipExe = Get-Command -Name $pip -ErrorAction SilentlyContinue
@@ -275,7 +277,7 @@ function New-PythonVirtualEnvironment {
 
     if ((-not $NoExtraModules) -and $PSCmdlet.ShouldProcess("Python", ("Install code quality tools: {0}" -f $code_quality_modules))) {
         [string[]]$pip_arguments_here = $pip_arguments + $code_quality_modules + $code_environment_modules
-        pip @pip_arguments_here
+        & $default_pip @pip_arguments_here
     }
 
     if ($DataScience) {
@@ -285,9 +287,9 @@ function New-PythonVirtualEnvironment {
     if ($Conda) {
         # Install Conda distribution
         Write-Verbose -Message "Installing conda"
-        pip install auxlib ruamel_yaml requests pycosat
-        pip install pip-review zc.buildout pip-upgrader
-        pip install conda==4.2.7
+        & $default_pip install auxlib ruamel_yaml requests pycosat
+        & $default_pippip install pip-review zc.buildout pip-upgrader
+        & $default_pip install conda==4.2.7
         conda install -y anaconda
         conda update -y conda
         conda install -y conda-build
@@ -299,6 +301,7 @@ function New-PythonVirtualEnvironment {
     }
 
     [string[]]$extra_packages = @()
+    [string[]]$extra_packages_pip = @()
 
     if ($Testing) {
         [string[]]$package_set = Get-Content -LiteralPath (
@@ -309,6 +312,10 @@ function New-PythonVirtualEnvironment {
         [string[]]$package_set = Get-Content -LiteralPath (
             Join-Path -Path $PSScriptRoot -ChildPath "python-misc-packages.txt")
         $extra_packages += $package_set
+
+        [string[]]$package_set = Get-Content -LiteralPath (
+            Join-Path -Path $PSScriptRoot -ChildPath "python-misc-packages-pip.txt")
+        $extra_packages_pip += $package_set
     }
 
     if ($extra_packages.Length -gt 0) {
@@ -320,7 +327,12 @@ function New-PythonVirtualEnvironment {
         & conda @conda_arguments
     } else {
         $pip_arguments = @("install") + $extra_packages
-        & pip @pip_arguments
+        & $default_pip @pip_arguments
+    }
+
+    if ($extra_packages_pip -and ($extra_packages_pip.Length -gt 0)) {
+        $pip_arguments = @("install") + $extra_packages_pip
+        & $default_pip @pip_arguments
     }
 
     if($DoNotSwitchEnvironment) {
