@@ -294,6 +294,12 @@ function New-PythonVirtualEnvironment {
         conda update -y conda
         conda install -y conda-build
         conda install -y zlib libpng qt pywin32
+
+        # After the following command the output of 'conda config --show' should contain:
+        # > channels:
+        # >  - conda-forge
+        # >  - defaults
+        conda config --add channels conda-forge
     }
 
     if ($DataScience) {
