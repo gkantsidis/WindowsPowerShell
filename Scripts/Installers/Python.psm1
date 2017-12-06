@@ -288,7 +288,7 @@ function New-PythonVirtualEnvironment {
         # Install Conda distribution
         Write-Verbose -Message "Installing conda"
         & $default_pip install auxlib ruamel_yaml requests pycosat
-        & $default_pippip install pip-review zc.buildout pip-upgrader
+        & $default_pip install pip-review zc.buildout pip-upgrader
         & $default_pip install conda==4.2.7
         conda install -y anaconda
         conda update -y conda
