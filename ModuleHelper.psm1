@@ -201,7 +201,20 @@ function Update-Modules {
         }
         $need_update = $update[$i..$end]
 
-        Update-Module -Name $need_update -Force
+        try {
+            PowerShellGet\Update-Module -Name $need_update -Force
+        } catch {
+            Write-Warning -Message "Error in updating batch of modules; will try one by one"
+            for ($j=$i; $j -le $end; $j++) {
+                $pkg = $need_update[$j]
+                try {
+                    PowerShellGet\Update-Module -Name $pkg -Force
+                } catch {
+                    $e = $_
+                    Write-Error -Message "Error upgrading package $pkg; error: $e"
+                }
+            }
+        }
     }
 }
 
