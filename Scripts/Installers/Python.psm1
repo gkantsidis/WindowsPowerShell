@@ -261,9 +261,19 @@ function New-PythonVirtualEnvironment {
     if ($PSCmdlet.ShouldProcess("Python", "Create virtual environment with arguments: $arguments")) {
         if ($Local) {
             virtualenv @arguments
+            $activate_script = Join-Path -Path $Name -ChildPath Scripts | Join-Path -ChildPath "activate.ps1"
+            if (-not (Test-Path -Path $activate_script -PathType Leaf)) {
+                Write-Error -Message "Failed to create virtual environment"
+                return
+            }
             & ".\$Name\Scripts\activate.ps1"
         } else {
             mkvirtualenv @arguments
+            $activate_script = Join-Path -Path $target_profile -ChildPath Scripts | Join-Path -ChildPath "activate.ps1"
+            if (-not (Test-Path -Path $activate_script -PathType Leaf)) {
+                Write-Error -Message "Failed to create virtual environment"
+                return
+            }
             # workon $Name
             & "$target_profile\Scripts\activate.ps1"
         }
