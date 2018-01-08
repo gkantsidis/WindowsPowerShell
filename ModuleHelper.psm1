@@ -155,7 +155,11 @@ function Update-Modules {
         $examine = $names[$i..$end]
         Write-Debug -Message "Examining modules $($examine[0]) ($i) to $($examine[-1]) ($end)"
 
-        $server = Find-Module -Name $examine
+        $server = Find-Module -Name $examine -ErrorAction SilentlyContinue
+        if ($server -eq $null) {
+            Write-Verbose -Message "Unknown Module(s): $examine; ignoring"
+            continue
+        }
 
         [string[]]$to_update = $examine | ForEach-Object -Process {
             $module = $_
@@ -172,18 +176,30 @@ function Update-Modules {
             }
 
             $installed = $installed[0]
+            if ($installed -is [System.Array]) {
+                $installed = ($installed | Sort-Object -Property Version -Descending)[0]
+            }
             $current = $current[0]
 
-            Write-Debug -Message "Module: $module`t Installed: $($installed.Version), Current: $($current.Version)"
-
-            $comparison = $installed.Version.CompareTo($current.Version)
-            if ($comparison -eq 1) {
-                Write-Warning -Message "Module $module has more recent local version (Installed: $($installed.Version), Current: $($current.Version))"
-            } elseif ($comparison -eq 0) {
-                Write-Debug -Message "Module $module is up to date"
+            if ($current -eq $null) {
+                Write-Debug -Message "Module $module is not listed in server; ignoring"
             } else {
-                Write-Verbose -Message "Module $module needs updating (Installed: $($installed.Version), Current: $($current.Version))"
-                $module
+                Write-Debug -Message "Module: $module`t Installed: $($installed.Version), Current: $($current.Version)"
+
+                $currentVersion = $current.Version
+                if ($currentVersion -is [String]) {
+                    $currentVersion = [Version]::Parse($currentVersion)
+                }
+
+                $comparison = $installed.Version.CompareTo($currentVersion)
+                if ($comparison -eq 1) {
+                    Write-Warning -Message "Module $module has more recent local version (Installed: $($installed.Version), Current: $currentVersion)"
+                } elseif ($comparison -eq 0) {
+                    Write-Debug -Message "Module $module is up to date"
+                } else {
+                    Write-Verbose -Message "Module $module needs updating (Installed: $($installed.Version), Current: $currentVersion)"
+                    $module
+                }
             }
         }
 
@@ -202,7 +218,28 @@ function Update-Modules {
         $need_update = $update[$i..$end]
 
         try {
-            PowerShellGet\Update-Module -Name $need_update -Force
+            PowerShellGet\Update-Module -Name $need_update -Force -ErrorVariable updateError -ErrorAction SilentlyContinue
+            if (($updateError -ne $null) -and ($updateError -is [System.Collections.ArrayList])) {
+                $installationErrors = $errorMessage | Where-Object -FilterScript { $_.FullyQualifiedErrorId -eq "ModuleNotInstalledUsingInstallModuleCmdlet,Update-Module" }
+                $installationErrors | ForEach-Object -Process {
+                    $message = $_.Exception.Message
+                    if ($message -match "Module '[A-z0-9\.]+' was not installed by using Install-Module, so it cannot be updated.") {
+                        $package = $message.Substring(8, $message.IndexOf("'", 9) - 8)
+                        Write-Verbose -Message "Package $package is not installed locally"
+                        PowerShellGet\Install-Module -Name $package -Force -AllowClobber
+                    } else {
+                        Write-Warning -Message "Do not know how to deal with error '$message' of package $need_update"
+                    }
+                }
+
+
+                $errorMessage = $updateError[1].FullyQualifiedErrorId
+                if ($errorMessage -eq "ModuleNotInstalledUsingInstallModuleCmdlet,Update-Module") {
+                    PowerShellGet\Install-Module -Name $need_update -Force -AllowClobber
+                } else {
+                    Write-Warning -Message "Don't know what to do with error '$errorMessage' for package $($need_update)"
+                }
+            }
         } catch {
             Write-Warning -Message "Error in updating batch of modules; will try one by one"
             for ($j=$i; $j -le $end; $j++) {
