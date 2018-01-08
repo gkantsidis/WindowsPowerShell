@@ -43,6 +43,7 @@ $modules = (
     'SharePointPnPPowerShellOnline',
     'ShowUI',
     'SnippetPx',
+    'SpeculationControl',   # Check for Meltdown and Spectre bugs in Intel processors --- https://aka.ms/SpeculationControlPS
     'TypePx',
     'VSSetup',
     'xDscDiagnostics',
