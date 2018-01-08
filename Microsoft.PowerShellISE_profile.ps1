@@ -1,4 +1,4 @@
-$private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent 
+$private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 Push-Location $private:PowerShellProfileDirectory
 
 #
@@ -69,7 +69,7 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 #
 # Third party modules with special initialization
-# 
+#
 
 # Module: posh-git
 $StartMS = Get-Date
@@ -87,7 +87,7 @@ if ($poshGitModule) {
 }
 else {
     Write-Warning "Consider installing posh-git module (as admin): Install-Module -Name posh-git -Force -AllowClobber"
-    
+
     if (Test-Path -LiteralPath $localPoshGitModule) {
         Import-Module $localPoshGitModule
     }
@@ -95,12 +95,12 @@ else {
         throw "Failed to import posh-git."
     }
 }
-                                                                                                                                              
-# Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.                                                     
-# Example:                                                                                                                                    
-#     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"                                                                       
-                                                                                                                                              
-Start-SshAgent -Quiet                                                                                                                         
+
+# Settings for the prompt are in GitPrompt.ps1, so add any desired settings changes here.
+# Example:
+#     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"
+
+Start-SshAgent -Quiet
 
 # Other modules
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
@@ -149,7 +149,7 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 #
 # Local Modules
-# 
+#
 
 $StartMS = Get-Date
 
@@ -163,7 +163,7 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 #
 # End of initialization
-# 
+#
 
 Pop-Location
 
