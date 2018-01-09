@@ -17,6 +17,7 @@ $modulesToCheck = (
     'pscx',
     'PowerShellCookbook',
     'posh-git',
+    'posh-with',
     'SnippetPx',
     'TypePx',
     'VSSetup',
@@ -210,6 +211,29 @@ if ($rgcommand) {
 }
 
 Stop-Timing -Description "Stop timing: setting up ripgrep (rg)"
+
+#
+# Setting up the
+#
+
+Start-Timing
+
+if (Get-Command -Name thefuck -ErrorAction SilentlyContinue) {
+    $env:PYTHONIOENCODING='utf-8'
+    function fuck {
+        $history = (Get-History -Count 1).CommandLine;
+        if (-not [string]::IsNullOrWhiteSpace($history)) {
+            $fuck = $(thefuck $args $history);
+            if (-not [string]::IsNullOrWhiteSpace($fuck)) {
+                if ($fuck.StartsWith("echo")) { $fuck = $fuck.Substring(5); }
+                else { iex "$fuck"; }
+            }
+        }
+    }
+}
+
+
+Stop-Timing -Description "Stop timing: setting up command corrections"
 
 #
 # End of initialization
