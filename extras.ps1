@@ -25,7 +25,7 @@ $modules = (
     'Pester',
     'Pipeworks',
     'Plaster',
-    'posh-with',               # Program prefixing for continuous workflow using a single tool.
+    'posh-with',                # Program prefixing for continuous workflow using a single tool.
     'PoshInternals',
     'PowerShellCookbook',
     'psake',
@@ -38,13 +38,14 @@ $modules = (
     'PSWindowsUpdate',
     'Posh-Gist',
     'posh-git',
+    'PoshRSJob',                # Provides an alternative to PSjobs with greater performance and less overhead to run commands in the background, freeing up the console.
     'RoughDraft',
     'ScriptBrowser',
     'ScriptCop',
     'SharePointPnPPowerShellOnline',
     'ShowUI',
     'SnippetPx',
-    'SpeculationControl',   # Check for Meltdown and Spectre bugs in Intel processors --- https://aka.ms/SpeculationControlPS
+    'SpeculationControl',       # Check for Meltdown and Spectre bugs in Intel processors --- https://aka.ms/SpeculationControlPS
     'TypePx',
     'VSSetup',
     'xDscDiagnostics',
