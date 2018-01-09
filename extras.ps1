@@ -25,6 +25,7 @@ $modules = (
     'Pester',
     'Pipeworks',
     'Plaster',
+    'posh-with',               # Program prefixing for continuous workflow using a single tool.
     'PoshInternals',
     'PowerShellCookbook',
     'psake',
