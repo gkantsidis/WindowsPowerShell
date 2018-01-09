@@ -7,6 +7,7 @@ param(
 )
 
 $modules = (
+    'Configuration',
     'cWindowsOS',
     'EZOut',
     'DeployImage',
