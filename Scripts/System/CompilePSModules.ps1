@@ -3,7 +3,9 @@
 
 
 [CmdletBinding()]
-param()
+param(
+    [switch]$NoDependencies
+)
 
 Set-Alias ngen (Join-Path ([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory()) ngen.exe)
 
@@ -23,7 +25,13 @@ Set-Alias ngen (Join-Path ([System.Runtime.InteropServices.RuntimeEnvironment]::
             else
             {
                 Write-Verbose -Message "NGENing      : $Name (from $location)"
-                ngen install $_.location | ForEach-Object -Process {"`t$_"}
+                if ($NoDependencies) {
+                    $result = ngen install $_.location /NoDependencies
+                } else {
+                    $result = ngen install $_.location
+                }
+
+                $result | ForEach-Object -Process {"`t$_"}
             }
         }
       }
