@@ -93,7 +93,7 @@ if ((Get-Module -Name PowerLine -ListAvailable) -ne $null) {
     }
 
     function global:Set-NormalPrompt2 {
-        Set-PowerLinePrompt -Prompt { Get-TruncatedPath } -Colors "#00DDFF","#0066FF" -PowerLineFont
+        Set-PowerLinePrompt -Prompt { Get-TruncatedPath } -Colors "#00DDFF","#0066FF" -PowerLineFont -FullColor
     }
 }
 
