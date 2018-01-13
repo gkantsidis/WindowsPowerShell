@@ -8,6 +8,10 @@ if (Test-Path -Path profile_local.ps1 -PathType Leaf) {
     . .\profile_local.ps1
 }
 
+If (Test-Path "C:\Program Files\openssh-win64\Set-SSHDEfaultShell.ps1") {
+    {& "C:\Program Files\openssh-win64\Set-SSHDEfaultShell.ps1"}
+}
+
 Pop-Location
 
 # Add modules for PowerShellEditorServices
@@ -41,16 +45,3 @@ Set-alias gitlog Get-GitLog
 
 New-PSDrive -Name me -PSProvider FileSystem -Root ([Environment]::GetFolderPath("User"))
 New-PSDrive -Name ps -PSProvider FileSystem -Root $PSScriptRoot
-
-# Dynamic module loader
-$dynamic_module_loader = Join-Path -Path $PSScriptRoot -ChildPath packages | Join-Path -ChildPath DynamicPackageLoader.psm1
-if (Test-Path -Path $dynamic_module_loader -PathType Leaf) {
-    $loader = Get-Item -Path $dynamic_module_loader
-    Push-Location -Path $loader.DirectoryName
-    Try {
-        Import-Module -Name ./DynamicPackageLoader -Prefix DynamicLoader
-    } Finally {
-        Pop-Location
-    }
-    Write-Warning -Message "If you see errors related to module log4net use:`n          Register-DynamicLoaderExtraPackages"
-}

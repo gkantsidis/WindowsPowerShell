@@ -235,6 +235,19 @@ if (Get-Command -Name thefuck -ErrorAction SilentlyContinue) {
 
 Stop-Timing -Description "Stop timing: setting up command corrections"
 
+# Dynamic module loader
+$dynamic_module_loader = Join-Path -Path $PSScriptRoot -ChildPath packages | Join-Path -ChildPath DynamicPackageLoader.psm1
+if (Test-Path -Path $dynamic_module_loader -PathType Leaf) {
+    $loader = Get-Item -Path $dynamic_module_loader
+    Push-Location -Path $loader.DirectoryName
+    Try {
+        Import-Module -Name ./DynamicPackageLoader -Prefix DynamicLoader
+    } Finally {
+        Pop-Location
+    }
+    Write-Warning -Message "If you see errors related to module log4net use:`n          Register-DynamicLoaderExtraPackages"
+}
+
 #
 # End of initialization
 #
