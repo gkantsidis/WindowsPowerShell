@@ -179,8 +179,11 @@ function Update-Modules {
             if ($installed -is [System.Array]) {
                 $installed = ($installed | Sort-Object -Property Version -Descending)[0]
             }
-            $current = $current[0]
+            if ($installed.Version -is [String]) {
+                $installed.Version = [Version]::Parse($installed.Version)
+            }
 
+            $current = $current[0]
             if ($current -eq $null) {
                 Write-Debug -Message "Module $module is not listed in server; ignoring"
             } else {
