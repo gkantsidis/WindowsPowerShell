@@ -78,6 +78,7 @@ function Test-Python ([string]$python = $null, [string]$pip = $null) {
     $pythonExe = Get-Command -Name $python -ErrorAction SilentlyContinue
 
     if (-not $pythonExe) {
+        Write-Verbose -Message "Cannot find python.exe"
         return $false
     }
 
@@ -88,6 +89,11 @@ function Test-Python ([string]$python = $null, [string]$pip = $null) {
     }
 
     $pipExe = Get-Command -Name $pip -ErrorAction SilentlyContinue
+    if ($pipExe -eq $null) {
+        $pip = Join-Path -Path $python_root -ChildPath $default_pip
+        $pipExe = Get-Command -Name $pip -ErrorAction SilentlyContinue
+    }
+
     return $pipExe -ne $null
 }
 
