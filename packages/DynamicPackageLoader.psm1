@@ -209,4 +209,68 @@ function Get-AllModules {
     return $config
 }
 
-Export-ModuleMember -Function Register-ExtraPackages,Unregister-ExtraPackages
+$OnAssemblySearch = [System.ResolveEventHandler] {
+    param($sender, $e)
+
+    $index = $e.Name.IndexOf(",")
+    if ($index -gt 0) {
+        $name = $e.Name.Substring(0, $index)
+    } else {
+        $name = $e
+    }
+
+    $assemblies = [System.AppDomain]::CurrentDomain.GetAssemblies()
+
+    # First attempt: look for exact match
+    foreach($a in $assemblies)
+    {
+        if ($a.FullName -eq $e.Name)
+        {
+        Write-Debug -Mesage "... Found $($a.FullName)"
+        return $a
+        }
+    }
+
+    # Second attempt: look for same name
+    foreach($a in $assemblies)
+    {
+      Write-Debug -Message "Testing $($a.GetName().Name) with $($e.Name) : $($e.Name.GetType())"
+      if ($a.GetName().Name -eq $name)
+      {
+        Write-Verbose -Message "... Found $($a.FullName)"
+        return $a
+      }
+    }
+
+    Write-Host "Failed to find assembly: $name"
+
+    return $null
+}
+
+function Register-TraceMissingAssemblies {
+    [CmdletBinding()]
+    param()
+
+    if (-not $registered) {
+        Write-Debug -Message "Registering handler"
+        [System.AppDomain]::CurrentDomain.add_AssemblyResolve($script:OnAssemblySearch)
+        $script:registered = $true
+    } else {
+        Write-Debug -Message "Handler is already registered"
+    }
+}
+
+function Unregister-TraceMissingAssemblies {
+    [CmdletBinding()]
+    param()
+
+    if ($registered) {
+        Write-Debug -Message "Unregistering handler"
+        [System.AppDomain]::CurrentDomain.remove_AssemblyResolve($script:OnAssemblySearch)
+        $script:registered = $false
+    } else {
+        Write-Debug -Message "Handler is not registered"
+    }
+}
+
+Export-ModuleMember -Function Register-ExtraPackages,Unregister-ExtraPackages,Register-TraceMissingAssemblies,Unregister-TraceMissingAssemblies
