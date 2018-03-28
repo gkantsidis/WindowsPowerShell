@@ -1,9 +1,6 @@
 [submodule "Modules/Posh-GitHub"]
 	path = Modules/Posh-GitHub
 	url = https://github.com/Iristyle/Posh-GitHub.git
-[submodule "Modules/Invoke-MSBuild"]
-	path = Modules/Invoke-MSBuild
-	url = https://git01.codeplex.com/invokemsbuild
 [submodule "Modules/PowerShellArsenal"]
 	path = Modules/PowerShellArsenal
 	url = https://github.com/gkantsidis/PowerShellArsenal.git
