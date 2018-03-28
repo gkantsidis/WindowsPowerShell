@@ -33,7 +33,6 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 # The other modules are local (i.e. in the repo or in submodules):
 # - Posh-VsVars (not really a module)
-# - Invoke-MSBuild
 # - Pester
 # - IsePester
 # - PowerShellArsenal
@@ -120,7 +119,6 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 $StartMS = Get-Date
 
-Import-Module Invoke-MSBuild\Invoke-MSBuild
 Import-Module Pester
 Import-Module IsePester
 Import-Module PowerShellArsenal

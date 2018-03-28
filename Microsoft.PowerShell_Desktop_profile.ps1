@@ -40,7 +40,6 @@ Stop-Timing -Description "Checking for external modules"
 Start-Timing
 
 $extraModulesToImport = (
-    "Invoke-MSBuild\Invoke-MSBuild",
     "Pester",
     "PowerShellArsenal",
     "TypePx",
@@ -53,7 +52,6 @@ Stop-Timing -Description "Importing modules"
 
 # The other modules are local (i.e. in the repo or in submodules):
 # - Editors
-# - Invoke-MSBuild
 # - Pester
 # - IsePester
 # - PowerShellArsenal
