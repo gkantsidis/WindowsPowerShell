@@ -1,2 +1,7 @@
+Current Version:
+https://gallery.technet.microsoft.com/PowerShell-Device-60d73bb0
+Version: 2/20/2016
+
+Previous Version:
 https://gallery.technet.microsoft.com/scriptcenter/Device-Management-7fad2388
 Version: 9/24/2012
