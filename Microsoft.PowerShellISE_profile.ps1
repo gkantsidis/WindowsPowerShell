@@ -1,3 +1,11 @@
+$usermodules = Join-Path -Path $PSScriptRoot -ChildPath Modules
+if ($Env:PSModulePath -ne $null) {
+    $modulePaths = $Env:PSModulePath.Split(';', [StringSplitOptions]::RemoveEmptyEntries)
+    if ($modulePaths -notcontains $usermodules) {
+        $Env:PSModulePath += ";$usermodules"
+    }
+}
+
 $private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 Push-Location $private:PowerShellProfileDirectory
 
@@ -166,4 +174,6 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 Pop-Location
 
 Write-Verbose -Message "Settting prompt"
+$default_prompt = $Function:prompt
 . $PSScriptRoot\Prompts.ps1
+Set-NormalPrompt -NoColor

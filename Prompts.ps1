@@ -48,10 +48,11 @@
 
     return ("{0}:{1}" -f $drive,$path)
 }
+
 function global:Set-NormalPrompt {
     param(
-        [switch]
-        $DoNotRemoveAlias
+        [switch]$DoNotRemoveAlias,
+        [switch]$NoColor
     )
 
     # Some modules (e.g. xUtility) create this alias to modify the prompt
@@ -59,17 +60,25 @@ function global:Set-NormalPrompt {
         Remove-Item Alias:\Prompt -ErrorAction SilentlyContinue
     }
 
-    function global:prompt {
-        $p = "{0} λ" -f (global:Get-TruncatedPath)
-        Write-Host $p -NoNewLine -ForegroundColor "DarkGray"
-        return " "
+    if ($NoColor) {
+        function global:prompt {
+            $p = "{0} λ" -f (global:Get-TruncatedPath)
+            Write-Host $p -NoNewLine
+            return " "
+        }
+    } else {
+        function global:prompt {
+            $p = "{0} λ" -f (global:Get-TruncatedPath)
+            Write-Host $p -NoNewLine -ForegroundColor "DarkGray"
+            return " "
+        }
     }
 }
 
 function global:Set-GitPrompt {
     param(
-        [switch]
-        $DoNotRemoveAlias
+        [switch]$DoNotRemoveAlias,
+        [switch]$NoColor
     )
 
     # Some modules (e.g. xUtility) create this alias to modify the prompt
@@ -77,13 +86,24 @@ function global:Set-GitPrompt {
         Remove-Item Alias:\Prompt -ErrorAction SilentlyContinue
     }
 
-    function global:prompt {
-        $realLASTEXITCODE = $LASTEXITCODE
-        Write-Host($pwd.ProviderPath) -nonewline
-        Write-VcsStatus
-        $global:LASTEXITCODE = $realLASTEXITCODE
-        Write-Host "`nλ" -NoNewLine -ForegroundColor "DarkGray"
-        return " "
+    if ($NoColor) {
+        function global:prompt {
+            $realLASTEXITCODE = $LASTEXITCODE
+            Write-Host($pwd.ProviderPath) -nonewline
+            Write-VcsStatus
+            $global:LASTEXITCODE = $realLASTEXITCODE
+            Write-Host "`nλ" -NoNewLine
+            return " "
+        }
+    } else {
+        function global:prompt {
+            $realLASTEXITCODE = $LASTEXITCODE
+            Write-Host($pwd.ProviderPath) -nonewline
+            Write-VcsStatus
+            $global:LASTEXITCODE = $realLASTEXITCODE
+            Write-Host "`nλ" -NoNewLine -ForegroundColor "DarkGray"
+            return " "
+        }
     }
 }
 
