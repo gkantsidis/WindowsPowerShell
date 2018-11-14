@@ -82,3 +82,8 @@ if ($platform -eq "Win32NT") {
 }
 
 Remove-Item -Path Variable:platform
+# Chocolatey profile
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+  Import-Module "$ChocolateyProfile"
+}

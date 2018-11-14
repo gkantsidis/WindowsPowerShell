@@ -1,3 +1,5 @@
+#Requires  -RunAsAdministrator
+
 # Goal: compile assemblies to improve PS profile loading time
 # Source: https://blogs.msdn.microsoft.com/powershell/2008/09/02/speeding-up-powershell-startup-updating-update-gac-ps1/
 
