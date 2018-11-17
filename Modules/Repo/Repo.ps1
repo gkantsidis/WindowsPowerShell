@@ -61,14 +61,15 @@ function Get-ManifestXml {
             Write-Verbose -Message "Refreshing manifest"
             $parent = (Get-Item $manifestFile).DirectoryName
             Push-Location -Path $parent
-            git pull
+            git pull | Out-Null
             Pop-Location
         }
 
+        Write-Verbose -Message "Reading manifest from $manifestFile"
         [xml]$manifest = Get-Content -Path $manifestFile
         return $manifest
     } else {
-        Write-Error -Message "Cannot find manifest in $Path"
+        throw "Cannot find manifest in $Path"
     }
 }
 
@@ -178,7 +179,7 @@ function Get-Manifest {
 
 
     $manifestFile = Find-Manifest -Path $Path
-    [xml]$manifest = Get-ManifestXml -Path $Path -DoNotRefresh:$DoNotRefresh
+    $manifest = Get-ManifestXml -Path $Path -DoNotRefresh:$DoNotRefresh
     $manifestLocation = (Get-Item -Path $manifestFile).DirectoryName
     $root = Join-Path -Path $manifestLocation -ChildPath ".." | Join-Path -ChildPath ".."
     $repo = [Repo]::new($root, $manifestFile, $manifest)
