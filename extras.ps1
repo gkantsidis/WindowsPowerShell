@@ -48,6 +48,7 @@ $modules = (
     'ShowUI',
     'SnippetPx',
     'SpeculationControl',       # Check for Meltdown and Spectre bugs in Intel processors --- https://aka.ms/SpeculationControlPS
+    'SSH',
     'TypePx',
     'VSSetup',
     'xDscDiagnostics',
