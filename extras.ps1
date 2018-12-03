@@ -26,6 +26,7 @@ $modules = (
     'Pester',
     'Pipeworks',
     'Plaster',
+    'posh-ssh',
     'posh-with',                # Program prefixing for continuous workflow using a single tool.
     'PoshInternals',
     'PowerLine',                # Classes for richer output and prompts
