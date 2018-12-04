@@ -87,3 +87,6 @@ $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 if (Test-Path($ChocolateyProfile)) {
   Import-Module "$ChocolateyProfile"
 }
+
+# The $__ variable will hold the last output
+$PSDefaultParameterValues['Out-Default:OutVariable'] = '__'
