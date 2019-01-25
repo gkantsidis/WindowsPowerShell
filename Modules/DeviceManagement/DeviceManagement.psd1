@@ -11,4 +11,5 @@
 	FormatsToProcess = @('DeviceManagement.format.ps1xml')
 	ModuleList = @('DeviceManagement.dll')
 	FileList = @('DeviceManagement.dll', 'DeviceManagementLib.dll', 'DeviceManagement.psd1')
+	NestedModules = @('DeviceManagementEx.ps1')
 }
