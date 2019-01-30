@@ -79,6 +79,45 @@ function Get-DeviceCom {
 
     )
 
-    $devices = Get-WMIObject -Class Win32_SerialPort
-    return $devices
+    # To identify the COM devices we follow the steps below:
+    # 1. Use "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" to identify *active* devices
+    # 2. Search the device under "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum"
+
+    $devices = Get-Item -Path "HKLM:SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices"
+    $normalized = $devices.Property | ForEach-Object -Process {
+                   $port = $_
+                   $name = $devices.GetValue($port)
+                   $ids  = $name.Split('#')
+
+                   if ($ids.Length -le 2) {
+                       Write-Error -Message "Unexpected number of elements in path $_"
+                       continue
+                   }
+
+                   $prefix = $ids[0]
+                   if (($prefix.StartsWith("\\?\") -eq $false) -or ($prefix.Length -le 4)) {
+                       Write-Error -Message "Unexpected prefix: $prefix"
+                       continue
+                   } else {
+                       $prefix = $prefix.Substring(4)
+                   }
+
+                   $inside = $ids[1..($ids.Length-2)]
+                   $proper = [System.IO.Path]::Combine($prefix, [System.String]::Join([System.IO.Path]::DirectorySeparatorChar, $inside))
+
+                   $registryPath = [System.IO.Path]::Combine("HKLM:SYSTEM\CurrentControlSet\Enum", $proper)
+                   $registry = Get-Item -Path $registryPath
+
+                   [PSCustomObject]@{
+                       Port = $port
+                       FriendlyName = $registry.GetValue("FriendlyName")
+                       Name = $name
+                       Prefix = $proper
+                       Registry = $registry
+                   }
+               }
+
+    $normalized | Add-Member -TypeName "DeviceComInformation"
+    Update-TypeData -DefaultDisplayPropertySet Port,FriendlyName -Force -TypeName "DeviceComInformation"
+    return $normalized
 }
