@@ -91,6 +91,8 @@ function Get-DeviceCom {
     # 1. Use "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" to identify *active* devices
     # 2. Search the device under "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum"
 
+    # TODO: There is duplication of code below. We want to merge.
+
     if ($remote) {
         Write-Verbose -Message "Retrieving list of COM ports on remote device"
         [PSCustomObject[]]$normalized = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
