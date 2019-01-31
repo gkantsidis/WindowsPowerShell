@@ -76,14 +76,40 @@ function Get-DeviceEx {
 function Get-DeviceCom {
     [CmdletBinding()]
     param(
-
+        [string]
+        $ComputerName = $null
     )
+
+    if (($ComputerName -eq $null) -or ($ComputerName -eq "localhost") -or ($ComputerName -eq "")) {
+        $remote = $false
+    } else {
+        $remote = $true
+    }
+    Write-Debug -Message "Running on remote computer: $remote ($ComputerName)"
 
     # To identify the COM devices we follow the steps below:
     # 1. Use "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" to identify *active* devices
     # 2. Search the device under "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum"
 
-    $devices = Get-Item -Path "HKLM:SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices"
+    $com_device_path = "HKLM:SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices"
+    if ($remote) {
+        Write-Verbose -Message "Retrieving list of COM ports on remote device"
+        $devices = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
+            Get-Item -Path $com_device_path  -ErrorAction SilentlyContinue
+        } -ErrorAction SilentlyContinue
+    } else {
+        $devices = Get-Item -Path $com_device_path -ErrorAction SilentlyContinue
+    }
+
+    if ($devices -eq $null) {
+        if ($remote) {
+            Write-Verbose -Message "No COM devices seems to be active on $ComputerName"
+        } else {
+            Write-Verbose -Message "No COM devices seems to be active"
+        }
+        return
+    }
+
     $normalized = $devices.Property | ForEach-Object -Process {
                    $port = $_
                    $name = $devices.GetValue($port)
@@ -106,7 +132,14 @@ function Get-DeviceCom {
                    $proper = [System.IO.Path]::Combine($prefix, [System.String]::Join([System.IO.Path]::DirectorySeparatorChar, $inside))
 
                    $registryPath = [System.IO.Path]::Combine("HKLM:SYSTEM\CurrentControlSet\Enum", $proper)
-                   $registry = Get-Item -Path $registryPath
+
+                   if ($remote) {
+                       $registry = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
+                           Get-Item -Path $registryPath
+                       }
+                   } else {
+                       $registry = Get-Item -Path $registryPath
+                   }
 
                    [PSCustomObject]@{
                        Port = $port
