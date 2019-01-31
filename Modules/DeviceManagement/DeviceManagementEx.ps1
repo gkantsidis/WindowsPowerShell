@@ -91,14 +91,13 @@ function Get-DeviceCom {
     # 1. Use "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" to identify *active* devices
     # 2. Search the device under "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum"
 
-    $com_device_path = "HKLM:SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices"
     if ($remote) {
         Write-Verbose -Message "Retrieving list of COM ports on remote device"
         $devices = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
-            Get-Item -Path $com_device_path  -ErrorAction SilentlyContinue
+            Get-Item -Path "HKLM:SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" -ErrorAction SilentlyContinue
         } -ErrorAction SilentlyContinue
     } else {
-        $devices = Get-Item -Path $com_device_path -ErrorAction SilentlyContinue
+        $devices = Get-Item -Path "HKLM:SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" -ErrorAction SilentlyContinue
     }
 
     if ($devices -eq $null) {
