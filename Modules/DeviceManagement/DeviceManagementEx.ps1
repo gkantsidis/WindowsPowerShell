@@ -87,9 +87,9 @@ function Get-DeviceCom {
     }
     Write-Debug -Message "Running on remote computer: $remote ($ComputerName)"
 
-    # To identify the COM devices we follow the steps below:
-    # 1. Use "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" to identify *active* devices
-    # 2. Search the device under "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum"
+    # To identify the COM devices, we search under
+    # "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum" for devices that
+    # have a COM port.
 
     # TODO: There is duplication of code below. We want to merge.
 
