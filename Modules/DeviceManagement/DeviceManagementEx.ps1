@@ -96,52 +96,27 @@ function Get-DeviceCom {
     if ($remote) {
         Write-Verbose -Message "Retrieving list of COM ports on remote device"
         [PSCustomObject[]]$normalized = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
-            $devices = Get-Item -Path "HKLM:SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" -ErrorAction SilentlyContinue
+            $active = Get-Item -Path HKLM:\HARDWARE\DEVICEMAP\SERIALCOMM
+            [string[]]$activePorts = $active.GetValueNames() | ForEach-Object -Process { $active.GetValue($_) }
+
+            $devices = Get-ChildItem -Path HKLM:\SYSTEM\CurrentControlSet\Enum -Recurse -ErrorAction SilentlyContinue | `
+                   Where-Object -FilterScript { $_.Property -contains "PortName" }
 
             if ($devices -eq $null) {
-                Write-Verbose -Message "No COM devices seems to be active on $ComputerName"
+                Write-Verbose -Message "No COM device seems to be active"
                 return
-            } else {
-                Write-Verbose -Message "Found devices on remote machine"
             }
 
-            $normalized = $devices.Property | ForEach-Object -Process {
-                $port = $_
-                $name = $devices.GetValue($port)
-                $ids  = $name.Split('#')
+            $normalized = $devices | ForEach-Object -Process {
+                $port = $_.GetValue("PortName")
+                $registry = Split-Path -Path $_.PSPath -Parent | Get-Item
 
-                if ($ids.Length -le 2) {
-                    Write-Error -Message "Unexpected number of elements in path $_"
-                    continue
-                }
-
-                $prefix = $ids[0]
-                if (($prefix.StartsWith("\\?\") -eq $false) -or ($prefix.Length -le 4)) {
-                    Write-Error -Message "Unexpected prefix: $prefix"
-                    continue
-                } else {
-                    $prefix = $prefix.Substring(4)
-                }
-
-                $inside = $ids[1..($ids.Length-2)]
-                $proper = [System.IO.Path]::Combine($prefix, [System.String]::Join([System.IO.Path]::DirectorySeparatorChar, $inside))
-
-                $registryPath = [System.IO.Path]::Combine("HKLM:SYSTEM\CurrentControlSet\Enum", $proper)
-
-                if ($remote) {
-                    $registry = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
-                        Get-Item -Path $registryPath
-                    }
-                } else {
-                    $registry = Get-Item -Path $registryPath
-                }
-
+                $isActive = $activePorts -contains $port
                 [PSCustomObject]@{
                     Port = $port
                     FriendlyName = $registry.GetValue("FriendlyName")
-                    Name = $name
-                    Prefix = $proper
                     Registry = $registry
+                    Active = $isActive
                 }
             }
 
@@ -154,49 +129,27 @@ function Get-DeviceCom {
             Write-Verbose -Message "Did not found any devices on remote machine"
         }
     } else {
-        $devices = Get-Item -Path "HKLM:SYSTEM\CurrentControlSet\Control\COM Name Arbiter\Devices" -ErrorAction SilentlyContinue
+        $active = Get-Item -Path HKLM:\HARDWARE\DEVICEMAP\SERIALCOMM
+        [string[]]$activePorts = $active.GetValueNames() | ForEach-Object -Process { $active.GetValue($_) }
+
+        $devices = Get-ChildItem -Path HKLM:\SYSTEM\CurrentControlSet\Enum -Recurse -ErrorAction SilentlyContinue | `
+                   Where-Object -FilterScript { $_.Property -contains "PortName" }
 
         if ($devices -eq $null) {
-            Write-Verbose -Message "No COM devices seems to be active"
+            Write-Verbose -Message "No COM device seems to be active"
+            return
         }
 
-        $normalized = $devices.Property | ForEach-Object -Process {
-            $port = $_
-            $name = $devices.GetValue($port)
-            $ids  = $name.Split('#')
+        $normalized = $devices | ForEach-Object -Process {
+            $port = $_.GetValue("PortName")
+            $registry = Split-Path -Path $_.PSPath -Parent | Get-Item
 
-            if ($ids.Length -le 2) {
-                Write-Error -Message "Unexpected number of elements in path $_"
-                continue
-            }
-
-            $prefix = $ids[0]
-            if (($prefix.StartsWith("\\?\") -eq $false) -or ($prefix.Length -le 4)) {
-                Write-Error -Message "Unexpected prefix: $prefix"
-                continue
-            } else {
-                $prefix = $prefix.Substring(4)
-            }
-
-            $inside = $ids[1..($ids.Length-2)]
-            $proper = [System.IO.Path]::Combine($prefix, [System.String]::Join([System.IO.Path]::DirectorySeparatorChar, $inside))
-
-            $registryPath = [System.IO.Path]::Combine("HKLM:SYSTEM\CurrentControlSet\Enum", $proper)
-
-            if ($remote) {
-                $registry = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
-                    Get-Item -Path $registryPath
-                }
-            } else {
-                $registry = Get-Item -Path $registryPath
-            }
-
+            $isActive = $activePorts -contains $port
             [PSCustomObject]@{
                 Port = $port
                 FriendlyName = $registry.GetValue("FriendlyName")
-                Name = $name
-                Prefix = $proper
                 Registry = $registry
+                Active = $isActive
             }
         }
 
@@ -208,6 +161,6 @@ function Get-DeviceCom {
     if ($normalized -eq $null) { return }
 
     $normalized | Add-Member -TypeName "DeviceComInformation"
-    Update-TypeData -DefaultDisplayPropertySet Port,FriendlyName -Force -TypeName "DeviceComInformation"
+    Update-TypeData -DefaultDisplayPropertySet Port,Active,FriendlyName -Force -TypeName "DeviceComInformation"
     return $normalized
 }
