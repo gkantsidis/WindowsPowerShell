@@ -73,6 +73,38 @@ function Get-DeviceEx {
     return $devices
 }
 
+function Get-DeviceComImpl {
+    $active = Get-Item -Path HKLM:\HARDWARE\DEVICEMAP\SERIALCOMM
+    [string[]]$activePorts = $active.GetValueNames() | ForEach-Object -Process { $active.GetValue($_) }
+
+    $devices = Get-ChildItem -Path HKLM:\SYSTEM\CurrentControlSet\Enum -Recurse -ErrorAction SilentlyContinue | `
+                Where-Object -FilterScript { $_.Property -contains "PortName" }
+
+    if ($devices -eq $null) {
+        Write-Verbose -Message "No COM device seems to be active"
+        return
+    }
+
+    $normalized = $devices | ForEach-Object -Process {
+        $port = $_.GetValue("PortName")
+        $registry = Split-Path -Path $_.PSPath -Parent | Get-Item
+
+        $isActive = $activePorts -contains $port
+        [PSCustomObject]@{
+            Port = $port
+            FriendlyName = $registry.GetValue("FriendlyName")
+            Registry = $registry
+            Active = $isActive
+            FullRegistryPath = $registry.Name
+            RegistryPath = $registry.Name.Replace("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\", "")
+            HardwareID = $registry.GetValue("HardwareID")
+            Driver = $registry.GetValue("Driver")
+        }
+    }
+
+    return ($normalized)
+}
+
 function Get-DeviceCom {
     [CmdletBinding()]
     param(
@@ -91,67 +123,16 @@ function Get-DeviceCom {
     # "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum" for devices that
     # have a COM port.
 
-    # TODO: There is duplication of code below. We want to merge.
-
     if ($remote) {
         Write-Verbose -Message "Retrieving list of COM ports on remote device"
-        [PSCustomObject[]]$normalized = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
-            $active = Get-Item -Path HKLM:\HARDWARE\DEVICEMAP\SERIALCOMM
-            [string[]]$activePorts = $active.GetValueNames() | ForEach-Object -Process { $active.GetValue($_) }
-
-            $devices = Get-ChildItem -Path HKLM:\SYSTEM\CurrentControlSet\Enum -Recurse -ErrorAction SilentlyContinue | `
-                   Where-Object -FilterScript { $_.Property -contains "PortName" }
-
-            if ($devices -eq $null) {
-                Write-Verbose -Message "No COM device seems to be active"
-                return
-            }
-
-            $normalized = $devices | ForEach-Object -Process {
-                $port = $_.GetValue("PortName")
-                $registry = Split-Path -Path $_.PSPath -Parent | Get-Item
-
-                $isActive = $activePorts -contains $port
-                [PSCustomObject]@{
-                    Port = $port
-                    FriendlyName = $registry.GetValue("FriendlyName")
-                    Registry = $registry
-                    Active = $isActive
-                }
-            }
-
-            return ($normalized)
-        }
-
+        [PSCustomObject[]]$normalized = Invoke-Command -ComputerName $ComputerName -ScriptBlock ${function:Get-DeviceComImpl}
         if ($normalized -ne $null) {
             Write-Verbose -Message "Found $($normalized.Length) devices on remote $ComputerName"
         } else {
             Write-Verbose -Message "Did not found any devices on remote machine"
         }
     } else {
-        $active = Get-Item -Path HKLM:\HARDWARE\DEVICEMAP\SERIALCOMM
-        [string[]]$activePorts = $active.GetValueNames() | ForEach-Object -Process { $active.GetValue($_) }
-
-        $devices = Get-ChildItem -Path HKLM:\SYSTEM\CurrentControlSet\Enum -Recurse -ErrorAction SilentlyContinue | `
-                   Where-Object -FilterScript { $_.Property -contains "PortName" }
-
-        if ($devices -eq $null) {
-            Write-Verbose -Message "No COM device seems to be active"
-            return
-        }
-
-        $normalized = $devices | ForEach-Object -Process {
-            $port = $_.GetValue("PortName")
-            $registry = Split-Path -Path $_.PSPath -Parent | Get-Item
-
-            $isActive = $activePorts -contains $port
-            [PSCustomObject]@{
-                Port = $port
-                FriendlyName = $registry.GetValue("FriendlyName")
-                Registry = $registry
-                Active = $isActive
-            }
-        }
+        [PSCustomObject[]]$normalized = Get-DeviceComImpl
 
         if ($normalized -ne $null) {
             Write-Verbose -Message "Found $($normalized.Length) devices on local machine"
