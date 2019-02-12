@@ -95,6 +95,7 @@ FunctionsToExport = @(
     'Get-WindowsProductKey',
     'Get-WinlogonHistory',
     'Install-Scoop',
+    'Join-Objects',
     'Reset-ForegroundColor',
     'Restart-Process',
     'Save-EnvironmentSettings',
