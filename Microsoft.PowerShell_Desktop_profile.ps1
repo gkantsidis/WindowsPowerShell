@@ -187,7 +187,7 @@ Start-Timing
 $rgcommand = Get-Command -Name rg -ErrorAction SilentlyContinue
 if ($rgcommand) {
     $rgreal = Get-ShimProperties -ProgramName rg
-    if ($rgreal -eq $null) {
+    if ($null -eq $rgreal) {
         $rgpath = $rgcommand.Path
     } else {
         $rgpath = $rgreal.Path
@@ -224,10 +224,12 @@ if (Get-Command -Name thefuck -ErrorAction SilentlyContinue) {
             $fuck = $(thefuck $args $history);
             if (-not [string]::IsNullOrWhiteSpace($fuck)) {
                 if ($fuck.StartsWith("echo")) { $fuck = $fuck.Substring(5); }
-                else { iex "$fuck"; }
+                else { Invoke-Expression "$fuck"; }
             }
         }
     }
+} else {
+    Write-Warning -Message "Cannot load thefuck system"
 }
 
 
@@ -239,6 +241,7 @@ if (Test-Path -Path $dynamic_module_loader -PathType Leaf) {
     $loader = Get-Item -Path $dynamic_module_loader
     Push-Location -Path $loader.DirectoryName
     Try {
+        Import-Module -Name Pipeworks
         Import-Module -Name ./DynamicPackageLoader -Prefix DynamicLoader
     } Finally {
         Pop-Location
