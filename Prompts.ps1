@@ -107,7 +107,7 @@ function global:Set-GitPrompt {
     }
 }
 
-if ((Get-Module -Name PowerLine -ListAvailable) -ne $null) {
+if ($null -ne (Get-Module -Name PowerLine -ListAvailable)) {
     if (-not (Get-Module -Name PowerLine)) {
         Import-Module -Name PowerLine
     }
