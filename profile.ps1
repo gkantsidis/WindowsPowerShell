@@ -41,6 +41,22 @@ if ((Test-Path -Path $PSEditorServicesPath) -and `
 function Get-GitLog { git log --oneline --all --graph --decorate $args }
 Set-alias gitlog Get-GitLog
 
+function fzf() {
+  try {
+    $fzf = Get-Command -CommandType Application fzf -ErrorAction Stop
+    if (Test-Path Env:\TERM) {
+      $saveTERM = $Env:TERM
+      $Env:TERM = ""
+    }
+    & $fzf @Args
+  }
+  finally {
+    if (Test-Path Variable:\saveTERM) {
+      $Env:TERM = $saveTERM
+    }
+  }
+}
+
 # Shortcuts
 
 New-PSDrive -Name me -PSProvider FileSystem -Root ([Environment]::GetFolderPath("User"))
