@@ -50,14 +50,14 @@ function Open-InEmacs {
 
         $currentWindow = [WindowingTricks]::GetForegroundWindow()
 
-        $emacs = Get-Process -Name emacs -ErrorAction SilentlyContinue
+        [System.Diagnostics.Process[]]$emacs = Get-Process -Name emacs -ErrorAction SilentlyContinue
         if ($null -eq $emacs) {
-            runemacs
+            emacs "--daemon"
             Read-Host -Prompt "Press <ENTER> after emacs initializes"
-            $emacs = Get-Process -Name emacs -ErrorAction SilentlyContinue
+            [System.Diagnostics.Process[]]$emacs = Get-Process -Name emacs -ErrorAction SilentlyContinue
         }
 
-        [WindowingTricks]::SetForegroundWindow($emacs.MainWindowHandle)
+        [WindowingTricks]::SetForegroundWindow($emacs[-1].MainWindowHandle)
         emacsclient $emacsNoWait $File
 
         if (-not $NoWait) {
