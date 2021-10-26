@@ -58,7 +58,7 @@ function Open-InEmacs {
         }
 
         [WindowingTricks]::SetForegroundWindow($emacs[-1].MainWindowHandle)
-        emacsclient $emacsNoWait $File
+        emacsclientw $emacsNoWait $File
 
         if (-not $NoWait) {
             # TODO The following does not work:
