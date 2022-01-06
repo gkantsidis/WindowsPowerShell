@@ -17,7 +17,6 @@ $modules = (
     'GistProvider',
     'GuiCompletion',
     'InvokeBuild',
-    'LibGit2',
     'LINQ',
     'Logging',
     'Logman',

@@ -1,5 +1,5 @@
-$usermodules = Join-Path -Path $PSScriptRoot -ChildPath Modules
-if ($Env:PSModulePath -ne $null) {
+$usermodules = Join-Path -Path $PSScriptRoot -ChildPath MyModules
+if ($null -eq $Env:PSModulePath) {
     $modulePaths = $Env:PSModulePath.Split(';', [StringSplitOptions]::RemoveEmptyEntries)
     if ($modulePaths -notcontains $usermodules) {
         $Env:PSModulePath += ";$usermodules"

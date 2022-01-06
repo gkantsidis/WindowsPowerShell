@@ -107,10 +107,10 @@ if (-not $poshGitModule) {
 }
 
 # Other modules
-Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
+Invoke-Expression -Command .\MyModules\Posh-GitHub\Posh-GitHub-Profile.ps1
 $VSSetupModule = Get-Module -Name VSSetup
-if ((Test-HasVisualStudio) -and ($VSSetupModule -ne $null)) {
-    Import-Module -Name .\Modules\Posh-VsVars
+if ((Test-HasVisualStudio) -and ($null -eq $VSSetupModule)) {
+    Import-Module -Name .\MyModules\Posh-VsVars
 }
 Remove-Item -Path Variable:VSSetupModule
 
@@ -131,7 +131,7 @@ if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -Pat
 # Not needed here, we have imported it above:
 # Import-Module PowerShellCookbook -ErrorAction SilentlyContinue
 $cwcmd = Get-Command -Name New-CommandWrapper -ErrorAction SilentlyContinue
-if ($cwcmd -ne $null) {
+if ($null -eq $cwcmd) {
     . .\customize-console-output.ps1
 }
 
@@ -154,7 +154,7 @@ catch {
     # do nothing; keep standard gci
 }
 
-if ((Get-Module -Name xUtility -ListAvailable) -ne $null) {
+if ($null -eq (Get-Module -Name xUtility -ListAvailable)) {
     . $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
 } else {
     Write-Warning -Message "Consider installing xUtility (admin):  Install-Module -Name xUtility -Force -AllowClobber"

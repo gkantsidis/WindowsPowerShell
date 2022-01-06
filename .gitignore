@@ -200,3 +200,6 @@ FakesAssemblies/
 *.opt
 
 profile_local.ps1
+.fake
+
+Modules/

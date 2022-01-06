@@ -1,17 +1,14 @@
 [submodule "Modules/Posh-GitHub"]
-	path = Modules/Posh-GitHub
+	path = MyModules/Posh-GitHub
 	url = https://github.com/Iristyle/Posh-GitHub.git
 [submodule "Modules/PowerShellArsenal"]
-	path = Modules/PowerShellArsenal
+	path = MyModules/PowerShellArsenal
 	url = https://github.com/gkantsidis/PowerShellArsenal.git
 [submodule "Modules/Posh-VsVars"]
-	path = Modules/Posh-VsVars
+	path = MyModules/Posh-VsVars
 	url = https://github.com/gkantsidis/Posh-VsVars.git
-[submodule "Modules/Pester"]
-	path = Modules/Pester
-	url = https://github.com/pester/Pester.git
 [submodule "Modules/IsePester"]
-	path = Modules/IsePester
+	path = MyModules/IsePester
 	url = https://github.com/dfinke/IsePester.git
 [submodule "Source/NTFS-Streams"]
 	path = Source/NTFS-Streams
@@ -21,7 +18,7 @@
 	path = Source/PSPKI
 	url = https://github.com/gkantsidis/PSPKI.git
 [submodule "Modules/PsVsts"]
-	path = Modules/PsVsts
+	path = MyModules/PsVsts
 	url = https://github.com/mmanela/PsVsts.git
 [submodule "Modules/PowerShellEditorServices"]
 	path = Modules-VSCode/PowerShellEditorServices
