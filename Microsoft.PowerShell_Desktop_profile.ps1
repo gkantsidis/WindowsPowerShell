@@ -103,7 +103,7 @@ if (-not $poshGitModule) {
     # Example:
     #     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"
 
-    Start-SshAgent -Quiet
+    # Start-SshAgent -Quiet   # Not needed any more?
 }
 
 # Other modules

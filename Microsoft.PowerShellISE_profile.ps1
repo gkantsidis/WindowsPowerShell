@@ -107,7 +107,7 @@ else {
 # Example:
 #     $Global:GitPromptSettings.BranchBehindAndAheadDisplay = "Compact"
 
-Start-SshAgent -Quiet
+# Start-SshAgent -Quiet # Not needed any more?
 
 # Other modules
 Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
