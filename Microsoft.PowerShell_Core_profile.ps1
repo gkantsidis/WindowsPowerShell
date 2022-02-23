@@ -135,7 +135,7 @@ if ($null -eq $cwcmd) {
     . .\customize-console-output.ps1
 }
 
-
+. $PSScriptRoot\Overrides\Set-LocationWithHints.ps1
 
 Stop-Timing -Description "Third party modules took"
 

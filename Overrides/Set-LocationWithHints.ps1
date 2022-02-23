@@ -1,6 +1,6 @@
 #Requires -Version 3
 #Requires -Modules posh-git
-#Requires -Modules xUtility
+
 
 function Set-LocationWithHints {
     [CmdletBinding(DefaultParameterSetName='Path')]
@@ -44,7 +44,7 @@ function Set-LocationWithHints {
         $isAdmin = Test-AdminRights
 
         $testcmder = Get-Command -Name RenameTab -ErrorAction SilentlyContinue
-        if ($testcmder -eq $null) {
+        if ($null -eq $testcmder) {
             $isCmder = $false
         } else {
             $isCmder = $true
@@ -60,7 +60,7 @@ function Set-LocationWithHints {
             {
                 'Pscx\Set-LocationEx' {
                     if ($PSCmdlet.ParameterSetName -eq 'Path') {
-                        if ($UnboundArguments -ne $null) {
+                        if ($null -eq $UnboundArguments) {
                             Write-Verbose -Message "Changing path with Set-LocationEx and unbound arguments"
                             Set-LocationEx  -Path $Path `
                                             -UnboundArguments $UnboundArguments `
@@ -70,10 +70,10 @@ function Set-LocationWithHints {
                             Write-Verbose -Message "Changing path with Set-LocationEx"
                             Set-LocationEx  -Path $Path `
                                             -PassThru:$PassThru.IsPresent `
-                                            -UseTransaction:$UseTransaction.IsPresent                        
+                                            -UseTransaction:$UseTransaction.IsPresent
                         }
                     } else {
-                        if ($UnboundArguments -ne $null) {
+                        if ($null -eq $UnboundArguments) {
                             Write-Verbose -Message "Changing path with Set-LocationEx, literal path, and unbound arguments"
                             Set-LocationEx  -LiteralPath $Path `
                                             -UnboundArguments $UnboundArguments `
@@ -83,8 +83,8 @@ function Set-LocationWithHints {
                             Write-Verbose -Message "Changing path with Set-LocationEx and literal path"
                             Set-LocationEx  -LiteralPath $Path `
                                             -PassThru:$PassThru.IsPresent `
-                                            -UseTransaction:$UseTransaction.IsPresent                        
-                        }                    
+                                            -UseTransaction:$UseTransaction.IsPresent
+                        }
                     }
                 }
                 'Set-Location' {
@@ -101,16 +101,29 @@ function Set-LocationWithHints {
                     }
                 }
                 'cdX' {
-                    if ($PSCmdlet.ParameterSetName -eq 'Path') {
-                        Write-Verbose -Message "Changing path with Set-Location"
-                        cdX -Path $Path `
-                            -PassThru:$PassThru.IsPresent `
-                            -UseTransaction:$UseTransaction.IsPresent
+                    $cdxcommand = (get-command cdx)
+                    if ($cdxcommand.Parameters.ContainsKey("UseTransaction")) {
+                        if ($PSCmdlet.ParameterSetName -eq 'Path') {
+                            Write-Verbose -Message "Changing path with Set-Location"
+                            cdX -Path $Path `
+                                -PassThru:$PassThru.IsPresent `
+                                -UseTransaction:$UseTransaction.IsPresent
+                        } else {
+                            Write-Verbose -Message "Changing path with Set-Location and literal path"
+                            cdX -LiteralPath $Path `
+                                -PassThru:$PassThru.IsPresent `
+                                -UseTransaction:$UseTransaction.IsPresent
+                        }
                     } else {
-                        Write-Verbose -Message "Changing path with Set-Location and literal path"
-                        cdX -LiteralPath $Path `
-                            -PassThru:$PassThru.IsPresent `
-                            -UseTransaction:$UseTransaction.IsPresent
+                        if ($PSCmdlet.ParameterSetName -eq 'Path') {
+                            Write-Verbose -Message "Changing path with Set-Location"
+                            cdX -Path $Path `
+                                -PassThru:$PassThru.IsPresent
+                        } else {
+                            Write-Verbose -Message "Changing path with Set-Location and literal path"
+                            cdX -LiteralPath $Path `
+                                -PassThru:$PassThru.IsPresent
+                        }
                     }
                 }
             }
@@ -126,10 +139,10 @@ function Set-LocationWithHints {
             $current = Get-Item -Path .
             $stopsearch = $false
             do {
-                Write-Debug -Message "Examining $current"            
+                Write-Debug -Message "Examining $current"
                 if ([System.String]::Equals($current.LinkType, "Junction", [System.StringComparison]::InvariantCultureIgnoreCase)) {
                     Write-Debug -Message "Detected that $current is junction"
-                    $realpath = Select-Object -InputObject $current -ExpandProperty Target                    
+                    $realpath = Select-Object -InputObject $current -ExpandProperty Target
                     DoChangePath $realcd $realpath
                     $current = Get-Item -Path .
                 } else {
@@ -143,7 +156,7 @@ function Set-LocationWithHints {
                         $current = Get-Item -Path $parent
                     }
                 }
-            } until ($stopsearch -or ($current -eq $null))
+            } until ($stopsearch -or ($null -eq $current))
 
             Write-Debug -Message "Components: $components"
             $components = $components.Reverse()
@@ -151,11 +164,11 @@ function Set-LocationWithHints {
             $realpath = [System.IO.Path]::Combine($components)
             Write-Verbose -Message "Switching to $realpath"
             DoChangePath $realcd $realpath
-            
+
         }
 
-        $pwd = Get-Location
-        $pp = $pwd.ProviderPath
+        $mpwd = Get-Location
+        $pp = $mpwd.ProviderPath
         if ($pp.StartsWith("\\")) {
             $endhost = $pp.IndexOf('\', 2)
             $host_name = $pp.Substring(2, $endhost-2)
@@ -163,12 +176,12 @@ function Set-LocationWithHints {
             $host_name = $null
         }
 
-        $leaf = Split-Path $pwd.ProviderPath -Leaf
+        $leaf = Split-Path $mpwd.ProviderPath -Leaf
 
         # The command Get-GitStatus may return a non-null object even if the path is not part of a git repository.
         # For example, it is possible to put .git in the root (e.g. C:\.git) to register hooks.
         $git = Get-GitStatus
-        if ( ($git -ne $null) -and (Test-Path -Path (Join-Path -Path $git.GitDir -ChildPath "config")) ) {
+        if ( ($null -eq $git) -and (Test-Path -Path (Join-Path -Path $git.GitDir -ChildPath "config")) ) {
             $gitroot = Split-Path (Split-Path $git.GitDir -Parent) -Leaf
         } else {
             $gitroot = $null
@@ -177,18 +190,18 @@ function Set-LocationWithHints {
         $header = ""
         if ($isCmder) {
             if ($isAdmin) { $header += "*"}
-            if ($host_name -ne $null) { $header += "@"}
-            if ($gitroot -ne $null) { $header += "$gitroot" } else { $header += "$leaf"}
+            if ($null -eq $host_name) { $header += "@"}
+            if ($null -eq $gitroot) { $header += "$gitroot" } else { $header += "$leaf"}
 
             RenameTab $header
         } else {
             if ($isAdmin) { $header += "[Admin] "}
-            if ($host_name -ne $null) { $header += "\\$host_name "}
-            if ($gitroot -ne $null) { $header += "$gitroot " }
+            if ($null -eq $host_name) { $header += "\\$host_name "}
+            if ($null -eq $gitroot) { $header += "$gitroot " }
             $header += "$leaf"
 
             Set-Title -Message $header
-        }            
+        }
     }
 }
 
