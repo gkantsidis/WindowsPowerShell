@@ -107,7 +107,7 @@ if (-not $poshGitModule) {
 }
 
 # Other modules
-Invoke-Expression -Command $PSScriptRoot\MyModules\Posh-GitHub\Posh-GitHub-Profile.ps1
+Invoke-Expression -Command $PSScriptRoot\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
 $VSSetupModule = Get-Module -Name VSSetup
 if ((Test-HasVisualStudio) -and ($null -eq $VSSetupModule)) {
     Import-Module -Name $PSScriptRoot\MyModules\Posh-VsVars
