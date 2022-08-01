@@ -129,7 +129,8 @@ $StartMS = Get-Date
 
 Import-Module Pester
 Import-Module IsePester
-Import-Module PowerShellArsenal
+# Avoid loading because it triggers security alerts
+# Import-Module PowerShellArsenal
 
 if (Test-Path -Path $env:ChocolateyInstall\helpers\chocolateyInstaller.psm1 -PathType Leaf) {
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1" -Force

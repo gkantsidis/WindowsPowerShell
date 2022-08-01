@@ -41,7 +41,7 @@ Start-Timing
 
 $extraModulesToImport = (
     "Pester",
-    "PowerShellArsenal",
+    # "PowerShellArsenal",
     "TypePx",
     "$PSScriptRoot\Source\PSPKI\PSPKI"
 )
