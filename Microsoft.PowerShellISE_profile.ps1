@@ -110,7 +110,7 @@ else {
 # Start-SshAgent -Quiet # Not needed any more?
 
 # Other modules
-Invoke-Expression -Command .\Modules\Posh-GitHub\Posh-GitHub-Profile.ps1
+Invoke-Expression -Command .\MyModules\Posh-GitHub\Posh-GitHub-Profile.ps1
 
 if (Test-HasVisualStudio) {
     Import-Module -Name .\Modules\Posh-VsVars
