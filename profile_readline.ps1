@@ -1,7 +1,7 @@
 #Require -Module PSReadLine
 
 Import-Module PSReadLine
-Set-PSReadlineOption -EditMode Emacs
+Set-PSReadlineOption -EditMode Emacs -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView
 Set-PSReadlineKeyHandler -Key "Ctrl+LeftArrow" -Function ShellBackwardWord
 Set-PSReadlineKeyHandler -Key "Ctrl+RightArrow" -Function ShellForwardWord
 
@@ -13,7 +13,7 @@ Set-PSReadlineKeyHandler -Key "Ctrl+RightArrow" -Function ShellForwardWord
 # without that option, the cursor will remain at the position it was
 # when you used up arrow, which can be useful if you forget the exact
 # string you started the search on.
-Set-PSReadLineOption -HistorySearchCursorMovesToEnd 
+Set-PSReadLineOption -HistorySearchCursorMovesToEnd
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
@@ -160,7 +160,7 @@ Set-PSReadlineKeyHandler -Key '(','{','[' `
     $line = $null
     $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-    [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor - 1)        
+    [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor - 1)
 }
 
 Set-PSReadlineKeyHandler -Key ')',']','}' `
@@ -371,7 +371,7 @@ Set-PSReadlineKeyHandler -Key "Alt+%" `
             $alias = $ExecutionContext.InvokeCommand.GetCommand($token.Extent.Text, 'Alias')
             if ($alias -ne $null)
             {
-                $resolvedCommand = $alias.ResolvedCommandName 
+                $resolvedCommand = $alias.ResolvedCommandName
                 if ($resolvedCommand -ne $null)
                 {
                     $extent = $token.Extent

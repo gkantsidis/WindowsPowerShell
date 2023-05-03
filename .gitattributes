@@ -80,3 +80,4 @@
 
 # PowerShell
 *.psd1 text
+*.ps1 text
