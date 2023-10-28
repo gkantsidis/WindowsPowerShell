@@ -46,7 +46,11 @@ try {
       Write-Warning "Set git global username with git config --global user.name 'foo' to use standup"
     }
     git config --global alias.stats 'diff --stat'
-    git config --global alias.sync '! git fetch upstream -v && git fetch origin -v && git checkout master && git merge upstream/master'
+
+    # The following makes the assumption that there is an upstream remote, and that the main branch is called master
+    # (many new repos call it main). It would be better to replace this with a function that covers those cases.
+    # git config --global alias.sync '! git fetch upstream -v && git fetch origin -v && git checkout master && git merge upstream/master'
+
     git config --global alias.undo 'reset head~'
     git config --global alias.unstage 'reset HEAD'
     git config --global alias.wdiff 'diff --word-diff'
