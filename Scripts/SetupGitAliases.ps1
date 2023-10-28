@@ -37,13 +37,9 @@ try {
     git config --global alias.remotes 'remote -v show'
     git config --global alias.stage 'add'
     $userName = git config --global --get user.name
-    if ($userName -and $userName.Contains(" "))
-    {
-      $userName = $userName.Split(" ")[-1]
-    }
     if ($userName)
     {
-      git config --global alias.standup "log --since yesterday --oneline --author $userName"
+      git config --global alias.standup "log --since yesterday --oneline --author '$userName'"
     }
     else
     {
