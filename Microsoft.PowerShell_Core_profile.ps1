@@ -29,7 +29,7 @@ $modulesToCheck = (
 # Measure performance with:
 # $modulesToCheck |% {  $t = Measure-Command { Import-Module $_ }; "{0} : {1}" -f $_,$t.Milliseconds }
 
-if ((Get-Random -Maximum 100) -lt 5) {
+if ((Get-Random -Maximum 1000) -lt 5) {
     Get-ModuleInstall -ModuleName $modulesToCheck -ErrorAction SilentlyContinue
 } else {
     Import-Module -Name $modulesToCheck -ErrorAction SilentlyContinue
