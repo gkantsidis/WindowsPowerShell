@@ -36,6 +36,7 @@ try {
     git config --global alias.pick 'add -p'
     git config --global alias.remotes 'remote -v show'
     git config --global alias.stage 'add'
+    git config --global alias.track-all-branches '!git fetch --all && for remote in `git branch -r`; do git branch --track ${remote#origin/} $remote; done && git fetch --all'
     $userName = git config --global --get user.name
     if ($userName)
     {

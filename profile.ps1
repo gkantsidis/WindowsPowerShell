@@ -61,3 +61,13 @@ function fzf() {
 
 New-PSDrive -Name me -PSProvider FileSystem -Root ([Environment]::GetFolderPath("User"))
 New-PSDrive -Name ps -PSProvider FileSystem -Root $PSScriptRoot
+
+#region conda initialize
+# !! Contents within this block are managed by 'conda init' !!
+If (Test-Path "C:\Users\chrisgk.EUROPE\scoop\apps\miniconda3\current\Scripts\conda.exe") {
+    (& "C:\Users\chrisgk.EUROPE\scoop\apps\miniconda3\current\Scripts\conda.exe" "shell.powershell" "hook") | Out-String | ?{$_} | Invoke-Expression
+}
+#endregion
+
+
+. C:\Users\chrisgk.EUROPE\AppData\Roaming\dystroy\broot\config\launcher\powershell\br.ps1
