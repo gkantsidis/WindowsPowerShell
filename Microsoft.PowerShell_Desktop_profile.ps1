@@ -19,7 +19,7 @@ $modulesToCheck = (
     'posh-git',
     'posh-with',
     'SnippetPx',
-    'TypePx',
+    # 'TypePx',    # Probably inactive: https://www.powershellgallery.com/packages/TypePx/
     'VSSetup',
     'xUtility',
     'Editors',
@@ -40,9 +40,8 @@ Stop-Timing -Description "Checking for external modules"
 Start-Timing
 
 $extraModulesToImport = (
-    "Pester",
-    # "PowerShellArsenal",
-    "TypePx",
+    # "Pester",                  # Slow to load
+    # "PowerShellArsenal",       # May raise fall alarms
     "$PSScriptRoot\Source\PSPKI\PSPKI"
 )
 $modulesToImport = $modulesToCheck + $extraModulesToImport
