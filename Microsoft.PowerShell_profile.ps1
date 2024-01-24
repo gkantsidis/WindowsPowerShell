@@ -96,4 +96,10 @@ $PSDefaultParameterValues['Out-Default:OutVariable'] = '__'
 try { $null = Get-Command concfg -ea stop; concfg tokencolor -n enable } catch { }
 
 $env:PYTHONIOENCODING="utf-8"
-Invoke-Expression -Command "$(thefuck --alias)"
+
+$tfalias = thefuck --alias 2> Out-Null
+if ($null -ne $tfalias) {
+    Invoke-Expression -Command $tfalias
+} else {
+    Write-Warning -Message "The utility thefuck does not work properly"
+}
