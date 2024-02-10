@@ -209,31 +209,6 @@ if ($rgcommand) {
 
 Stop-Timing -Description "Stop timing: setting up ripgrep (rg)"
 
-#
-# Setting up the
-#
-
-Start-Timing
-
-if (Get-Command -Name thefuck -ErrorAction SilentlyContinue) {
-    $env:PYTHONIOENCODING='utf-8'
-    function fuck {
-        $history = (Get-History -Count 1).CommandLine;
-        if (-not [string]::IsNullOrWhiteSpace($history)) {
-            $fuck = $(thefuck $args $history);
-            if (-not [string]::IsNullOrWhiteSpace($fuck)) {
-                if ($fuck.StartsWith("echo")) { $fuck = $fuck.Substring(5); }
-                else { Invoke-Expression "$fuck"; }
-            }
-        }
-    }
-} else {
-    Write-Warning -Message "Cannot load thefuck system"
-}
-
-
-Stop-Timing -Description "Stop timing: setting up command corrections"
-
 # Dynamic module loader
 $dynamic_module_loader = Join-Path -Path $PSScriptRoot -ChildPath packages | Join-Path -ChildPath DynamicPackageLoader.psm1
 if (Test-Path -Path $dynamic_module_loader -PathType Leaf) {
