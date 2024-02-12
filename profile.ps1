@@ -103,3 +103,6 @@ if (Get-Command -Name thefuck -ErrorAction SilentlyContinue) {
 } else {
     Write-Warning -Message "Cannot load thefuck system"
 }
+
+Import-Module gsudoModule -ErrorAction SilentlyContinue
+
