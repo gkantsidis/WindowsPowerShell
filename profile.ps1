@@ -71,35 +71,10 @@ if (Test-Path -Path $brootLauncher) {
 
 #region mamba initialize
 # !! Contents within this block are managed by 'mamba shell init' !!
-if (-not (Test-Path Env:\MAMBA_ROOT_PREFIX)) {
-  $drives = Get-DriveInfo | select -Property Name
-  foreach ($drive in $drives) {
-    $candidateMambaRoot = Join-Path -Path $drive.Name -ChildPath $Env:HOMEPATH
-    if (Test-Path -Path $candidateMambaRoot -PathType Container) {
-      Write-Verbose -Message "Found mamba root at $candidateMambaRoot"
-      $Env:MAMBA_ROOT_PREFIX = $candidateMambaRoot
-      break
-    }
-  }
-
-  Write-Verbose -Message "No mamba root found, using default"
-  $Env:MAMBA_ROOT_PREFIX = Join-Path -Path $Env:HOMEDRIVE -ChildPath $Env:HOMEPATH | `
-                           Join-Path -ChildPath "micromamba"
-}
-$Env:MAMBA_EXE = Join-Path -Path $Env:LOCALAPPDATA "micromamba\micromamba.exe"
+$Env:MAMBA_ROOT_PREFIX = "$($Env:PATH)\micromamba"
+$Env:MAMBA_EXE = "$($Env:LOCALAPPDATA)\micromamba\micromamba.exe"
 (& $Env:MAMBA_EXE 'shell' 'hook' -s 'powershell' -p $Env:MAMBA_ROOT_PREFIX) | Out-String | Invoke-Expression
 #endregion
 
 micromamba activate base
 $env:PYTHONIOENCODING="utf-8"
-
-if (Get-Command -Name thefuck -ErrorAction SilentlyContinue) {
-    $tfalias = thefuck --alias 2> Out-Null
-    if ($null -ne $tfalias) {
-        Invoke-Expression -Command $tfalias
-    } else {
-        Write-Warning -Message "The utility thefuck does not work properly"
-    }
-} else {
-    Write-Warning -Message "Cannot load thefuck system"
-}
