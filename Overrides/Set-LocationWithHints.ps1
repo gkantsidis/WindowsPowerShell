@@ -159,7 +159,7 @@ function Set-LocationWithHints {
             } until ($stopsearch -or ($null -eq $current))
 
             Write-Debug -Message "Components: $components"
-            $components = $components.Reverse()
+            [Array]::Reverse($components)
             Write-Debug -Message "Components in order: $components"
             $realpath = [System.IO.Path]::Combine($components)
             Write-Verbose -Message "Switching to $realpath"

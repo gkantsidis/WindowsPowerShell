@@ -80,6 +80,7 @@ FunctionsToExport = @(
     'Get-ChildItemWithOwner',
     'Get-ExecutableType',
     'Get-FileHead',
+    'Get-FileMetaData',
     'Get-HwInfo',
     'Get-InstalledApplications',
     'Get-ListOfLogons',
