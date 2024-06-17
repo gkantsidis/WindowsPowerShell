@@ -13,7 +13,6 @@ $modules = (
     'DeployImage',
     'DockerMsftProvider',
     'Find-String',
-    'FormatPx',
     'GistProvider',
     'GuiCompletion',
     'InvokeBuild',
