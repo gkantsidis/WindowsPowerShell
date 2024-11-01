@@ -84,6 +84,11 @@ if ($platform -eq "Win32NT") {
     . $PSScriptRoot\Prompts.ps1
 }
 
+$elanProfile = Join-Path -Path $PSScriptRoot -ChildPath Microsoft.PowerShell_profile_elan.ps1
+if (Test-Path -Path $elanProfile) {
+    . $elanProfile
+}
+
 Remove-Item -Path Variable:platform
 # Chocolatey profile
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
