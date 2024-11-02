@@ -80,3 +80,12 @@ micromamba activate base
 $env:PYTHONIOENCODING="utf-8"
 
 Import-Module gsudoModule -ErrorAction SilentlyContinue
+
+#region conda initialize
+# !! Contents within this block are managed by 'conda init' !!
+$conda_exe = Join-Path -Path $Env:USERPROFILE -ChildPath "scoop\apps\miniconda3\current\Script\conda.exe"
+If (Test-Path $conda_exe) {
+    (& $conda_exe "shell.powershell" "hook") | Out-String | ?{$_} | Invoke-Expression
+}
+#endregion
+
