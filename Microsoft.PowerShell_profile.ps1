@@ -103,3 +103,4 @@ try { $null = Get-Command concfg -ea stop; concfg tokencolor -n enable } catch {
 
 $env:PYTHONIOENCODING='utf-8'
 
+try { $null = gcm pshazz -ea stop; pshazz init 'default' } catch { }
