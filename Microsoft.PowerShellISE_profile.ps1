@@ -174,7 +174,6 @@ $Diff = ($EndMS - $StartMS).TotalMilliseconds
 
 Pop-Location
 
-Write-Verbose -Message "Settting prompt"
-$default_prompt = $Function:prompt
+Write-Verbose -Message "Setting prompt"
 . $PSScriptRoot\Prompts.ps1
 Set-NormalPrompt -NoColor

@@ -2,105 +2,26 @@
 # Add our module directory to the path
 # (Not all modules will work in all editions of PS)
 #
-$usermodules = Join-Path -Path $PSScriptRoot -ChildPath MyModules
+
+$user_modules = Join-Path -Path $PSScriptRoot -ChildPath MyModules
 if ($null -ne $Env:PSModulePath) {
     $modulePaths = $Env:PSModulePath.Split(';', [StringSplitOptions]::RemoveEmptyEntries)
-    if ($modulePaths -notcontains $usermodules) {
-        $Env:PSModulePath += ";$usermodules"
+    if ($modulePaths -notcontains $user_modules) {
+        $Env:PSModulePath += ";$user_modules"
     }
 } else {
     Write-Warning -Message "Env:PSModulePath is empty!"
-    $Env:PSModulePath = $usermodules
+    $Env:PSModulePath = $user_modules
 }
 
 $private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 Push-Location $private:PowerShellProfileDirectory
 
-#
-# Helper methods
-#
-function Start-Timing {
-    $global:StartMS = Get-Date
-}
+return
 
-function Stop-Timing {
-    param([string]$Description)
-
-    $EndMS = Get-Date
-    $Diff = ($EndMS - $global:StartMS).TotalMilliseconds
-
-    "{0,-50} {1,10:F3} msec to load" -f $Description,$Diff
-}
-
-#
-# Call PowerShell edition specific profile
-#
-
-$editionProfile = "Microsoft.PowerShell_{0}_profile.ps1" -f $PSEdition
-$editionProfilePath = Join-Path -Path $PSScriptRoot -ChildPath $editionProfile
-Write-Host "Loading profile for edition $PSEdition"
-
-if (Test-Path -Path $editionProfilePath) {
-    . $editionProfilePath
+$full_experience = Join-Path -Path $PSScriptRoot -ChildPath "full-experience.ps1"
+if (Test-Path -Path $full_experience) {
+    . $full_experience
 } else {
-    Write-Warning -Message "No profile available for PowerShell edition: $PSEdition"
+    Write-Warning -Message "No full experience available"
 }
-
-Remove-Item -Path Variable:editionProfile
-Remove-Item -Path Variable:editionProfilePath
-
-#
-# End of PowerShell edition specific profile
-#
-
-Pop-Location
-
-#
-# OS Specific items
-#
-
-$platform = [System.Environment]::OSVersion.Platform
-Write-Host "Loading profile for platform $platform"
-$platformProfile = "Microsoft.PowerShell_{0}_profile.ps1" -f $platform
-$platformProfilePath = Join-Path -Path $PSScriptRoot -ChildPath $platformProfile
-if (Test-Path -Path $platformProfilePath) {
-    . $platformProfilePath
-}
-
-
-Remove-Item -Path Variable:platformProfile
-Remove-Item -Path Variable:platformProfilePath
-
-#
-# Some extra stuff
-#
-
-Remove-Item -Path Variable:StartMS -ErrorAction SilentlyContinue
-Set-StrictMode -Version latest
-
-if ($platform -eq "Win32NT") {
-    # This runs in all cases, but it messes up the console provider in bash in Windows
-    # hence we use it only in windows --- we need something equivalent for Unix.
-    . $PSScriptRoot\Prompts.ps1
-}
-
-$elanProfile = Join-Path -Path $PSScriptRoot -ChildPath Microsoft.PowerShell_profile_elan.ps1
-if (Test-Path -Path $elanProfile) {
-    . $elanProfile
-}
-
-Remove-Item -Path Variable:platform
-# Chocolatey profile
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-  Import-Module "$ChocolateyProfile"
-}
-
-# The $__ variable will hold the last output
-$PSDefaultParameterValues['Out-Default:OutVariable'] = '__'
-try { $null = Get-Command concfg -ea stop; concfg tokencolor -n enable } catch { }
-
-
-$env:PYTHONIOENCODING='utf-8'
-
-try { $null = gcm pshazz -ea stop; pshazz init 'default' } catch { }
