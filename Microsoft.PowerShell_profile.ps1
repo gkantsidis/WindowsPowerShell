@@ -17,7 +17,7 @@ if ($null -ne $Env:PSModulePath) {
 $private:PowerShellProfileDirectory = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 Push-Location $private:PowerShellProfileDirectory
 
-return
+# return
 
 $full_experience = Join-Path -Path $PSScriptRoot -ChildPath "full-experience.ps1"
 if (Test-Path -Path $full_experience) {

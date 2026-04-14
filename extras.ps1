@@ -12,11 +12,9 @@ $modules = (
     'EZOut',
     'DeployImage',
     'DockerMsftProvider',
-    'Find-String',
     'GistProvider',
     'GuiCompletion',
     'InvokeBuild',
-    'LINQ',
     'Logging',
     'Logman',
     'nPSDesiredStateConfiguration',
@@ -37,9 +35,7 @@ $modules = (
     'PSParallel',
     'PSScriptAnalyzer',
     'PSWindowsUpdate',
-    'Posh-Gist',
     'posh-git',
-    'PoshRSJob',                # Provides an alternative to PSjobs with greater performance and less overhead to run commands in the background, freeing up the console.
     'RoughDraft',
     'ScriptBrowser',
     'ScriptCop',
@@ -48,7 +44,6 @@ $modules = (
     'SnippetPx',
     'SpeculationControl',       # Check for Meltdown and Spectre bugs in Intel processors --- https://aka.ms/SpeculationControlPS
     'SSH',
-    'TypePx',
     'VSSetup',
     'xDscDiagnostics',
     'xNetworking',
@@ -79,8 +74,8 @@ function ProcessModule {
     Write-Verbose -Message "Examining $module, will load? $load"
     Get-ModuleInstall -ModuleName $module -ErrorAction SilentlyContinue
 
-    $isLoaded = (Get-Module -Name $module) -ne $null
-    $isAvailable = (Get-Module $module -ListAvailable) -ne $null
+    $isLoaded = $null -ne (Get-Module -Name $module)
+    $isAvailable = $null -ne (Get-Module $module -ListAvailable)
     Write-Verbose -Message "Module: $module, loaded: $isLoaded, available: $isAvailable"
     if ($load -and (-not $isLoaded) -and $isAvailable) {
         Write-Verbose -Message "Importing module $module"
